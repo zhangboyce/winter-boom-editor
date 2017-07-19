@@ -1,0 +1,12 @@
+{
+  "mongo": {
+    "editor": "mongodb://localhost:27017/winter",
+    "boom": "mongodb://localhost:27017/boom"
+  },
+  "sso": {
+    "server": "http://localhost:8888",
+    "server_api": "http://localhost:8888",
+    "client": "http://localhost:8877"
+  },
+  "port":"8877"
+}

@@ -1,0 +1,81 @@
+@import "main.less";
+
+.main {
+  background-color: rgb(255, 255, 255);
+  padding-top: 50px;
+  height: 100%;
+}
+
+.main > .col,
+.col-style > div > .col {
+  height: 100%;
+  border-left: 1px solid rgb(174, 175, 175);
+}
+
+.col-style > div {
+  height: 100%;
+}
+
+.col-style-type {
+  padding: 0;
+}
+.col-style-type > ul {
+  padding: 0;
+  list-style: none;
+}
+
+.col-style-type > ul > li,
+.col-style-type > ul > li > ul > li {
+  padding: 0;
+  position: relative;
+  line-height: 40px;
+  text-align: center;
+  cursor: pointer;
+  border-bottom: 1px dashed rgb(234, 234, 234);
+}
+
+.col-style-type > ul > li:hover,
+.col-style-type > ul > li > ul > li:hover {
+  background-color: rgb(96, 102, 190);
+  border-color: rgb(96, 102, 190);
+  color: rgb(255, 255, 255);
+}
+
+.col-style-type > ul > li > ul {
+  display: none;
+  position: absolute;
+  width: 100px;
+  top: -1px;
+  left: 101%;
+  padding: 0;
+  z-index: 1000;
+  list-style: none;
+  background-color: rgb(255, 255, 255);
+  border-right: 1px solid rgb(234, 234, 234);
+  border-top: 1px solid rgb(234, 234, 234);
+}
+.col-style-type > ul > li:first-child > ul {
+  border-top: none;
+  top: 0;
+}
+
+.col-style-type > ul > li.show > ul {
+  display: block;
+  color: rgb(89, 89, 90);
+}
+
+
+.col-style-item {
+  overflow-y: scroll;
+}
+
+.col-style-item > ul {
+  list-style: none;
+  padding: 0;
+}
+
+.col-style-item > ul > li {
+  border-bottom: 1px dashed rgb(204, 204, 204);
+  padding: 20px;
+  cursor: pointer;
+}
