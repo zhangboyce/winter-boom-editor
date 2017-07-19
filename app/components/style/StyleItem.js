@@ -1,7 +1,7 @@
 'use strict';
 import _ from 'lodash';
-import Component from './Component';
-import { isArray } from '../../common/TypeUtils';
+import Component from './../Component';
+import { isArray } from '../../../common/TypeUtils';
 
 export default class extends Component {
 

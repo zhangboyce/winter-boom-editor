@@ -1,5 +1,5 @@
 'use strict';
-import Component from './Component';
+import Component from './../Component';
 
 export default class extends Component {
 

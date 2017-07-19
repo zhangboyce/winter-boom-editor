@@ -1,5 +1,5 @@
 'use strict';
-import '../public/style/winter.boom.editor.less';
+import '../public/style/main.less';
 import App from './App';
 
 let app = new App();

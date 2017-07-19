@@ -1,5 +1,5 @@
 'use strict';
-import Component from './Component';
+import Component from './../Component';
 import StyleType from './StyleType';
 import StyleItem from './StyleItem';
 

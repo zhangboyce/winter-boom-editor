@@ -1,8 +1,8 @@
 'use strict';
 import Component from './Component';
-import ColumnStyle from './ColumnStyle';
-import ColumnEditor from './ColumnEditor';
-import ColumnArticle from './ColumnArticle';
+import ColumnStyle from './style/ColumnStyle';
+import ColumnEditor from './editor/ColumnEditor';
+import ColumnArticle from './article/ColumnArticle';
 
 export default class extends Component {
     render() {
