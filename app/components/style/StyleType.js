@@ -7,7 +7,7 @@ export default class extends Component {
         $.getJSON('/api/types', json => {
             if (json.status) {
                 let types = json.result;
-                types = [...types, { _id: 'all', name: '全部' }];
+                types = [{ _id: 'all', name: '全部' },...types];
                 callback(types);
             }
         });
@@ -31,8 +31,9 @@ export default class extends Component {
         });
     };
 
-    __typeOnClick__  = type => {
+    __typeOnClick__  = (type, callback) => {
         return e => {
+            callback();
             e.stopPropagation();
             this.__loadStyles__(type, items => {
                 this.props.onGetItems(items);
@@ -46,8 +47,10 @@ export default class extends Component {
         this.__loadTypes__(types => {
             types.forEach(type => {
                 let $li_1 = $(`<li>${type.name}</li>`).appendTo($ul);
-
-                $li_1.click(this.__typeOnClick__(type));
+                $li_1.click(this.__typeOnClick__(type, () => {
+                    $li_1.addClass("active").siblings().removeClass("active");
+                    $li_1.addClass("active").siblings().children("ul").children("li").removeClass("active");
+                }));
                 this.__typeOnHover__($li_1);
 
                 if (type.children && type.children.length != 0) {
@@ -55,7 +58,11 @@ export default class extends Component {
 
                     type.children.forEach(child => {
                         let $li_2 = $(`<li>${child.name}</li>`).appendTo($subUl);
-                        $li_2.click(this.__typeOnClick__(child));
+                        $li_2.click(this.__typeOnClick__(child, () => {
+                            $li_2.addClass("active").siblings().removeClass("active");
+                            $li_2.parent().parent().addClass("active").siblings().removeClass("active");
+                            $li_2.parent().parent().addClass("active").siblings().children("ul").children("li").removeClass("active");
+                        }));
                     });
                 }
             });
