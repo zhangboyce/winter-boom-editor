@@ -39,8 +39,7 @@ export default class extends Component {
         }
     };
 
-
-    __textHandle__= data => {
+    __textHandle__ = data => {
         let type = data.type;
         let $t = $('<div></div>').html(data.text);
 
@@ -54,7 +53,7 @@ export default class extends Component {
         $t.find('img').each(function () {
             let $i = $(this);
             let imgUrl = $i.attr('src');
-            if(type == projectTypes.WECHAT) {
+            if (type == projectTypes.WECHAT) {
                 imgUrl = 'http://imgcache.cceato.com/cache/' + encodeURIComponent(imgUrl);
             }
             //$i.removeAttr('src');
@@ -62,22 +61,22 @@ export default class extends Component {
             $i.attr('src', imgUrl);
         });
 
-        if(type == projectTypes.WECHAT) {
-            $t.find('iframe').each( () => {
+        if (type == projectTypes.WECHAT) {
+            $t.find('iframe').each(() => {
                 try {
                     let $t = $(this);
                     let originSrc = $t.attr('data-src');
-                    if(originSrc.indexOf('qq.com')) {
+                    if (originSrc.indexOf('qq.com')) {
                         let vid = originSrc.split('?')[1].split('&')[0].split('=')[1];
                         $t.attr('src', `https://v.qq.com/iframe/player.html?vid=${vid}&tiny=0&auto=0`);
                     }
-                }catch(e) {}
+                } catch (e) {
+                }
             });
         }
 
         return $t[0].innerHTML;
     };
-
 
     __getCollectionList__ = callback => {
         $.getJSON('/collection/list', list => {
@@ -85,7 +84,7 @@ export default class extends Component {
         });
     };
 
-    __showArticleDetails__ = c =>{
+    __showArticleDetails__ = c => {
         $.getJSON('/collection/getText/' + c._id, pt => {
             let $t = $(`<div class="modal-body boom-content">
                     <div class="boom-content-header">
@@ -110,11 +109,8 @@ export default class extends Component {
             //});
 
             $(`
-                    <button class="btn btn-success">编<br/>辑<br/>此<br/>文<br/>章</button>
-                `).css({
-                position: 'absolute',
-                right: '7px'
-            }).click(e => {
+                <button class="btn btn-success">编<br/>辑<br/>此<br/>文<br/>章</button>
+                `).click(e => {
                 /* editor.showArticle({
                  title: c.title,
                  digest: c.desc,
@@ -127,18 +123,9 @@ export default class extends Component {
         });
     };
 
-
-
-
-
-
-
     render() {
-
         this.__getCollectionList__(list => {
-
             list.forEach(c => {
-
                 let card = $(`<div class="card bg-white card-simple">
                                     <img src="" class="card-img-top img-responsive" style="display: block;"/>
                                     <div class="card-block">
@@ -149,10 +136,8 @@ export default class extends Component {
                     this.__showArticleDetails__(c);
                 });
                 card.appendTo($collectionList);
-
             });
         });
-
         let $collectionList = $(`<div class="col col-md-12 collection-list-container"></div>`);
         return $collectionList;
     }

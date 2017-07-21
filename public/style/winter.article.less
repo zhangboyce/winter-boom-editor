@@ -66,18 +66,58 @@
   border-bottom: 1px solid #ebebe7;
 }
 
-.article-list-container .article-list .title {
+.article-list-container .article-list .delete-article {
+  height: 23px;
+  width: 23px;
+  position: absolute;
+  right: 0;
+  text-align: center;
+  line-height: 23px;
+  background-color: rgba(33, 34, 35, 0.7);
 
+}
+
+.article-list-container .article-list .edit-article {
+  height: 23px;
+  width: 23px;
+  position: absolute;
+  right: 25px;
+  text-align: center;
+  line-height: 23px;
+  background-color: rgba(33, 34, 35, 0.7);
+}
+
+.article-list-container .article-list .title {
   width: 100%;
-  height: 30px;
+  height: 40px;
   color: #fff;
   position: absolute;
   bottom: 0;
   padding: 0 5px;
   overflow: hidden;
   background-color: rgba(33, 34, 35, 0.7);
-  text-align: center;
-  line-height: 30px;
+  text-align: left;
+  line-height: 18px;
+
+}
+
+.article-list-container .article-list .title span {
+  width:70%;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  display: inline-block;
+  padding-top:3px;
+
+}
+
+.article-list-container .article-list .title .datatime {
+  text-align: right;
+  margin-top: -2px;
+  transform: scale(0.9);
+  -webkit-transform: scale(0.9);
+  -moz-transform: scale(0.9);
+  -o-transform: scale(0.9);
 }
 
 .header-content > .sync-article-btn {
@@ -104,6 +144,11 @@
 
 .collection-list-container .card:hover {
   opacity: 0.9;
+}
+
+#winter-editor-modal .btn-success{
+  position: absolute;
+  right: 7px;
 }
 
 
