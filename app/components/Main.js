@@ -10,7 +10,7 @@ export default class extends Component {
 
         let columnEditor = new ColumnEditor();
         let columnStyle = new ColumnStyle({ editor: columnEditor });
-        let columnArticle = new ColumnArticle();
+        let columnArticle = new ColumnArticle({ editor: columnEditor });
 
         $main.append(columnStyle.render());
         $main.append(columnEditor.render());

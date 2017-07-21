@@ -7,12 +7,12 @@ export default class extends Component {
 
     constructor(props) {
         super(props);
-        this.articleSaveList = new ArticleList();
+        this.articleSaveList = new ArticleList({ parent: this });
         this.collectionList = new CollectionList({ parent: this });
     }
 
     showArticle = article => {
-        this.parent.showArticle(article);
+        this.editor.showArticle(article);
     };
 
     render() {
