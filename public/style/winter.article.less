@@ -1,1 +1,74 @@
 @import "common.less";
+
+.col-article{
+  position:relative;
+}
+.col-article .change-list{
+    margin-top: 44px;
+    position: relative;
+}
+
+.tab-nav-bar{
+    height:44px;
+    border-bottom: 1px solid rgb(174, 175, 175);
+    position: fixed;
+    top:50px;
+    right:0;
+    z-index: 99;
+    padding: 0;
+    margin: 0;
+    background: #fff;
+    border-left:1px solid rgb(174, 175, 175);
+}
+.tab-nav-bar>.save-article-bar,
+.tab-nav-bar>.collection-article-bar{
+    display: inline-block;
+    height: 44px;
+    line-height: 44px;
+    text-align: center;
+    color:rgb(189, 190, 191);
+    cursor: pointer;
+}
+
+
+.tab-nav-bar>.save-article-bar.active,
+.tab-nav-bar>.collection-article-bar.active{
+    border-bottom:3px solid rgb(189, 190, 191);
+    color:rgb(98, 73, 71);
+}
+
+
+.col-article>div{
+    height:100%;
+    overflow-y:scroll;
+    position: relative;
+}
+
+
+.article-list-container{
+    position: relative;
+    height: 100%;
+    overflow: hidden;
+}
+.header-content{
+    width: 100%;
+    text-align: center;
+}
+
+.header-content > .sync-article-btn{
+    width: 80px;
+    height: 28px;
+    line-height:30px;
+    text-align: center;
+    border-radius:5px;
+    color:#fff;
+    background-color:rgb(96, 102, 190);
+    margin:10px auto;
+    cursor: pointer;
+}
+.body-content{
+
+
+}
+
+
