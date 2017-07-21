@@ -36,9 +36,7 @@ export default class extends Component {
     };
 
     clear =() => {
-        if (!this.isEmpty() && confirm("是否确认清空文档?")) {
-            this.editable.empty();
-        }
+        this.editable.empty();
     };
 
     isEmpty = () => {

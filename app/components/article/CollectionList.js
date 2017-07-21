@@ -109,7 +109,7 @@ export default class extends Component {
                     this.parent.showArticle({
                         title: c.title,
                         digest: c.desc,
-                        content: c.text
+                        content: pt.text
                     });
                     modal.close();
             }).prependTo($t);

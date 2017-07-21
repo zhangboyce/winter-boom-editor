@@ -12,7 +12,7 @@ export default class extends Component {
         super(props);
         this.title = new Title({ parent: this});
         this.editor = new Editor({ parent: this});
-        this.editorFooter = new EditorFooter({ parent: this});
+        this.editorFooter = new EditorFooter({ parent: this });
         this.operator = new Operator({ parent: this});
         this.message = new Message();
 
@@ -23,16 +23,22 @@ export default class extends Component {
         this.editor.insert($node);
     };
 
-    save = callback => {
-        let article = new Article({
-            title: this.title.getTitle(),
-            author: this.title.getAuthor(),
-            source: this.editorFooter.getSource(),
-            cover: this.title.getCover(),
-            digest: this.editorFooter.getDigest() ,
-            content: this.editor.getContent()
-        });
+    showArticle = article => {
+        if(!this.__check__()) {
+            return;
+        }
+        this.originArticle = new Article(article);
 
+        this.title.setTitle(article.title || '');
+        this.title.setAuthor(article.author || '');
+        this.title.setCover(article.cover || '');
+        this.editorFooter.setSource(article.source || '');
+        this.editorFooter.setDigest(article.digest || '');
+        this.editor.setContent(article.content || '');
+    };
+
+    save = callback => {
+        let article = this.__getArticle__();
         if(!this.originArticle.isEmpty() ?
                 article.isEquals(this.originArticle) :
                 article.isEmpty()) {
@@ -62,6 +68,10 @@ export default class extends Component {
     };
 
     clear = () => {
+        if(!this.__check__()) {
+            return;
+        }
+
         this.editor.clear();
         this.title.clear();
         this.editorFooter.clear();
@@ -69,8 +79,32 @@ export default class extends Component {
     };
 
     deepClear = () => {
-        this.clear();
-        this.originArticle = new Article({});
+        this.showArticle({});
+    };
+
+    __check__ = () => {
+        let article = this.__getArticle__();
+        if(!this.originArticle) {
+            if(!article.isEmpty() && !confirm('未保存的临时文档，操作后内容将无法恢复,是否确认执行操作?')) {
+                return false;
+            }
+        }else {
+            if(!article.isEquals(this.originArticle) && !confirm('文档内容已更新，操作后内容将无法恢复,是否确认执行操作?')) {
+                return false;
+            }
+        }
+        return true;
+    };
+
+    __getArticle__ = () => {
+        return new Article({
+            title: this.title.getTitle(),
+            author: this.title.getAuthor(),
+            cover: this.title.getCover(),
+            source: this.editorFooter.getSource(),
+            digest: this.editorFooter.getDigest() ,
+            content: this.editor.getContent()
+        });
     };
 
     render() {

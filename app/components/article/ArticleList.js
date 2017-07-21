@@ -37,6 +37,7 @@ export default class extends Component {
             .hide()
             .append($('<i class="fa fa-pencil-square-o" style="color: #fff;"></i>'))
             .click(e => {
+                this.parent.showArticle(article);
                 return false;
             });
     };
@@ -74,8 +75,8 @@ export default class extends Component {
 
                 let $li = $(`<div class="article-list" id="article_${article._id}"></div>`).css({
                     'background': `rgba(0, 0, 0, 0) url("${article.cover || 'http://boom-static.static.cceato.com/images/shirt.png'}") no-repeat scroll center center / cover`
-                }).click(function () {
-                    //showArticle(a._id);
+                }).click(() => {
+                    this.parent.showArticle(article);
                 }).hover(() => {
                         showTimeout = setTimeout(function () {
                             delBtn.show('fast');
