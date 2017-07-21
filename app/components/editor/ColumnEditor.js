@@ -2,7 +2,9 @@
 import Component from './../Component';
 import Title from './Title';
 import Editor from './Editor';
+import EditorFooter from './EditorFooter';
 import Operator from './Operator';
+import Message from '../common/Message';
 
 export default class extends Component {
 
@@ -10,7 +12,9 @@ export default class extends Component {
         super(props);
         this.title = new Title({ parent: this});
         this.editor = new Editor({ parent: this});
+        this.editorFooter = new EditorFooter({ parent: this});
         this.operator = new Operator({ parent: this});
+        this.message = new Message();
 
         this.originArticle = new Article({});
     }
@@ -23,9 +27,9 @@ export default class extends Component {
         let article = new Article({
             title: this.title.getTitle(),
             author: this.title.getAuthor(),
-            //source: sourceInput.val(),
+            source: this.editorFooter.getSource(),
             cover: this.title.getCover(),
-            //digest:summary ,
+            digest: this.editorFooter.getDigest() ,
             content: this.editor.getContent()
         });
 
@@ -33,17 +37,26 @@ export default class extends Component {
                 article.isEquals(this.originArticle) :
                 article.isEmpty()) {
             callback && callback();
+
+            this.message.info('已保存');
             return;
         }
         let url;
         if(this.originArticle.id) {
-            url = '/article/update/' + this.originArticle.id;
+            article.id = this.originArticle.id;
+            url = '/article/update';
         }else {
             url = '/article/save';
         }
-        $.post(url, { data: article.toJson() }, json => {
-            this.originArticle = article;
-            this.originArticle.id = json.id;
+        $.post(url, article.clone(), json => {
+            if (json && json.status == 'ok') {
+                this.originArticle = article;
+                this.originArticle.id = json.id;
+
+                this.message.success('保存成功');
+            } else {
+                this.message.error('保存失败');
+            }
             callback && callback(article);
         });
     };
@@ -51,6 +64,8 @@ export default class extends Component {
     clear = () => {
         this.editor.clear();
         this.title.clear();
+        this.editorFooter.clear();
+        this.message.success('已清空内容');
     };
 
     deepClear = () => {
@@ -62,7 +77,9 @@ export default class extends Component {
         let $columnEditor = $(`<div class="col col-md-6 col-editor"></div>`);
         $columnEditor.append(this.title.render());
         $columnEditor.append(this.editor.render());
+        $columnEditor.append(this.editorFooter.render());
         $columnEditor.append(this.operator.render());
+        $columnEditor.append(this.message.render());
 
         return $columnEditor;
     }
@@ -108,13 +125,12 @@ Article.prototype.isEquals = function(obj) {
 
 };
 
-Article.prototype.toJson = function () {
-    let json = {  };
+Article.prototype.clone = function () {
+    let obj = {  };
     for(let k in this) {
-        if (this.hasOwnProperty(k)) {
-            json[k] = this[k];
+        if (Object.prototype.hasOwnProperty.call(this, k)) {
+            obj[k] = this[k];
         }
     }
-
-    return json;
+    return obj;
 };

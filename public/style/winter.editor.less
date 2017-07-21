@@ -78,6 +78,7 @@
   left: 0;
   text-align: center;
   line-height: 50px;
+  z-index: 9999;
 }
 
 .col-editor-operator > span.btn {
@@ -101,6 +102,35 @@
 .col-editor-operator > span.btn.save:hover {
   background-color: darken(@purple, 20%);
   border: 1px solid darken(@purple, 20%);
+}
+
+.col-editor-footer {
+  border-top: 1px solid rgb(174, 175, 175);
+  padding-top: 20px;
+  margin-bottom: 50px;
+}
+
+.col-editor-footer > div {
+  margin-top: 20px;
+}
+
+.col-editor-footer label {
+  margin-right: 50px;
+}
+
+.col-editor-footer span {
+  color: darken(@light-grey, 10%);
+}
+
+.col-editor-footer input {
+  border: 1px solid @light-grey;
+  width: 80%;
+}
+
+.col-editor-footer textarea {
+  border: 1px solid @light-grey;
+  width: 80%;
+  height: 100px;
 }
 
 // editor

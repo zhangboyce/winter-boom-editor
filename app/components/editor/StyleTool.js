@@ -112,7 +112,8 @@ function StyleTool(editable, options = {}) {
         }
     });
 
-    function copy(target, text) {
+    function copy(target, text, callback) {
+
         function handleCopy(e) {
             e.clipboardData.setData('text/html', text);
             e.clipboardData.setData('text/plain', text);
@@ -120,16 +121,24 @@ function StyleTool(editable, options = {}) {
         }
 
         document.addEventListener('copy', handleCopy);
-        let clipboardHtml = new Clipboard(target, {
+        let clipboard = new Clipboard(target, {
             text: function () {
                 return text;
             }
         });
 
-        clipboardHtml.on('success', function (e) {
+        clipboard.on('success', function (e) {
+            callback && callback('success');
             document.removeEventListener('copy', handleCopy);
             e.clearSelection();
-            clipboardHtml.destroy();
+            clipboard.destroy();
+        });
+
+        clipboard.on('error', function(e) {
+            callback && callback('success');
+            document.removeEventListener('copy', handleCopy);
+            e.clearSelection();
+            clipboard.destroy();
         });
     }
 

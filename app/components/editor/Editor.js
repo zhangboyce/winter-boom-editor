@@ -26,7 +26,13 @@ export default class extends Component {
     };
 
     copy = target => {
-        this.styleTool.copy(target, this.editable.html())
+        this.styleTool.copy(target, this.editable.html(), status => {
+            if (status == 'success')
+                this.parent.message.success('已复制到剪切板');
+            else {
+                this.parent.message.warn('没有复制成功');
+            }
+        })
     };
 
     clear =() => {

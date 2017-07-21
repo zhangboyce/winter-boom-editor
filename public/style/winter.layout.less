@@ -24,7 +24,7 @@ html, body, #winter-boom-editor {
 }
 
 .main {
-  background-color: rgb(255, 255, 255);
+  background-color: @white;
   padding-top: 50px !important;
   height: 100%;
   position: relative;
@@ -32,9 +32,49 @@ html, body, #winter-boom-editor {
 
 .main > .col {
   height: 100%;
-  border-left: 1px solid rgb(174, 175, 175);
+  border-left: 1px solid @grey;
 }
 .row ,.col{
   padding:0;
   margin:0;
+}
+
+.editor-message > i {
+  margin-right: 10px;
+}
+
+.editor-message.success > i {
+  color: @success-color;
+}
+
+.editor-message.info > i {
+  color: @info-color;
+}
+
+.editor-message.warn > i {
+  color: @warn-color;
+}
+
+.editor-message.error > i {
+  color: @error-color;
+}
+
+.editor-message {
+  background-color: @white;
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  padding: 16px;
+  border-radius: 4px;
+  color: @grey;
+  font-size: 12px;
+  overflow: hidden;
+  z-index: 9998;
+  .editor-message-box-shadow(@dark-grey)
+}
+
+.editor-message-box-shadow(@color) {
+  -moz-box-shadow: 0 2px 8px fade(@color, 20%);
+  -webkit-box-shadow: 0 2px 8px fade(@color, 20%);
+  box-shadow: 0 2px 8px fade(@color, 20%);
 }
