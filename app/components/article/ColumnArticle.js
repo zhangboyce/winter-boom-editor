@@ -8,8 +8,12 @@ export default class extends Component {
     constructor(props) {
         super(props);
         this.articleSaveList = new ArticleList();
-        this.collectionList = new CollectionList();
+        this.collectionList = new CollectionList({ parent: this });
     }
+
+    showArticle = article => {
+        this.parent.showArticle(article);
+    };
 
     render() {
         let $columnArticle = $(`<div class="col col-md-2 col-article"></div>`);

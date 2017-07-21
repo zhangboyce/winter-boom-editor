@@ -104,19 +104,14 @@ export default class extends Component {
             let $articleHtml = this.__supplyText__(_.assign(pt, c));
             $articleHtml.appendTo($('<div class="boom-content-text"></div>').appendTo($t));
 
-            //$articleHtml.find('img').lazyload({
-            //    container : $articleHtml.closest('.scrollable')
-            //});
-
-            $(`
-                <button class="btn btn-success">编<br/>辑<br/>此<br/>文<br/>章</button>
-                `).click(e => {
-                /* editor.showArticle({
-                 title: c.title,
-                 digest: c.desc,
-                 content: pt.text
-                 });*/
-                modal.close();
+            $(`<button class="btn btn-success">编<br/>辑<br/>此<br/>文<br/>章</button>`)
+                .click(e => {
+                    this.parent.showArticle({
+                        title: c.title,
+                        digest: c.desc,
+                        content: c.text
+                    });
+                    modal.close();
             }).prependTo($t);
 
             modal.open($t);

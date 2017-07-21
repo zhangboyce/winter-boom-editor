@@ -37,7 +37,6 @@ export default class extends Component {
             .hide()
             .append($('<i class="fa fa-pencil-square-o" style="color: #fff;"></i>'))
             .click(e => {
-                alert("此处编辑文章");
                 return false;
             });
     };
@@ -67,14 +66,14 @@ export default class extends Component {
         $btnHeader.append($btnArea);
 
         this.__getArticleList__(articleList => {
-            articleList.forEach(list => {
-                let delBtn = this.__buildDelBtn__(list);
-                let editBtn = this.__buildEditBtn__(list);
+            articleList.forEach(article => {
+                let delBtn = this.__buildDelBtn__(article);
+                let editBtn = this.__buildEditBtn__(article);
                 let isShow = false;
                 let showTimeout;
 
-                let $li = $(`<div class="article-list" id="article_${list._id}"></div>`).css({
-                    'background': `rgba(0, 0, 0, 0) url("${list.cover || 'http://boom-static.static.cceato.com/images/shirt.png'}") no-repeat scroll center center / cover`
+                let $li = $(`<div class="article-list" id="article_${article._id}"></div>`).css({
+                    'background': `rgba(0, 0, 0, 0) url("${article.cover || 'http://boom-static.static.cceato.com/images/shirt.png'}") no-repeat scroll center center / cover`
                 }).click(function () {
                     //showArticle(a._id);
                 }).hover(() => {
@@ -96,7 +95,7 @@ export default class extends Component {
                     .append(delBtn)
                     .append(editBtn)
                     .appendTo($bodyContent)
-                    .append(this.__buildTitle__(list));
+                    .append(this.__buildTitle__(article));
             });
         });
         return $articleList;
