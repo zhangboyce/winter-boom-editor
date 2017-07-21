@@ -8,15 +8,85 @@ import Component from './../Component';
 
 export default class extends Component {
 
+    __supplyText__ = data => {
+        let $result = $('<div></div>');
+
+        switch (data.type) {
+            case projectTypes.FACEBOOK:
+            case projectTypes.TWITTER:
+            case projectTypes.INSTAGRAM:
+                if (data.coverImg && data.coverImg.url) {
+                    $(`<img src=${ FileUrlUtil.md5ImageUrl(data.coverImg.url, data.type) } / >`).appendTo($result);
+                }
+                $(`<p>${ data.desc }</p>`).appendTo($result);
+                return $result;
+
+            case projectTypes.STUDIO:
+                $('<img/>').attr('src', `http://boom.static.cceato.com/${data.coverImg.fileName}`)
+                    .appendTo(
+                        $('<p></p>').css('text-align', 'center')
+                            .appendTo($result)
+                    );
+
+                $('<div></div>').html(this.__textHandle__(data)).appendTo($result);
+
+                return $result;
+
+            default:
+                return data.text ?
+                    $('<div></div>').html(this.__textHandle__(data)) :
+                    $(`<div><p>${ data.desc }</p></div>`);
+        }
+    };
+
+
+    __textHandle__= data => {
+        let type = data.type;
+        let $t = $('<div></div>').html(data.text);
+
+        //过滤script
+        $t.find('script').remove();
+
+        //过滤class
+        $t.find('*').removeAttr('class').removeAttr('id');
+
+        //图片懒加载
+        $t.find('img').each(function () {
+            let $i = $(this);
+            let imgUrl = $i.attr('src');
+            if(type == projectTypes.WECHAT) {
+                imgUrl = 'http://imgcache.cceato.com/cache/' + encodeURIComponent(imgUrl);
+            }
+            //$i.removeAttr('src');
+            //$i.attr('data-original', imgUrl);
+            $i.attr('src', imgUrl);
+        });
+
+        if(type == projectTypes.WECHAT) {
+            $t.find('iframe').each( () => {
+                try {
+                    let $t = $(this);
+                    let originSrc = $t.attr('data-src');
+                    if(originSrc.indexOf('qq.com')) {
+                        let vid = originSrc.split('?')[1].split('&')[0].split('=')[1];
+                        $t.attr('src', `https://v.qq.com/iframe/player.html?vid=${vid}&tiny=0&auto=0`);
+                    }
+                }catch(e) {}
+            });
+        }
+
+        return $t[0].innerHTML;
+    };
+
+
     __getCollectionList__ = callback => {
         $.getJSON('/collection/list', list => {
             callback(list);
         });
     };
 
-    __showArticleDetails__(c) {
-
-        $.getJSON('/collection/getText/' + c._id, function (pt) {
+    __showArticleDetails__ = c =>{
+        $.getJSON('/collection/getText/' + c._id, pt => {
             let $t = $(`<div class="modal-body boom-content">
                     <div class="boom-content-header">
                         <div class="title-box col-xs-9">
@@ -55,80 +125,10 @@ export default class extends Component {
 
             modal.open($t);
         });
+    };
 
 
-    }
 
-
-    __supplyText__(data) {
-        let $result = $('<div></div>');
-
-        switch (data.type) {
-            case projectTypes.FACEBOOK:
-            case projectTypes.TWITTER:
-            case projectTypes.INSTAGRAM:
-                if (data.coverImg && data.coverImg.url) {
-                    $(`<img src=${ FileUrlUtil.md5ImageUrl(data.coverImg.url, data.type) } / >`).appendTo($result);
-                }
-                $(`<p>${ data.desc }</p>`).appendTo($result);
-                return $result;
-
-            case projectTypes.STUDIO:
-                $('<img/>').attr('src', `http://boom.static.cceato.com/${data.coverImg.fileName}`)
-                    .appendTo(
-                        $('<p></p>').css('text-align', 'center')
-                            .appendTo($result)
-                    );
-
-                $('<div></div>').html(this.__textHandle__(data)).appendTo($result);
-
-                return $result;
-
-            default:
-                return data.text ?
-                    $('<div></div>').html(textHandle(data)) :
-                    $(`<div><p>${ data.desc }</p></div>`);
-        }
-    }
-
-
-    __textHandle__(data) {
-        let type = data.type;
-        let $t = $('<div></div>').html(data.text);
-
-        //过滤script
-        $t.find('script').remove();
-
-        //过滤class
-        $t.find('*').removeAttr('class').removeAttr('id');
-
-        //图片懒加载
-        $t.find('img').each(function () {
-            let $i = $(this);
-            let imgUrl = $i.attr('src');
-            if(type == projectTypes.WECHAT) {
-                imgUrl = 'http://imgcache.cceato.com/cache/' + encodeURIComponent(imgUrl);
-            }
-            //$i.removeAttr('src');
-            //$i.attr('data-original', imgUrl);
-            $i.attr('src', imgUrl);
-        });
-
-        if(type == projectTypes.WECHAT) {
-            $t.find('iframe').each(function () {
-                try {
-                    let $t = $(this);
-                    let originSrc = $t.attr('data-src');
-                    if(originSrc.indexOf('qq.com')) {
-                        let vid = originSrc.split('?')[1].split('&')[0].split('=')[1];
-                        $t.attr('src', `https://v.qq.com/iframe/player.html?vid=${vid}&tiny=0&auto=0`);
-                    }
-                }catch(e) {}
-            });
-        }
-
-        return $t[0].innerHTML;
-    }
 
 
 
