@@ -1,6 +1,7 @@
 'use strict';
 import _ from 'lodash';
 import Component from './../Component';
+import SyncArticle from './SyncArticle';
 
 let articleList;
 
@@ -59,6 +60,10 @@ export default class extends Component {
         $articleList.append($bodyContent);
 
         let $btnArea = $('<div class="sync-article-btn">同步文章</div>');
+
+        $btnArea.click( () => {
+            SyncArticle();
+        });
         $btnHeader.append($btnArea);
 
         this.__getArticleList__(articleList => {
