@@ -28,9 +28,10 @@ export default class extends Component {
         items.forEach(style => {
             let $li = $(`<li rel="${style._id}"></li>`).appendTo($ul);
             $li.append(this.__section__(style));
-            $li.click(function (e) {
+            $li.click(e => {
                 e.preventDefault();
-                let $t = $(this).children().clone();
+                let $t = $li.children().clone();
+                this.parent.editor.insert($t);
             });
         });
     };

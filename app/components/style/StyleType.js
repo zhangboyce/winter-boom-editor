@@ -36,7 +36,7 @@ export default class extends Component {
             callback();
             e.stopPropagation();
             this.__loadStyles__(type, items => {
-                this.props.onGetItems(items);
+                this.parent.getItems(items);
             });
         };
     };

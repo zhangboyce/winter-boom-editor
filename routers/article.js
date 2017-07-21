@@ -77,6 +77,7 @@ router.post('/article/save', function *() {
         sourceUrl: data.source,
         status: 1
     });
+
     yield article.save();
     yield new ArticleContent({
         _id: article._id,

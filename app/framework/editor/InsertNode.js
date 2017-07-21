@@ -1,6 +1,5 @@
 import range from '../../utils/range';
 import dom from '../../utils/dom';
-
 import _ from 'lodash';
 
 export default function (editorDom, editable, lastSection, $node) {

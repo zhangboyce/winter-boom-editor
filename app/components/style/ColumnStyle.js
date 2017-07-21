@@ -7,11 +7,11 @@ export default class extends Component {
     constructor(props) {
         super(props);
 
-        this.styleType = new StyleType({ onGetItems: this.__handleGetItems__ });
-        this.styleItem = new StyleItem();
+        this.styleType = new StyleType({ parent: this });
+        this.styleItem = new StyleItem({ parent: this });
     }
 
-    __handleGetItems__ = items => {
+    getItems = items => {
         this.styleItem.setItems(items);
     };
 

@@ -8,8 +8,8 @@ export default class extends Component {
     render() {
         let $main = $(`<div class="row main"></div>`);
 
-        let columnStyle = new ColumnStyle();
         let columnEditor = new ColumnEditor();
+        let columnStyle = new ColumnStyle({ editor: columnEditor });
         let columnArticle = new ColumnArticle();
 
         $main.append(columnStyle.render());

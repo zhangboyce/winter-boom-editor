@@ -50,7 +50,7 @@ export default class extends Component {
 
 class DropdownMenu extends Component {
     render() {
-        let { href, icon, name, onClick } = this.props;
+        let { href, icon, name, onClick } = this;
         let menu = $(
             `<li role="presentation">
                 <a role="menuitem" tabindex="-1" class="dropdown-menu-list" href=${ href || 'javascript:;' } target="_blank">

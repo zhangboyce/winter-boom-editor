@@ -2,7 +2,7 @@
 
 .col-style > div > .col {
   height: 100%;
-  border-left: 1px solid rgb(174, 175, 175);
+  border-left: 1px solid @grey;
 }
 
 .col-style > div {
@@ -24,16 +24,16 @@
   line-height: 40px;
   text-align: center;
   cursor: pointer;
-  border-bottom: 1px dashed rgb(234, 234, 234);
+  border-bottom: 1px dashed @light-grey;
 }
 
 .col-style-type > ul > li.active,
 .col-style-type > ul > li > ul > li.active,
 .col-style-type > ul > li:hover,
 .col-style-type > ul > li > ul > li:hover {
-  background-color: rgb(96, 102, 190);
-  border-color: rgb(96, 102, 190);
-  color: rgb(255, 255, 255);
+  background-color: @purple;
+  border-color: @purple;
+  color: @white;
 }
 
 .col-style-type > ul > li > ul {
@@ -45,9 +45,9 @@
   padding: 0;
   z-index: 1000;
   list-style: none;
-  background-color: rgb(255, 255, 255);
-  border-right: 1px solid rgb(234, 234, 234);
-  border-top: 1px solid rgb(234, 234, 234);
+  background-color: @white;
+  border-right: 1px solid @light-grey;
+  border-top: 1px solid @light-grey;
 }
 .col-style-type > ul > li:first-child > ul {
   border-top: none;
@@ -56,7 +56,7 @@
 
 .col-style-type > ul > li.show > ul {
   display: block;
-  color: rgb(89, 89, 90);
+  color: @dark-grey;
 }
 
 
@@ -70,7 +70,7 @@
 }
 
 .col-style-item > ul > li {
-  border-bottom: 1px dashed rgb(204, 204, 204);
+  border-bottom: 1px dashed @grey;
   padding: 20px;
   cursor: pointer;
 }

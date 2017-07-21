@@ -53,15 +53,9 @@ export default function({titleEditor, sourceInput, coverEditor, context}) {
 
 
     function getArticle() {
-
         let summary='';
-        let summarySubString='';
-        let summernotContentText=context.code();
-  
-        summarySubString=$(".note-editable").text().substring(0,54);
-
         if(coverEditor.textarea.val().length<1){
-            summary=summarySubString;
+            summary = $(".note-editable").text().substring(0,54);
         }else{
             summary=coverEditor.textarea.val();
         }
