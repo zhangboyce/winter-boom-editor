@@ -1,12 +1,11 @@
 'use strict';
 import _ from 'lodash';
 import Component from './../Component';
+import SyncArticle from './SyncArticle';
 
 let articleList;
 
 export default class extends Component {
-
-
 
     __getArticleList__ = callback => {
         $.getJSON('/article/list', result => {
@@ -16,25 +15,43 @@ export default class extends Component {
         });
     };
 
-     __buildTitle__ = title => {
-        return $(`<div class="title">${title}</div>`).css({
-            width: '100%',
-            height: '30px',
-            color: '#fff',
-            position: 'absolute',
-            bottom: 0,
-            padding: '0 5px',
-            overflow: 'hidden',
-            'background-color': 'rgba(33, 34, 35, 0.7)',
-            'text-align': 'center',
-            'line-height': '30px'
-        });
+    __buildTitle__ = list => {
+        let $title = $(`<div class="title"><span>${list.title}</span></div>`);
+        let $updatetime = $(`<div class="datatime">${list.lastUpdated.substring(0, 10)}</div>`);
+        $title.append($updatetime);
+        return $title;
     };
 
+    __buildDelBtn__ = article => {
+        return $(`<a class ="delete-article" title="删除文章"></a>`)
+            .hide()
+            .append($('<i class="icon-trash" style="color: #fff;"></i>'))
+            .click(e => {
+                this.__deleteArticle__(article._id);
+                return false;
+            });
+    };
 
+    __buildEditBtn__ = article => {
+        return $(`<a class="edit-article" title="编辑文章"></a>`)
+            .hide()
+            .append($('<i class="fa fa-pencil-square-o" style="color: #fff;"></i>'))
+            .click(e => {
+                alert("此处编辑文章");
+                return false;
+            });
+    };
+
+    __deleteArticle__ = id => {
+        //@TODO 需要判断是否是当前正在编辑的文章
+        if (confirm('确定删除此文章吗？')) {
+            $.getJSON('/article/delete/' + id, json => {
+                $('#article_' + id).remove();
+            });
+        }
+    };
 
     render() {
-
 
         let $articleList = $(`<div class=" col col-md-12 article-list-container"></div>`);
         let $btnHeader = $('<div class="header-content"></div>');
@@ -43,28 +60,45 @@ export default class extends Component {
         $articleList.append($bodyContent);
 
         let $btnArea = $('<div class="sync-article-btn">同步文章</div>');
+
+        $btnArea.click( () => {
+            SyncArticle();
+        });
         $btnHeader.append($btnArea);
 
         this.__getArticleList__(articleList => {
             articleList.forEach(list => {
-                let $li =  $(`<div id="article_${list._id}"></div>`).css({
-                    display: 'block',
-                    cursor: 'pointer',
-                    width:'86%',
-                    height: '100px',
-                    position: 'relative',
-                    'margin-left': '7%',
-                    'margin-bottom': '7px',
-                    'border-bottom': '1px solid #ebebe7',
+                let delBtn = this.__buildDelBtn__(list);
+                let editBtn = this.__buildEditBtn__(list);
+                let isShow = false;
+                let showTimeout;
+
+                let $li = $(`<div class="article-list" id="article_${list._id}"></div>`).css({
                     'background': `rgba(0, 0, 0, 0) url("${list.cover || 'http://boom-static.static.cceato.com/images/shirt.png'}") no-repeat scroll center center / cover`
-                })
+                }).click(function () {
+                    //showArticle(a._id);
+                }).hover(() => {
+                        showTimeout = setTimeout(function () {
+                            delBtn.show('fast');
+                            editBtn.show('fast');
+                            isShow = true;
+                        }, 200);
+                    }, () => {
+                        if (isShow) {
+                            delBtn.hide('fast');
+                            editBtn.hide('fast');
+                            isShow = false;
+                        } else {
+                            clearTimeout(showTimeout);
+                            showTimeout = false;
+                        }
+                    })
+                    .append(delBtn)
+                    .append(editBtn)
                     .appendTo($bodyContent)
-                    .append(this.__buildTitle__(list.title));
+                    .append(this.__buildTitle__(list));
             });
         });
-
         return $articleList;
-
-
     }
 }

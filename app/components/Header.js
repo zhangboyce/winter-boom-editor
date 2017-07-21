@@ -31,7 +31,7 @@ export default class extends Component {
         });
 
         let $avatar = $(`<a data-toggle="dropdown" class="ripple" href="javascript:;" aria-expanded="false">
-                            <span style="color: #ffffff;">
+                            <span class="imgwarp">
                                 <img class="avatar" width="30px" height="30px" src="${ 'http://boom-static.static.cceato.com/boom/imgs/avatars/' + (account.avatar || '01.png') }"/>
                                 &nbsp;${ account.nickname || account.username }
                             </span>

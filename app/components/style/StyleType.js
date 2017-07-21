@@ -69,8 +69,11 @@ export default class extends Component {
             $ul.children('li').eq(0).click();
         });
 
+        let $imgManagement = $('<div id="pic-management">图片管理</div>');
+
         let $styleTypes = $(`<div class="col col-md-3 col-style-type"></div>`);
         $styleTypes.append($ul);
+        $styleTypes.append($imgManagement);
         return $styleTypes;
     }
 }

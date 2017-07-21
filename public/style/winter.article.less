@@ -1,74 +1,608 @@
 @import "common.less";
 
-.col-article{
-  position:relative;
-}
-.col-article .change-list{
-    margin-top: 44px;
-    position: relative;
+.col-article {
+  position: relative;
 }
 
-.tab-nav-bar{
-    height:44px;
-    border-bottom: 1px solid rgb(174, 175, 175);
-    position: fixed;
-    top:50px;
-    right:0;
-    z-index: 99;
-    padding: 0;
-    margin: 0;
-    background: #fff;
-    border-left:1px solid rgb(174, 175, 175);
-}
-.tab-nav-bar>.save-article-bar,
-.tab-nav-bar>.collection-article-bar{
-    display: inline-block;
-    height: 44px;
-    line-height: 44px;
-    text-align: center;
-    color:rgb(189, 190, 191);
-    cursor: pointer;
+.col-article .change-list {
+  margin-top: 44px;
+  position: relative;
 }
 
+.tab-nav-bar {
+  height: 44px;
+  border-bottom: 1px solid rgb(174, 175, 175);
+  position: fixed;
+  top: 50px;
+  right: 0;
+  z-index: 99;
+  padding: 0;
+  margin: 0;
+  background: #fff;
+  border-left: 1px solid rgb(174, 175, 175);
+}
 
-.tab-nav-bar>.save-article-bar.active,
-.tab-nav-bar>.collection-article-bar.active{
-    border-bottom:3px solid rgb(189, 190, 191);
-    color:rgb(98, 73, 71);
+.tab-nav-bar > .save-article-bar,
+.tab-nav-bar > .collection-article-bar {
+  display: inline-block;
+  height: 44px;
+  line-height: 44px;
+  text-align: center;
+  color: rgb(189, 190, 191);
+  cursor: pointer;
+}
+
+.tab-nav-bar > .save-article-bar.active,
+.tab-nav-bar > .collection-article-bar.active {
+  border-bottom: 3px solid rgb(189, 190, 191);
+  color: rgb(98, 73, 71);
+}
+
+.col-article > div {
+  height: 100%;
+  overflow-y: scroll;
+  position: relative;
+}
+
+.article-list-container {
+  position: relative;
+  height: 100%;
+  overflow: hidden;
+}
+
+.header-content {
+  width: 100%;
+  text-align: center;
+}
+
+.article-list-container .article-list {
+  display: block;
+  cursor: pointer;
+  width: 86%;
+  height: 100px;
+  position: relative;
+  margin-left: 7%;
+  margin-bottom: 7px;
+  border-bottom: 1px solid #ebebe7;
+}
+
+.article-list-container .article-list .delete-article {
+  height: 23px;
+  width: 23px;
+  position: absolute;
+  right: 0;
+  text-align: center;
+  line-height: 23px;
+  background-color: rgba(33, 34, 35, 0.7);
+
+}
+
+.article-list-container .article-list .edit-article {
+  height: 23px;
+  width: 23px;
+  position: absolute;
+  right: 25px;
+  text-align: center;
+  line-height: 23px;
+  background-color: rgba(33, 34, 35, 0.7);
+}
+
+.article-list-container .article-list .title {
+  width: 100%;
+  height:30px;
+  color: #fff;
+  position: absolute;
+  bottom: 0;
+  padding: 0 5px;
+  overflow: hidden;
+  background-color: rgba(33, 34, 35, 0.7);
+  text-align: left;
+  line-height: 18px;
+
+}
+
+.article-list-container .article-list .title span {
+  width:70%;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  display: inline-block;
+  padding-top:3px;
+  transform: scale(0.9);
+  -webkit-transform: scale(0.9);
+  -moz-transform: scale(0.9);
+  -o-transform: scale(0.9);
+
+}
+
+.article-list-container .article-list .title .datatime {
+  text-align: right;
+  margin-top: -14px;
+  transform: scale(0.7);
+  -webkit-transform: scale(0.7);
+  -moz-transform: scale(0.7);
+  -o-transform: scale(0.7);
+  margin-right:-25px;
+}
+
+.header-content > .sync-article-btn {
+  width: 80px;
+  height: 28px;
+  line-height: 30px;
+  text-align: center;
+  border-radius: 5px;
+  color: #fff;
+  background-color: rgb(96, 102, 190);
+  margin: 10px auto;
+  cursor: pointer;
+}
+
+.body-content {
+
+}
+
+.collection-list-container .card {
+  margin: 0.75rem;
+  opacity: 0.7;
+  cursor: pointer;
+}
+
+.collection-list-container .card:hover {
+  opacity: 0.9;
+}
+
+#winter-editor-modal .btn-success{
+  position: absolute;
+  right: 7px;
 }
 
 
-.col-article>div{
-    height:100%;
-    overflow-y:scroll;
-    position: relative;
+
+
+
+/************ syncArticle css begin *********************/
+
+
+
+ul li {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.go-bind-container {
+  width: 500px;
+  height: 300px;
+  text-align: center;
+  background-color: #f9fafb;
+  position: relative;
+}
+
+.go-bind-container .closealertBtn {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  color: #999;
+  font-size: 12px;
+  cursor: pointer;
+  padding: 5px;
+}
+
+.go-bind-container .box-img {
+  height: 70px;
+  width: 80px;
+  margin-top: 60px;
+}
+
+.go-bind-container .tips-text {
+  color: #585858;
+  margin-top: 15px;
+  margin-bottom: 15px;
+}
+
+#goAddBind {
+  display: inline-block;
+  cursor: pointer;
+  margin: auto;
+  width: 170px;
+  height: 30px;
+  line-height: 30px;
+  border: 1px solid #5559b9;
+  color: #5559b9;
+  border-radius: 3px;
+  text-align: center
+}
+
+#completeAdd {
+  display: none;
+  cursor: pointer;
+  margin: auto;
+  width: 170px;
+  height: 30px;
+  line-height: 30px;
+  border: 1px solid #5559b9;
+  color: #5559b9;
+  border-radius: 3px;
+  text-align: center;
+  margin-top: 10px;
+}
+
+.go-sync-container {
+  height: 500px;
+  width: 600px;
+  text-align: center;
+  background-color: #f9fafb;
+  position: relative;
+}
+
+.go-sync-container .closealertBtn {
+  float: left;
+  color: #999;
+  font-size: 12px;
+  cursor: pointer;
+  padding: 15px;
+}
+
+.go-sync-container .closealertBtn1 {
+  float: left;
+  color: #999;
+  font-size: 12px;
+  cursor: pointer;
+  padding: 15px;
+  display: none;
+}
+
+.go-sync-container h6 {
+  text-align: left;
+  font-size: 14px;
+}
+
+#lastPagination {
+  cursor: pointer;
+  margin-top: 20px;
+  width: 60px;
+  height: 25px;
+  line-height: 25px;
+  text-align: center;
+  font-size: 12px;
+  border: 1px solid #5559b9;
+  color: #5559b9;
+  display: none;
+  margin-right: 20px;
+}
+
+#nextPagination {
+  cursor: pointer;
+  margin-top: 20px;
+  width: 60px;
+  height: 25px;
+  line-height: 25px;
+  text-align: center;
+  font-size: 12px;
+  border: 1px solid #5559b9;
+  color: #5559b9;
+  display: inline-block;
+}
+
+.wechat-selector-warp {
+  text-align: left;
+  position: relative;
+  width: 100%;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.wechat-select-show {
+  width: 100%;
+  height: 60px;
+  line-height: 60px;
+  border-top: 1px #bcbdbe solid;
+  border-bottom: 1px #bcbdbe solid;
+  cursor: pointer;
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.wechat-select-show > span {
+  float: left;
+  width: 70%;
+  height: 60px;
+  font-size: 12px;
+  line-height: 60px;
+  color: #666;
+  padding: 0 5px;
+  vertical-align: middle;
+}
+
+.wechat-select-show > em {
+  position: absolute;
+  right: 40%;
+  width: 20px;
+  height: 60px;
+  line-height: 60px;
+  vertical-align: middle;
+}
+
+.wechat-select-list {
+  overflow: scroll;
+  height: 100px;
+  width: 60%;
+  position: absolute;
+  left: 0;
+  top: 59px;
+  z-index: 9;
+  display: none;
+  background-color: #fff;
+  padding: 0;
+  border: 1px #D9D9D9 solid;
+  border-radius: 2px;
+}
+
+.wechat-select-list > li {
+  list-style: none;
+  overflow: hidden;
+  cursor: pointer;
+  width: 100%;
+  height: 50px;
+  line-height: 50px;
+  font-size: 12px;
+  color: #666;
+  padding-left: 5px;
+}
+
+.wechat-select-list > li:hover {
+  border: 1px solid #5559b9;
+  color: #333;
+  width: 100%;
+}
+
+#goBindMore {
+  cursor: pointer;
+  float: left;
+  border-radius: 3px;
+  display: inline-block;
+  width: 150px;
+  height: 30px;
+  line-height: 30px;
+  border: 1px solid #5559b9;
+  color: #5559b9;
+  margin-top: 35px;
+}
+
+#beginClickSync {
+  outline: none;
+  border: none;
+  cursor: pointer;
+  float: right;
+  border-radius: 3px;
+  display: inline-block;
+  width: 150px;
+  height: 30px;
+  line-height: 30px;
+  background-color: #4ec37a;
+  color: #fff;
+  margin-top: 35px;
+}
+
+.wechat-li-article {
+  float: left;
+  width: 32% !important;
+  height: 100%;
+  border: 1px solid #dfe0e1;
+  cursor: pointer;
+}
+
+.wechat-li-article .bgimg {
+  width: 100%;
+  height: 100px;
+}
+
+.wechat-li-article .article-title {
+  margin-top: 5px;
+  overflow: hidden;
+  text-align: left;
+  padding-left: 10px;
+  font-size: 12px;
+  color: #333;
+  height: 20px;
+  line-height: 20px;
+}
+
+.wechat-li-article .update-time {
+  text-align: left;
+  padding-left: 10px;
+  font-size: 12px;
+  color: #333;
+  height: 20px;
+  line-height: 20px;
+}
+
+.wechat-up-icon {
+  animation: rotatete 0.3s linear forwards;
+}
+
+.wechat-down-icon {
+  animation: rotatete2 0.3s linear forwards;
+}
+
+@-moz-keyframes rotatete {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(180deg);
+  }
+}
+
+@keyframes rotatete {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(180deg);
+  }
+}
+
+@-moz-keyframes rotatete2 {
+  from {
+    transform: rotate(180deg);
+  }
+  to {
+    transform: rotate(0deg);
+  }
+}
+
+@keyframes rotatete2 {
+  from {
+    transform: rotate(180deg);
+  }
+  to {
+    transform: rotate(0deg);
+  }
+}
+
+.choseIcon {
+  width: 400px;
+  margin: 0px auto;
+  border: 1px solid #5559b9 !important;
+}
+
+.choseIcon::after {
+  content: '';
+  display: block;
+  width: 10px;
+  height: 5px;
+  border: 2px solid #5559b9;
+  border-top: none;
+  border-right: none;
+  -moz-transform: rotate(-45deg);
+  -ms-transform: rotate(-45deg);
+  -webkit-transform: rotate(-45deg);
+  transform: rotate(-45deg);
+  position: relative;
+  top: -14px;
+  right: -133px;
+}
+
+.choseArticle li:first-child {
+  margin-right: 2%;
+}
+
+.choseArticle li:nth-child(2) {
+  margin-right: 2%;
+}
+
+.btn-sky {
+  background-color: #999988 !important;
+  color: #fff;
+}
+
+.tipSmallAlert {
+  height: 40px;
+  line-height: 40px;
+  width: 170px;
+  text-align: center;
+  border-radius: 5px;
+  background-color: #efefef;
+}
+
+div.editor-container {
+  height: 100%;
+  min-height: 350px;
+  overflow: hidden;
+}
+
+div.editor-container > div {
+  height: 100%;
+  float: left;
+}
+
+div.editor-module {
+  height: 100%;
+  float: left;
+  background-color: #feffff;
+}
+
+div.editor-module-left {
+  float: left;
+  height: 100%;
+  width: 46px;
+}
+
+button.editor-module-button {
+  font-size: 18px;
+  height: 46px;
+  width: 100%;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+button.editor-module-button > i {
+  color: #ffffff;
+  line-height: 46px !important;
+}
+
+div.editor-module-left-content {
+}
+
+div.editor-module-right {
+  position: relative;
+  float: left;
+  height: 100%;
+  border-right: 1px solid #eeeff0;
+  overflow: hidden;
+}
+
+div.editor-module-right > div.header-content {
+  height: 46px;
+  width: 100%;
+  background-color: #eeeff0;
+  overflow: hidden;
+  text-align: center;
+  font-size: 16px;
+  color: rgb(194, 194, 194);
+  line-height: 46px;
+}
+
+div.editor-module-right > div.body-content {
+  position: absolute;
+  top: 46px;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  overflow: scroll;
+  padding: 5px;
+}
+
+div.editor-module div.close-title {
+  display: none;
+}
+
+div.editor-module-close {
+  width: 46px;
+  cursor: pointer;
+}
+
+div.editor-module-close > div.editor-module-right {
+  display: none;
+}
+
+div.editor-module-close div.close-title {
+  display: block;
+}
+
+div.editor-module-close div.module-sidebar {
+  display: none;
+}
+
+div.editor-module-close div.close-title > p {
+  margin-top: 10px;
+  margin-bottom: 10px;
+  text-align: center;
 }
 
 
-.article-list-container{
-    position: relative;
-    height: 100%;
-    overflow: hidden;
-}
-.header-content{
-    width: 100%;
-    text-align: center;
-}
 
-.header-content > .sync-article-btn{
-    width: 80px;
-    height: 28px;
-    line-height:30px;
-    text-align: center;
-    border-radius:5px;
-    color:#fff;
-    background-color:rgb(96, 102, 190);
-    margin:10px auto;
-    cursor: pointer;
-}
-.body-content{
-
-
-}
+/************ syncArticle css end ************************/
 
 
