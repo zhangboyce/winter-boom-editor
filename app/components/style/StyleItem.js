@@ -7,7 +7,7 @@ export default class extends Component {
 
     constructor(props) {
         super(props);
-        this.$columnItem = $(`<div class="col col-md-9 col-style-item"></div>`);
+        this.$columnItem = $(`<div class="col col-md-10 col-style-item"></div>`);
     }
 
     __section__ = style => {
