@@ -1,13 +1,19 @@
 'use strict';
 import Component from './../Component';
+import PicManage from '../picture/PicManage';
 
 export default class extends Component {
+
+    constructor(props) {
+        super(props);
+        this.picManage = new PicManage();
+    }
 
     __loadTypes__ = callback => {
         $.getJSON('/api/types', json => {
             if (json.status) {
                 let types = json.result;
-                types = [{ _id: 'all', name: '全部' },...types];
+                types = [{_id: 'all', name: '全部'}, ...types];
                 callback(types);
             }
         });
@@ -31,7 +37,7 @@ export default class extends Component {
         });
     };
 
-    __typeOnClick__  = (type, callback) => {
+    __typeOnClick__ = (type, callback) => {
         return e => {
             callback();
             e.stopPropagation();
@@ -69,7 +75,9 @@ export default class extends Component {
             $ul.children('li').eq(1).click();
         });
 
-        let $imgManagement = $('<div id="pic-management">图片管理</div>');
+
+        let $imgManagement = $('<div id="pic-management" data-toggle="modal" data-target="#myModal">图片管理</div>');
+        $imgManagement.click(this.picManage.open());
 
         let $styleTypes = $(`<div class="col col-md-2 col-style-type"></div>`);
         $styleTypes.append($ul);
