@@ -11,7 +11,6 @@
 
 .tab-nav-bar {
   height: 44px;
-  border-bottom: 1px solid rgb(174, 175, 175);
   position: fixed;
   top: 50px;
   right: 0;
@@ -19,7 +18,8 @@
   padding: 0;
   margin: 0;
   background: #fff;
-  border-left: 1px solid rgb(174, 175, 175);
+  border-bottom: 1px solid @light-grey;
+  border-left: 1px solid @grey;
 }
 
 .tab-nav-bar > .save-article-bar,
@@ -34,8 +34,8 @@
 
 .tab-nav-bar > .save-article-bar.active,
 .tab-nav-bar > .collection-article-bar.active {
-  border-bottom: 3px solid rgb(189, 190, 191);
-  color: rgb(98, 73, 71);
+  border-bottom: 4px solid @purple;
+  color: @dark-grey;
 }
 
 .col-article > div {

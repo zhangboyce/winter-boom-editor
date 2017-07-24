@@ -84,19 +84,19 @@ router.post('/article/save', function *() {
         content: data.content
     }).save();
 
-    this.body = {status: 'ok', id: article.id, _id: article.id}
+    this.body = { status: 'ok', article: article }
 });
 
 router.post('/article/update', function *() {
     let data = yield parse(this);
-    let article = yield Article.findOne({_id: data.id, account: this.session.account._id});
+    let article = yield Article.findOne({_id: data._id, account: this.session.account._id});
     if(!article) {
         this.body = {status: 'error', errmsg: 'article is not found'};
         return;
     }
     let now = new Date();
     let r = yield Article.update(
-        { _id: data.id },
+        { _id: data._id },
         {$set: {
             title: data.title,
             cover: data.cover,
@@ -107,13 +107,14 @@ router.post('/article/update', function *() {
             status: article.status == 3 ? 2 : 1
         }});
     if(r.nModified > 0) {
-        yield ArticleContent.update({_id: data.id}, {$set: {
+        yield ArticleContent.update({_id: data._id}, {$set: {
             content: data.content,
             lastUpdated: now
         }});
     }
 
-    this.body = { status: 'ok', id: data.id }
+    article = yield Article.findOne({_id: data._id, account: this.session.account._id});
+    this.body = { status: 'ok', article: article }
 });
 
 router.get('/article/delete/:id', function *() {

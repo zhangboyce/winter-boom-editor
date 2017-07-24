@@ -8,7 +8,7 @@ export default class extends Component {
 
         this.$titleInput = $('<input name="title" type="text" placeholder="请输入标题"/>');
         this.$authorInput = $('<input name="author" type="text" placeholder="请输入作者"/>');
-        this.$coverImg = $(`<img src="">`);
+        this.$coverImg = $(`<img src="/static/images/default_cover.jpg">`);
 
         this.upload = upload({
             name: 'image',
@@ -18,6 +18,13 @@ export default class extends Component {
                 let json = JSON.parse(result);
                 this.$coverImg.attr('src', 'http://editor.static.cceato.com/' + json.key);
             }
+        });
+
+        this.$titleCover = $(`<div class="title">标题</div>`);
+        this.$titleInput.keyup(() => {
+            let val = this.$titleInput.val();
+            val = (val && val.trim()) || '标题';
+            this.$titleCover.text(val.trim());
         });
     }
 
@@ -66,9 +73,8 @@ export default class extends Component {
         $titlePanelLeft.append(this.$authorInput);
 
         let $coverDiv = $(`<div class="cover"></div>`);
-        let $titleDiv = $(`<div class="title">标题</div>`);
         $titlePanelRight.append($coverDiv);
-        $titlePanelRight.append($titleDiv);
+        $titlePanelRight.append(this.$titleCover);
 
         $coverDiv.append(`<div>添加封面</div>`);
         $coverDiv.append(this.$coverImg);
