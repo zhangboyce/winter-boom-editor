@@ -3,10 +3,15 @@ import _ from 'lodash';
 import modal from '../../utils/modal'
 import * as projectTypes from '../../../common/ProjectTypes';
 import FileUrlUtil from '../../../common/FileUrlUtil';
-
 import Component from './../Component';
+import Modal from '../common/Modal';
 
 export default class extends Component {
+
+    constructor(props) {
+        super(props);
+        this.modal = new Modal({ id: 'collectionArticleModal' });
+    }
 
     __supplyText__ = data => {
         let $result = $('<div></div>');
@@ -101,20 +106,33 @@ export default class extends Component {
 
                 </div>`);
 
-            let $articleHtml = this.__supplyText__(_.assign(pt, c));
-            $articleHtml.appendTo($('<div class="boom-content-text"></div>').appendTo($t));
+            let $header = $('<div class="collection-content-header"></div>');
+            $header.append(`<h4>${c.title}</h4>`);
+            $header.append(`
+                <div>
+                    <div><div>${ c.views }</div>Views</div>
+                    <div><div>${ c.likes }</div>Likes</div>
+                </div>`
+            );
 
-            $(`<button class="btn btn-success">编<br/>辑<br/>此<br/>文<br/>章</button>`)
+            this.modal.$header = $header;
+
+            let $articleHtml = this.__supplyText__(_.assign(pt, c));
+            let $body = $('<div class="boom-content-text"></div>');
+            $body.append( $(`<button class="btn btn-success">编<br/>辑<br/>此<br/>文<br/>章</button>`)
                 .click(e => {
                     this.parent.showArticle({
                         title: c.title,
                         digest: c.desc,
                         content: pt.text
                     });
-                    modal.close();
-            }).prependTo($t);
+                    this.modal.close();
+                }));
 
-            modal.open($t);
+            $body.append($articleHtml);
+
+            this.modal.$body = $body;
+            this.modal.open();
         });
     };
 
@@ -134,6 +152,7 @@ export default class extends Component {
             });
         });
         let $collectionList = $(`<div class="col col-md-12 collection-list-container"></div>`);
+
         return $collectionList;
     }
 }
