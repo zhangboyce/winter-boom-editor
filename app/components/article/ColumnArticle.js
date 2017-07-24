@@ -7,12 +7,16 @@ export default class extends Component {
 
     constructor(props) {
         super(props);
-        this.articleSaveList = new ArticleList({ parent: this });
+        this.articleList = new ArticleList({ parent: this });
         this.collectionList = new CollectionList({ parent: this });
     }
 
     showArticle = article => {
         this.editor.showArticle(article);
+    };
+
+    addArticle = article => {
+        this.articleList.addArticle(article);
     };
 
     render() {
@@ -32,7 +36,7 @@ export default class extends Component {
         $leftTab.click(() => {
             $leftTab.addClass("active").siblings().removeClass("active");
             $articleList.empty();
-            $articleList.append(this.articleSaveList.render());
+            $articleList.append(this.articleList.render());
             $articleList.show();
             $collectionList.hide();
         }).appendTo($tabNavbar);

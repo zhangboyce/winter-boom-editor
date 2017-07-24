@@ -42,28 +42,29 @@ export default class extends Component {
         if(!this.originArticle.isEmpty() ?
                 article.isEquals(this.originArticle) :
                 article.isEmpty()) {
-            callback && callback();
+            callback && callback(article);
 
             this.message.info('已保存');
             return;
         }
         let url;
-        if(this.originArticle.id) {
-            article.id = this.originArticle.id;
+        if(this.originArticle._id) {
+            article._id = this.originArticle._id;
             url = '/article/update';
         }else {
             url = '/article/save';
         }
         $.post(url, article.clone(), json => {
+            callback && callback(json.article);
             if (json && json.status == 'ok') {
                 this.originArticle = article;
-                this.originArticle.id = json.id;
+                this.originArticle._id = json.article._id;
 
+                this.parent.columnArticle.addArticle(json.article);
                 this.message.success('保存成功');
             } else {
                 this.message.error('保存失败');
             }
-            callback && callback(article);
         });
     };
 
@@ -125,7 +126,7 @@ function Article(options) {
     }
     options = options || {};
 
-    this.id = options.id || '';
+    this._id = options._id || '';
     this.title = options.title || '';
     this.author = options.author || '';
     this.source = options.source || '';

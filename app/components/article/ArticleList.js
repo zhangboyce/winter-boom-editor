@@ -2,22 +2,70 @@
 import _ from 'lodash';
 import Component from './../Component';
 import SyncArticle from './SyncArticle';
-
-let articleList;
-
 export default class extends Component {
+
+    constructor(props) {
+        super(props);
+        this.$articleList = $('<div class="body-content"></div>');
+        this.articles = [];
+    }
+
+    addArticle = article => {
+        if (!article) return;
+
+        let index = this.articles.findIndex(art => art.id == article.id);
+        if (index == -1) {
+            this.articles.push(article);
+            this.$articleList.prepend(this.__build$Article__(article));
+        } else {
+            $(`#article_${article._id}`).remove();
+            this.articles.splice(1, index);
+            this.articles.push(article);
+            this.$articleList.prepend(this.__build$Article__(article));
+        }
+    };
 
     __getArticleList__ = callback => {
         $.getJSON('/article/list', result => {
-            let list = result.list;
-            articleList = list;
-            callback(articleList);
+            this.articles = result.list;
+            callback && callback();
         });
     };
 
-    __buildTitle__ = list => {
-        let $title = $(`<div class="title"><span>${list.title}</span></div>`);
-        let $updatetime = $(`<div class="datatime">${list.lastUpdated.substring(0, 10)}</div>`);
+    __build$Article__ = article => {
+        let delBtn = this.__buildDelBtn__(article);
+        let editBtn = this.__buildEditBtn__(article);
+        let isShow = false;
+        let showTimeout;
+
+        return $(`<div class="article-list" id="article_${article._id}"></div>`).css({
+            'background': `rgba(0, 0, 0, 0) url("${article.cover || 'http://boom-static.static.cceato.com/images/shirt.png'}") no-repeat scroll center center / cover`
+        }).click(() => {
+            this.parent.showArticle(article);
+        }).hover(() => {
+                showTimeout = setTimeout(function () {
+                    delBtn.show('fast');
+                    editBtn.show('fast');
+                    isShow = true;
+                }, 200);
+            }, () => {
+                if (isShow) {
+                    delBtn.hide('fast');
+                    editBtn.hide('fast');
+                    isShow = false;
+                } else {
+                    clearTimeout(showTimeout);
+                    showTimeout = false;
+                }
+            })
+            .append(delBtn)
+            .append(editBtn)
+            .append(this.__buildTitle__(article))
+    };
+
+    __buildTitle__ = article => {
+        let $title = $(`<div class="title"><span>${article.title}</span></div>`);
+        let $updatetime = $(`<div class="datatime">${article.lastUpdated.substring(0, 10)}</div>`);
         $title.append($updatetime);
         return $title;
     };
@@ -52,53 +100,17 @@ export default class extends Component {
     };
 
     render() {
-
-        let $articleList = $(`<div class=" col col-md-12 article-list-container"></div>`);
-        let $btnHeader = $('<div class="header-content"></div>');
-        let $bodyContent = $('<div class="body-content"></div>');
-        $articleList.append($btnHeader);
-        $articleList.append($bodyContent);
-
-        let $btnArea = $('<div class="sync-article-btn">同步文章</div>');
-
-        $btnArea.click( () => {
+        let $column = $(`<div class=" col col-md-12 article-list-container"></div>`);
+        $column.append($('<div class="header-content"></div>').append($('<div class="sync-article-btn">同步文章</div>').click(() => {
             SyncArticle();
-        });
-        $btnHeader.append($btnArea);
+        })));
+        $column.append(this.$articleList);
 
-        this.__getArticleList__(articleList => {
-            articleList.forEach(article => {
-                let delBtn = this.__buildDelBtn__(article);
-                let editBtn = this.__buildEditBtn__(article);
-                let isShow = false;
-                let showTimeout;
-
-                let $li = $(`<div class="article-list" id="article_${article._id}"></div>`).css({
-                    'background': `rgba(0, 0, 0, 0) url("${article.cover || 'http://boom-static.static.cceato.com/images/shirt.png'}") no-repeat scroll center center / cover`
-                }).click(() => {
-                    this.parent.showArticle(article);
-                }).hover(() => {
-                        showTimeout = setTimeout(function () {
-                            delBtn.show('fast');
-                            editBtn.show('fast');
-                            isShow = true;
-                        }, 200);
-                    }, () => {
-                        if (isShow) {
-                            delBtn.hide('fast');
-                            editBtn.hide('fast');
-                            isShow = false;
-                        } else {
-                            clearTimeout(showTimeout);
-                            showTimeout = false;
-                        }
-                    })
-                    .append(delBtn)
-                    .append(editBtn)
-                    .appendTo($bodyContent)
-                    .append(this.__buildTitle__(article));
+        this.__getArticleList__(() => {
+            this.articles.forEach(article => {
+                this.$articleList.append(this.__build$Article__(article));
             });
         });
-        return $articleList;
+        return $column;
     }
 }

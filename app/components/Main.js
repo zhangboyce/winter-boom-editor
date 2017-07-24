@@ -5,16 +5,21 @@ import ColumnEditor from './editor/ColumnEditor';
 import ColumnArticle from './article/ColumnArticle';
 
 export default class extends Component {
+
+    constructor(props) {
+        super(props);
+
+        this.columnEditor = new ColumnEditor({ parent: this });
+        this.columnStyle = new ColumnStyle({ editor: this.columnEditor });
+        this.columnArticle = new ColumnArticle({ editor: this.columnEditor });
+    }
+
     render() {
         let $main = $(`<div class="row main"></div>`);
 
-        let columnEditor = new ColumnEditor();
-        let columnStyle = new ColumnStyle({ editor: columnEditor });
-        let columnArticle = new ColumnArticle({ editor: columnEditor });
-
-        $main.append(columnStyle.render());
-        $main.append(columnEditor.render());
-        $main.append(columnArticle.render());
+        $main.append(this.columnStyle.render());
+        $main.append(this.columnEditor.render());
+        $main.append(this.columnArticle.render());
 
 
         return $main;
