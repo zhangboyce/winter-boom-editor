@@ -11,6 +11,14 @@
 @warn-color: rgb(255, 191, 0);
 @error-color: rgb(240, 65, 52);
 
+// transition
+.transition(@ts) {
+  transition: @ts;
+  -moz-transition: @ts;	/* Firefox 4 */
+  -webkit-transition: @ts;	/* Safari 和 Chrome */
+  -o-transition: @ts;
+}
+
 // input placeholder color
 @input-placeholder-color: rgb(182, 182, 182);
 ::-webkit-input-placeholder {

@@ -5,6 +5,7 @@ import Editor from './Editor';
 import EditorFooter from './EditorFooter';
 import Operator from './Operator';
 import Message from '../common/Message';
+import ConfirmModal from '../common/ConfirmModal';
 
 export default class extends Component {
 
@@ -14,8 +15,6 @@ export default class extends Component {
         this.editor = new Editor({ parent: this});
         this.editorFooter = new EditorFooter({ parent: this });
         this.operator = new Operator({ parent: this});
-        this.message = new Message();
-
         this.originArticle = new Article({});
     }
 
@@ -24,17 +23,16 @@ export default class extends Component {
     };
 
     showArticle = article => {
-        if(!this.__check__()) {
-            return;
-        }
-        this.originArticle = new Article(article);
+        this.__check__(() => {
+            this.originArticle = new Article(article);
 
-        this.title.setTitle(article.title || '');
-        this.title.setAuthor(article.author || '');
-        this.title.setCover(article.cover || '');
-        this.editorFooter.setSource(article.source || '');
-        this.editorFooter.setDigest(article.digest || '');
-        this.editor.setContent(article.content || '');
+            this.title.setTitle(article.title || '');
+            this.title.setAuthor(article.author || '');
+            this.title.setCover(article.cover || '');
+            this.editorFooter.setSource(article.source || '');
+            this.editorFooter.setDigest(article.digest || '');
+            this.editor.setContent(article.content || '');
+        });
     };
 
     save = callback => {
@@ -69,32 +67,29 @@ export default class extends Component {
     };
 
     clear = () => {
-        if(!this.__check__()) {
-            return;
-        }
-
-        this.editor.clear();
-        this.title.clear();
-        this.editorFooter.clear();
-        this.message.success('已清空内容');
+        this.__check__(() => {
+            this.editor.clear();
+            this.title.clear();
+            this.editorFooter.clear();
+            this.message.success('已清空内容');
+        });
     };
 
     deepClear = () => {
         this.showArticle({});
     };
 
-    __check__ = () => {
+    __check__ = callback => {
         let article = this.__getArticle__();
         if(!this.originArticle) {
-            if(!article.isEmpty() && !confirm('未保存的临时文档，操作后内容将无法恢复,是否确认执行操作?')) {
-                return false;
+            if(!article.isEmpty()) {
+                this.confirm('未保存的临时文档，操作后内容将无法恢复,是否确认执行操作?', callback);
             }
         }else {
-            if(!article.isEquals(this.originArticle) && !confirm('文档内容已更新，操作后内容将无法恢复,是否确认执行操作?')) {
-                return false;
+            if(!article.isEquals(this.originArticle)) {
+                this.confirm('文档内容已更新，操作后内容将无法恢复,是否确认执行操作?', callback);
             }
         }
-        return true;
     };
 
     __getArticle__ = () => {
@@ -114,7 +109,6 @@ export default class extends Component {
         $columnEditor.append(this.editor.render());
         $columnEditor.append(this.editorFooter.render());
         $columnEditor.append(this.operator.render());
-        $columnEditor.append(this.message.render());
 
         return $columnEditor;
     }
@@ -126,7 +120,7 @@ function Article(options) {
     }
     options = options || {};
 
-    this._id = options._id || '';
+    this.id = options.id || '';
     this.title = options.title || '';
     this.author = options.author || '';
     this.source = options.source || '';

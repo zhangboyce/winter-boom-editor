@@ -1,13 +1,12 @@
 'use strict';
-import Component from './../Component';
 
-export default class extends Component {
+export default class {
     constructor(props) {
-        super(props);
-
         this.$header = null;
         this.$body = null;
         this.$footer = null;
+
+        this.id = props.id;
     }
 
     open = options => {
@@ -32,7 +31,7 @@ export default class extends Component {
               <span aria-hidden="true" style="font-size: 32px">&times;</span>
             </button>`
         );
-        this.$header && $header.append(this.$header);
+        $header.append(this.$header);
 
         let $body = $(`<div class="modal-body"></div>`);
         $body.append(this.$body);
@@ -41,7 +40,7 @@ export default class extends Component {
         $footer.append(this.$footer);
 
         let $content = $(`<div class="modal-content"></div>`);
-        $content.append($header);
+        this.$header && $content.append($header);
         this.$body && $content.append($body);
         this.$footer && $content.append($footer);
 
@@ -49,8 +48,9 @@ export default class extends Component {
             <div class="modal fade" id=${ this.id } tabindex="-1" role="dialog" aria-hidden="true" aria-labelledby="modalLabel">
             </div>`
         );
+        let $dialog = $(`<div class="modal-dialog" role="document"></div>`);
+        $dialog.append($content).appendTo($modal);
 
-        $(`<div class="modal-dialog modal-lg" role="document"></div>`).append($content).appendTo($modal);
         return $modal;
     }
 }

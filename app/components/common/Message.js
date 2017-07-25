@@ -1,10 +1,9 @@
 'use strict';
-import Component from './../Component';
 
-export default class extends Component {
-    constructor(props) {
-        super(props);
-        this.$msg = {};
+export default class {
+    constructor() {
+        this.$msg = $(`<div class="editor-message"></div>`);
+        $('body').append(this.$msg);
     }
 
     success = message => {
@@ -62,9 +61,4 @@ export default class extends Component {
         this.$msg.removeClass('success info warn error');
         this.$msg.html('');
     };
-
-    render() {
-        this.$msg = $(`<div class="editor-message"></div>`);
-        return this.$msg;
-    }
 }

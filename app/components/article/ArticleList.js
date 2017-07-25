@@ -92,11 +92,11 @@ export default class extends Component {
 
     __deleteArticle__ = id => {
         //@TODO 需要判断是否是当前正在编辑的文章
-        if (confirm('确定删除此文章吗？')) {
+        this.confirm('确定删除此文章吗？', () => {
             $.getJSON('/article/delete/' + id, json => {
                 $('#article_' + id).remove();
             });
-        }
+        });
     };
 
     render() {

@@ -104,3 +104,70 @@ html, body, #winter-boom-editor {
   -webkit-box-shadow: 0 2px 8px fade(@color, 20%);
   box-shadow: 0 2px 8px fade(@color, 20%);
 }
+
+
+#collectionArticleModal .modal-dialog {
+  width: 900px;
+}
+
+#confirmModal .modal-dialog {
+  width: 400px;
+  margin-top: 100px;
+}
+
+#confirmModal .modal-body {
+  padding: 30px;
+}
+
+#confirmModal .modal-content {
+  border-radius: 4px;
+}
+
+#confirmModal .title {
+  font-weight: bold;
+  font-size: 14px;
+  color: @dark-grey;
+}
+
+#confirmModal .title > div {
+  width: 90%;
+  display: inline-block;
+  vertical-align: text-top;
+  margin-top: -6px;
+}
+
+#confirmModal .title > i {
+  color: @warn-color;
+  margin-right: 10px;
+  font-size: 18px;
+}
+
+#confirmModal .footer {
+  margin-top: 30px;
+  text-align: right;
+}
+
+#confirmModal .footer > .btn {
+  border-radius: 4px;
+}
+
+#confirmModal .footer > .cancel {
+  border: 1px solid @light-grey;
+  color: @dark-grey;
+  margin-right: 6px;
+}
+
+#confirmModal .footer > .cancel:hover {
+  border-color: @purple;
+  color: @purple;
+  .transition('color 1s');
+}
+
+#confirmModal .footer > .ok {
+  color: @white;
+  background-color: @purple;
+}
+
+#confirmModal .footer > .ok:hover {
+  background-color: darken(@purple, 10%);
+}
