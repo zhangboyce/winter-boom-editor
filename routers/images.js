@@ -94,7 +94,8 @@ router.get('/images/categories/delete/:id', function * () {
 router.get('/images/list', function * () {
     let category = this.query.category;
     let accountId = this.session.account._id;
-    let query = {account: accountId, category: category || null};
+    let query = { account: accountId };
+    category && (query[category] = category);
 
     let count = yield ImageUploadFile.count(query);
     let page = _.toInteger(this.query.page) || 1;

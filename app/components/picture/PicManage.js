@@ -16,10 +16,10 @@ export default class extends Component {
         this.upload = upload({
             name: 'image',
             url: () => ('/upload/image/'),
-           // change: () => confirm('确认上传新图片？'),
+            // change: () => confirm('确认上传新图片？'),
             success: result => {
                 let json = JSON.parse(result);
-               // this.$coverImg.attr('src', 'http://editor.static.cceato.com/' + json.key);
+                // this.$coverImg.attr('src', 'http://editor.static.cceato.com/' + json.key);
             }
         });
     }
@@ -34,42 +34,56 @@ export default class extends Component {
     __loadTypes__ = callback => {
         $.getJSON('/images/categories/list', json => {
             let types = json;
-            types = [{_id: 'all', name: '全部图片'}, ...types];
+            types = [{_id: '', name: '全部图片'}, ...types];
             callback(types);
         });
     };
 
 
     __typeOnClick__ = (type, callback) => {
-
         return e => {
-            callback();
             e.stopPropagation();
-            this.__showImageCagegoryList__(type);
+            this.__showImageCategoryList__(type, callback);
         };
     };
 
-
-
-
-    __showImageCagegoryList__ = (type, callback) => {
-        $.get('/images/list',{category: type._id}, json => {
-            console.log(json);
-            if (json.status) callback(json.result);
-        });
-    };
-
-
-    __showImageList__ = callback => {
-        $.get('/images/list', json => {
+    __showImageCategoryList__ = (type, callback) => {
+        $.get('/images/list', {category: type._id}, json => {
             let items = json.list;
             callback(items);
         });
     };
 
+    __buildImageUl__ = ($imgUL, items) => {
+        $imgUL.html('');
+        items.forEach(item => {
+            let $liGetlist = $(
+                ` <li class="img-item">
+                                <div class="bg-warp">
+                                        <span class="cover" style="background-image:url(http://editor.static.cceato.com/${item.key});">
+                                        </span>
+                                        <span class="check-content">
+                                                  <label class="checkbox-label" for="checkbox10">
+                                                        <input type="checkbox" class="input-checkbox"  id="checkbox10"><i class=" "></i>
+                                                        <span class="bottom-content">${item._id}</span>
+                                                  </label>
+                                        </span>
+                                </div>
 
+                                <div class="list-card-ft">
+                                    <ul>
+                                        <li> <a href="#"><span><i class="fa fa-pencil"></i></span></a></li>
+                                        <li> <a href="#"><span><i class="fa fa-arrows"></i></span></a></li>
+                                        <li> <a href="#"><span><i class="fa fa-trash-o"></i></span></a></li>
+                                    </ul>
+                                </div>
+                           </li> `
+            );
 
+            $imgUL.append($liGetlist);
 
+        });
+    };
 
     render() {
 
@@ -82,21 +96,21 @@ export default class extends Component {
         let $ul = $(`<ul class="col col-md-12"> </ul>`);
         $modalLeft.append($ul);
 
+        //modal 右边区域的图片列表
+        let $modalRightBody = $(`<div id="img-list-warp"></div>`);
+        let $imgUL = $(`<ul class="clearfix"> </ul>`);
+        $modalRightBody.append($imgUL);
 
         this.__loadTypes__(types => {
-           /* let $allList = $(`<li class="col col-md-12" style="padding-left: 10px;"><a href="#"> 全部图片 (000)</a></li>`);
-            $ul.append($allList);*/
             types.forEach(type => {
                 let $liGetlist = $(`<li class="col col-md-12" categoryId='${type._id}'><a href="#">${type.name}</a></li>`);
                 $ul.append($liGetlist);
-                $liGetlist.click(this.__typeOnClick__(type, () => {
+                $liGetlist.click(this.__typeOnClick__(type, items => {
                     $liGetlist.addClass("active").siblings().removeClass("active");
-
+                    this.__buildImageUl__($imgUL, items);
                 }));
             });
             $ul.children('li').eq(0).click();
-
-
         });
 
 
@@ -112,10 +126,11 @@ export default class extends Component {
                 }
                 $createGroupDiv.hide();
             });
-
-
         });
         let $btnCanncel = $(`<a class="btn-tool btn-canncel" href="#">取消</a>`);
+        $btnCanncel.click(() => {
+            $createGroupDiv.hide();
+        });
         $createGroupDiv.append($createGroupText);
         $createGroupDiv.append($createGroupInput);
         $createGroupDiv.append($btnCommit);
@@ -168,44 +183,8 @@ export default class extends Component {
         $rightHeaderRight.append($buttonUpload);
 
 
-
-
-        //modal 右边区域的图片列表
-        let $modalRightBody = $(`<div id="img-list-warp"></div>`);
-        let $imgUL = $(`<ul class="clearfix"> </ul>`);
-        $modalRightBody.append($imgUL);
-
-        this.__showImageCagegoryList__(items => {
-            items.forEach(item => {
-                let $liGetlist = $(
-
-                        ` <li class="img-item">
-                                                    <div class="bg-warp">
-                                                            <span class="cover" style="background-image:url(http://editor.static.cceato.com/${item.key});">
-                                                            </span>
-                                                            <span class="check-content">
-                                                                      <label class="checkbox-label" for="checkbox10">
-                                                                            <input type="checkbox" class="input-checkbox"  id="checkbox10"><i class=" "></i>
-                                                                            <span class="bottom-content">${item._id}</span>
-                                                                      </label>
-                                                            </span>
-                                                    </div>
-
-                                                    <div class="list-card-ft">
-                                                        <ul>
-                                                            <li> <a href="#"><span><i class="fa fa-pencil"></i></span></a></li>
-                                                            <li> <a href="#"><span><i class="fa fa-arrows"></i></span></a></li>
-                                                            <li> <a href="#"><span><i class="fa fa-trash-o"></i></span></a></li>
-                                                        </ul>
-                                                    </div>
-                           </li> `
-
-                );
-
-                $imgUL.append($liGetlist);
-
-
-            });
+        this.__showImageCategoryList__(items => {
+            this.__buildImageUl__($imgUL, items);
         });
 
         $modalRight.append($modalRightBody);
