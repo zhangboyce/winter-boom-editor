@@ -4,12 +4,12 @@ import { isFunction } from '../../common/TypeUtils';
 
 export default class extends Component {
 
-    __handleLogout__() {
-        if (window.confirm("确定退出编辑器?")) {
+    __handleLogout__ = () => {
+        this.confirm("确定退出编辑器?", () => {
             let auth_callback = encodeURIComponent(window.config['SSO_CLIENT'] + '/api/getToken');
             window.location.href =  window.config['SSO_SERVER'] + '/api/user/logout?auth_callback=' + auth_callback;
-        }
-    }
+        });
+    };
 
     render() {
         let account = window.account || {};
