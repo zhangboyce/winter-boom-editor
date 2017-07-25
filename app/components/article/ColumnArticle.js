@@ -36,6 +36,7 @@ export default class extends Component {
         $leftTab.click(() => {
             $leftTab.addClass("active").siblings().removeClass("active");
             $articleList.empty();
+
             $articleList.append(this.articleList.render());
             $articleList.show();
             $collectionList.hide();
@@ -45,6 +46,7 @@ export default class extends Component {
         $rightTab.click(() => {
             $rightTab.addClass("active").siblings().removeClass("active");
             $collectionList.empty();
+            $('.body-content').empty();
             $collectionList.append(this.collectionList.render());
             $articleList.hide();
             $collectionList.show();

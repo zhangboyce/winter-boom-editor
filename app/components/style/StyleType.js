@@ -79,6 +79,8 @@ export default class extends Component {
         let $imgManagement = $('<div id="pic-management" data-toggle="modal" data-target="#myModal">图片管理</div>');
         $imgManagement.click(this.picManage.open());
 
+        $imgManagement.trigger( "click" );
+
         let $styleTypes = $(`<div class="col col-md-2 col-style-type"></div>`);
         $styleTypes.append($ul);
         $styleTypes.append($imgManagement);

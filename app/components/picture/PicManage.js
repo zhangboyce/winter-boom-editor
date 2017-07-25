@@ -2,14 +2,26 @@
 import _ from 'lodash';
 import Component from './../Component';
 import Modal from '../common/Modal';
+import upload from '../../utils/uploadImageNew';
 
 
 export default class extends Component {
+
 
     constructor(props) {
         super(props);
         this.modal = new Modal({id: 'pictureManagementModal'});
         this.render();
+
+        this.upload = upload({
+            name: 'image',
+            url: () => ('/upload/image/'),
+           // change: () => confirm('确认上传新图片？'),
+            success: result => {
+                let json = JSON.parse(result);
+               // this.$coverImg.attr('src', 'http://editor.static.cceato.com/' + json.key);
+            }
+        });
     }
 
     open = () => {
@@ -18,23 +30,49 @@ export default class extends Component {
         };
     };
 
+
     __loadTypes__ = callback => {
         $.getJSON('/images/categories/list', json => {
-            console.log(json);
-            console.log("111");
-            if (json.status) {
-                let types = json.result;
-                types = [{_id: 'all', name: '全部'}, ...types];
-                callback(types);
-            }
+            let types = json;
+            types = [{_id: 'all', name: '全部图片'}, ...types];
+            callback(types);
         });
     };
-    __typeOnClick__ = ()=>{
 
+
+    __typeOnClick__ = (type, callback) => {
+
+        return e => {
+            callback();
+            e.stopPropagation();
+            this.__showImageCagegoryList__(type);
+        };
     };
+
+
+
+
+    __showImageCagegoryList__ = (type, callback) => {
+        $.get('/images/list',{category: type._id}, json => {
+            console.log(json);
+            if (json.status) callback(json.result);
+        });
+    };
+
+
+    __showImageList__ = callback => {
+        $.get('/images/list', json => {
+            let items = json.list;
+            callback(items);
+        });
+    };
+
+
+
 
 
     render() {
+
 
         let $modalBody = $('<div class="modal-content modal-pic-body"></div>');
         let $row = $('<div class="row"></div>');
@@ -44,59 +82,50 @@ export default class extends Component {
         let $ul = $(`<ul class="col col-md-12"> </ul>`);
         $modalLeft.append($ul);
 
-        let $addGroup = $(`<li class="col col-md-12"><a href="#"> <i class="fa fa-plus"></i> 新建分组 </a></li>`);
+
+        this.__loadTypes__(types => {
+           /* let $allList = $(`<li class="col col-md-12" style="padding-left: 10px;"><a href="#"> 全部图片 (000)</a></li>`);
+            $ul.append($allList);*/
+            types.forEach(type => {
+                let $liGetlist = $(`<li class="col col-md-12" categoryId='${type._id}'><a href="#">${type.name}</a></li>`);
+                $ul.append($liGetlist);
+                $liGetlist.click(this.__typeOnClick__(type, () => {
+                    $liGetlist.addClass("active").siblings().removeClass("active");
+
+                }));
+            });
+            $ul.children('li').eq(0).click();
+
+
+        });
+
+
+        let $addGroup = $(`<li class="col col-md-12" style="padding-left: 10px;"><a href="#"> <i class="fa fa-plus"></i>新建分组</a></li>`);
 
         let $createGroupDiv = $(`<div class="create-group-div"></div>`);
         let $createGroupText = $(`<label class="create-group-text">创建分组</label>`);
         let $createGroupInput = $(`<input type="text" value="111" class="category-input">`);
-        //$createGroupInput.
         let $btnCommit = $(`<a class="btn-tool btn-commit" href="#">确定</a>`);
-        let $btnCanncel = $(`<a class="btn-tool btn-canncel" href="#">取消</a>`);
+        $btnCommit.click(() => {
+            $.post('/images/categories/save', {name: " "}, json => {
+                if (json.status == "ok") {
+                }
+                $createGroupDiv.hide();
+            });
 
+
+        });
+        let $btnCanncel = $(`<a class="btn-tool btn-canncel" href="#">取消</a>`);
         $createGroupDiv.append($createGroupText);
         $createGroupDiv.append($createGroupInput);
         $createGroupDiv.append($btnCommit);
         $createGroupDiv.append($btnCanncel);
         let $body = $('body');
 
-
-
-
-        $addGroup.click(function(){
-
+        $addGroup.click(function () {
             $body.append($createGroupDiv);
-
         });
-
-
-
-
-        $ul.append($addGroup);
-
-
-
-
-
-            //<li class="col col-md-12"><a href="#"><strong>全部图片</strong><span>(13)</span></a></li>
-
-
-
-
-
-
-        this.__loadTypes__(types => {
-            console.log("00");
-
-            types.forEach(type => {
-                let $li_1 = $(`<li>${type.name}</li>`).appendTo($ul);
-
-                $li_1.click(this.__typeOnClick__(type, () => {
-
-                }));
-
-            });
-        });
-
+        $addGroup.insertAfter($ul);
 
 
         let $modalRight = $(` <div class="modal-pic-right"></div>`);
@@ -115,7 +144,7 @@ export default class extends Component {
         $modalRightHeader.append($rightHeaderRight);
         $modalRight.append($modalRightHeader);
 
-        let $text  = $(`<div class="img-text">图片管理</div>`);
+        let $text = $(`<div class="img-text">图片管理</div>`);
         $rightHeaderLeft.append($text);
 
         let $operationArea = $(`<div class="operation-area"></div>`);
@@ -127,28 +156,37 @@ export default class extends Component {
 
                                   `);
         let $buttonMoveCategory = $('<span class="move-category button active">移动分组</span>');
-        let $buttonDelete  = $(`<span class="delete-pic button active">删除</span>`);
+        let $buttonDelete = $(`<span class="delete-pic button active">删除</span>`);
         $operationArea.append($buttonChooseAll);
         $operationArea.append($buttonMoveCategory);
         $operationArea.append($buttonDelete);
         $rightHeaderLeft.append($operationArea);
-
         let $buttonUpload = $(`<span>大小不超过2M</span><span class="button-upload-local">本地上传</span>`);
+        $buttonUpload.click(() => {
+            this.upload.click();
+        });
         $rightHeaderRight.append($buttonUpload);
 
 
+
+
         //modal 右边区域的图片列表
-        let $modalRightBody = $(`
-                                <div id="img-list-warp">
-                                        <ul class="clearfix">
-                                            <li class="img-item">
+        let $modalRightBody = $(`<div id="img-list-warp"></div>`);
+        let $imgUL = $(`<ul class="clearfix"> </ul>`);
+        $modalRightBody.append($imgUL);
+
+        this.__showImageCagegoryList__(items => {
+            items.forEach(item => {
+                let $liGetlist = $(
+
+                        ` <li class="img-item">
                                                     <div class="bg-warp">
-                                                            <span class="cover" src="https://mmbiz.qlogo.cn/mmbiz_jpg/6nu61EDibOsdVCcBUNibeEwuWyWytPkQFDQsg27Rgu20wC96On8snRxkklKMwibKogVJ6nkaXvTFLUVIxfmafYYeQ/0?wx_fmt=jpeg" style="background-image:url(https://mmbiz.qlogo.cn/mmbiz_jpg/6nu61EDibOsdVCcBUNibeEwuWyWytPkQFDQsg27Rgu20wC96On8snRxkklKMwibKogVJ6nkaXvTFLUVIxfmafYYeQ/0?wx_fmt=jpeg);">
+                                                            <span class="cover" style="background-image:url(http://editor.static.cceato.com/${item.key});">
                                                             </span>
                                                             <span class="check-content">
                                                                       <label class="checkbox-label" for="checkbox10">
                                                                             <input type="checkbox" class="input-checkbox"  id="checkbox10"><i class=" "></i>
-                                                                            <span class="bottom-content">4998f946fadsfdasfdsafdsafasdf5e002a.jpg</span>
+                                                                            <span class="bottom-content">${item._id}</span>
                                                                       </label>
                                                             </span>
                                                     </div>
@@ -160,102 +198,17 @@ export default class extends Component {
                                                             <li> <a href="#"><span><i class="fa fa-trash-o"></i></span></a></li>
                                                         </ul>
                                                     </div>
-                                            </li>
+                           </li> `
+
+                );
+
+                $imgUL.append($liGetlist);
 
 
-                                             <li class="img-item">
-                                                    <div class="bg-warp">
-                                                            <span class="cover" src="https://mmbiz.qlogo.cn/mmbiz_jpg/6nu61EDibOsdVCcBUNibeEwuWyWytPkQFDQsg27Rgu20wC96On8snRxkklKMwibKogVJ6nkaXvTFLUVIxfmafYYeQ/0?wx_fmt=jpeg" style="background-image:url(https://mmbiz.qlogo.cn/mmbiz_jpg/6nu61EDibOsdVCcBUNibeEwuWyWytPkQFDQsg27Rgu20wC96On8snRxkklKMwibKogVJ6nkaXvTFLUVIxfmafYYeQ/0?wx_fmt=jpeg);">
-                                                            </span>
-                                                            <span class="check-content">
-                                                                      <label class="checkbox-label" for="checkbox10">
-                                                                            <input type="checkbox" class="input-checkbox"  id="checkbox10"><i class=" "></i>
-                                                                            <span class="bottom-content">4998f946fadsfdasfdsafdsafasdf5e002a.jpg</span>
-                                                                      </label>
-                                                            </span>
-                                                    </div>
+            });
+        });
 
-                                                    <div class="list-card-ft">
-                                                        <ul>
-                                                            <li> <a href="#"><span><i class="fa fa-pencil"></i></span></a></li>
-                                                            <li> <a href="#"><span><i class="fa fa-arrows"></i></span></a></li>
-                                                            <li> <a href="#"><span><i class="fa fa-trash-o"></i></span></a></li>
-                                                        </ul>
-                                                    </div>
-                                            </li>
-
-
-                                             <li class="img-item">
-                                                    <div class="bg-warp">
-                                                            <span class="cover" src="https://mmbiz.qlogo.cn/mmbiz_jpg/6nu61EDibOsdVCcBUNibeEwuWyWytPkQFDQsg27Rgu20wC96On8snRxkklKMwibKogVJ6nkaXvTFLUVIxfmafYYeQ/0?wx_fmt=jpeg" style="background-image:url(https://mmbiz.qlogo.cn/mmbiz_jpg/6nu61EDibOsdVCcBUNibeEwuWyWytPkQFDQsg27Rgu20wC96On8snRxkklKMwibKogVJ6nkaXvTFLUVIxfmafYYeQ/0?wx_fmt=jpeg);">
-                                                            </span>
-                                                            <span class="check-content">
-                                                                      <label class="checkbox-label" for="checkbox10">
-                                                                            <input type="checkbox" class="input-checkbox"  id="checkbox10"><i class=" "></i>
-                                                                            <span class="bottom-content">4998f946fadsfdasfdsafdsafasdf5e002a.jpg</span>
-                                                                      </label>
-                                                            </span>
-                                                    </div>
-
-                                                    <div class="list-card-ft">
-                                                        <ul>
-                                                            <li> <a href="#"><span><i class="fa fa-pencil"></i></span></a></li>
-                                                            <li> <a href="#"><span><i class="fa fa-arrows"></i></span></a></li>
-                                                            <li> <a href="#"><span><i class="fa fa-trash-o"></i></span></a></li>
-                                                        </ul>
-                                                    </div>
-                                            </li>
-
-
-
-                                             <li class="img-item">
-                                                    <div class="bg-warp">
-                                                            <span class="cover" src="https://mmbiz.qlogo.cn/mmbiz_jpg/6nu61EDibOsdVCcBUNibeEwuWyWytPkQFDQsg27Rgu20wC96On8snRxkklKMwibKogVJ6nkaXvTFLUVIxfmafYYeQ/0?wx_fmt=jpeg" style="background-image:url(https://mmbiz.qlogo.cn/mmbiz_jpg/6nu61EDibOsdVCcBUNibeEwuWyWytPkQFDQsg27Rgu20wC96On8snRxkklKMwibKogVJ6nkaXvTFLUVIxfmafYYeQ/0?wx_fmt=jpeg);">
-                                                            </span>
-                                                            <span class="check-content">
-                                                                      <label class="checkbox-label" for="checkbox10">
-                                                                            <input type="checkbox" class="input-checkbox"  id="checkbox10"><i class=" "></i>
-                                                                            <span class="bottom-content">4998f946fadsfdasfdsafdsafasdf5e002a.jpg</span>
-                                                                      </label>
-                                                            </span>
-                                                    </div>
-
-                                                    <div class="list-card-ft">
-                                                        <ul>
-                                                            <li> <a href="#"><span><i class="fa fa-pencil"></i></span></a></li>
-                                                            <li> <a href="#"><span><i class="fa fa-arrows"></i></span></a></li>
-                                                            <li> <a href="#"><span><i class="fa fa-trash-o"></i></span></a></li>
-                                                        </ul>
-                                                    </div>
-                                            </li>
-
-
-
-                                             <li class="img-item">
-                                                    <div class="bg-warp">
-                                                            <span class="cover" src="https://mmbiz.qlogo.cn/mmbiz_jpg/6nu61EDibOsdVCcBUNibeEwuWyWytPkQFDQsg27Rgu20wC96On8snRxkklKMwibKogVJ6nkaXvTFLUVIxfmafYYeQ/0?wx_fmt=jpeg" style="background-image:url(https://mmbiz.qlogo.cn/mmbiz_jpg/6nu61EDibOsdVCcBUNibeEwuWyWytPkQFDQsg27Rgu20wC96On8snRxkklKMwibKogVJ6nkaXvTFLUVIxfmafYYeQ/0?wx_fmt=jpeg);">
-                                                            </span>
-                                                            <span class="check-content">
-                                                                      <label class="checkbox-label" for="checkbox10">
-                                                                            <input type="checkbox" class="input-checkbox"  id="checkbox10"><i class=" "></i>
-                                                                            <span class="bottom-content">4998f946fadsfdasfdsafdsafasdf5e002a.jpg</span>
-                                                                      </label>
-                                                            </span>
-                                                    </div>
-
-                                                    <div class="list-card-ft">
-                                                        <ul>
-                                                            <li> <a href="#"><span><i class="fa fa-pencil"></i></span></a></li>
-                                                            <li> <a href="#"><span><i class="fa fa-arrows"></i></span></a></li>
-                                                            <li> <a href="#"><span><i class="fa fa-trash-o"></i></span></a></li>
-                                                        </ul>
-                                                    </div>
-                                            </li>
-                                        </ul>
-                                </div>
-                      `);
         $modalRight.append($modalRightBody);
-
         this.modal.$body = $modalBody;
     }
 }
