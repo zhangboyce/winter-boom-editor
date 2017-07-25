@@ -85,9 +85,11 @@ co(function * () {
     const styleRouter = require('./routers/style');
     const articleRouter = require('./routers/article');
     const collectionRouter = require('./routers/collection');
+    const imageRouter = require('./routers/images').router;
     const wechatRouter = require('./routers/wechat');
     server.use(styleRouter.routes()).use(styleRouter.allowedMethods());
     server.use(articleRouter.routes()).use(articleRouter.allowedMethods());
+    server.use(imageRouter.routes()).use(imageRouter.allowedMethods());
     server.use(collectionRouter.routes()).use(collectionRouter.allowedMethods());
     server.use(wechatRouter.routes()).use(wechatRouter.allowedMethods());
 

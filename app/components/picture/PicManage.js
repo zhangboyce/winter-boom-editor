@@ -18,18 +18,87 @@ export default class extends Component {
         };
     };
 
+    __loadTypes__ = callback => {
+        $.getJSON('/images/categories/list', json => {
+            console.log(json);
+            console.log("111");
+            if (json.status) {
+                let types = json.result;
+                types = [{_id: 'all', name: '全部'}, ...types];
+                callback(types);
+            }
+        });
+    };
+    __typeOnClick__ = ()=>{
+
+    };
+
+
     render() {
 
         let $modalBody = $('<div class="modal-content modal-pic-body"></div>');
         let $row = $('<div class="row"></div>');
         let $col2 = $(' <div class="col col-md-2"></div>');
         let $col10 = $(' <div class="col col-md-10"></div>');
-        let $modalLeft = $(`<div class="modal-pic-left">
-                                 <ul class="col col-md-12">
-                                        <li class="col col-md-12"><a href="#"><strong>全部图片</strong><span>(13)</span></a></li>
-                                        <li class="col col-md-12"><a href="#"> <i class="fa fa-plus"></i> 新建分组 </a></li>
-                                 </ul>
-                            </div>`);
+        let $modalLeft = $(`<div class="modal-pic-left"> </div>`);
+        let $ul = $(`<ul class="col col-md-12"> </ul>`);
+        $modalLeft.append($ul);
+
+        let $addGroup = $(`<li class="col col-md-12"><a href="#"> <i class="fa fa-plus"></i> 新建分组 </a></li>`);
+
+        let $createGroupDiv = $(`<div class="create-group-div"></div>`);
+        let $createGroupText = $(`<label class="create-group-text">创建分组</label>`);
+        let $createGroupInput = $(`<input type="text" value="111" class="category-input">`);
+        //$createGroupInput.
+        let $btnCommit = $(`<a class="btn-tool btn-commit" href="#">确定</a>`);
+        let $btnCanncel = $(`<a class="btn-tool btn-canncel" href="#">取消</a>`);
+
+        $createGroupDiv.append($createGroupText);
+        $createGroupDiv.append($createGroupInput);
+        $createGroupDiv.append($btnCommit);
+        $createGroupDiv.append($btnCanncel);
+        let $body = $('body');
+
+
+
+
+        $addGroup.click(function(){
+
+            $body.append($createGroupDiv);
+
+        });
+
+
+
+
+        $ul.append($addGroup);
+
+
+
+
+
+            //<li class="col col-md-12"><a href="#"><strong>全部图片</strong><span>(13)</span></a></li>
+
+
+
+
+
+
+        this.__loadTypes__(types => {
+            console.log("00");
+
+            types.forEach(type => {
+                let $li_1 = $(`<li>${type.name}</li>`).appendTo($ul);
+
+                $li_1.click(this.__typeOnClick__(type, () => {
+
+                }));
+
+            });
+        });
+
+
+
         let $modalRight = $(` <div class="modal-pic-right"></div>`);
         $modalBody.append($row);
         $row.append($col2);
