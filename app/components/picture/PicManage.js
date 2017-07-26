@@ -6,8 +6,6 @@ import upload from '../../utils/uploadImageNew';
 
 
 export default class extends Component {
-
-
     constructor(props) {
         super(props);
         this.modal = new Modal({id: 'pictureManagementModal'});
@@ -16,12 +14,14 @@ export default class extends Component {
         this.upload = upload({
             name: 'image',
             url: () => ('/upload/image/'),
-            // change: () => confirm('确认上传新图片？'),
             success: result => {
                 let json = JSON.parse(result);
-                // this.$coverImg.attr('src', 'http://editor.static.cceato.com/' + json.key);
+                this.images = [json.item, ...this.images];
+                this.__buildImageUl__();
             }
         });
+
+        this.images = [];
     }
 
     open = () => {
@@ -32,8 +32,8 @@ export default class extends Component {
 
 
     __loadTypes__ = callback => {
-        $.getJSON('/images/categories/list', json => {
-            let types = json;
+        $.get('/images/categories/list', json => {
+            let types = json.list;
             types = [{_id: '', name: '全部图片'}, ...types];
             callback(types);
         });
@@ -48,8 +48,9 @@ export default class extends Component {
     };
 
 
+    //不同分类显示不同图片
     __showImageCategoryList__ = (type, callback) => {
-        $.get('/images/list', {category: type._id}, json => {
+        $.get('/images/list', {categoryId: type._id}, json => {
             let items = json.list;
             if (typeof callback === 'function') {
                 callback(items);
@@ -58,39 +59,123 @@ export default class extends Component {
         });
     };
 
-    __buildImageUl__ = ($imgUL, items) => {
-        $imgUL.html('');
-        items.forEach(item => {
-            let $liGetlist = $(
-                ` <li class="img-item">
-                                <div class="bg-warp">
-                                        <span class="cover" style="background-image:url(http://editor.static.cceato.com/${item.key});">
-                                        </span>
-                                        <span class="check-content">
-                                                  <label class="checkbox-label" for="${item.key}">
-                                                        <input type="checkbox" class="input-checkbox" name="inputcheckbox"  id="${item.key}"><i class=" "></i>
-                                                        <span class="bottom-content">${item._id}</span>
+    //删除图片
+    __deleteImageList__ = imageIds => {
+        $.get('/images/delete', {image: imageIds}, json => {
+            if (json.status == "ok") {
+
+                for (let imageId of imageIds) {
+                    let index = this.images.findIndex(img => img._id == imageId);
+                    if (index != -1) this.images.splice(index, 1);
+                }
+                this.__buildImageUl__();
+                if (this.images.length < 1) {
+                    this.__disableStatus__();
+                }
+            }
+        });
+    };
+
+    //激活状态[可操作]
+    __activeStatus__ = () => {
+        let $buttonMoveCategory = $('#js-move-group');
+        let $buttonDelete = $('#js-delete-chose');
+        $buttonMoveCategory.removeClass("active");
+        $buttonMoveCategory.removeAttr("disabled");
+        $buttonDelete.removeClass("active");
+        $buttonDelete.removeAttr("disabled");
+    };
+
+    //不可操作状态
+    __disableStatus__ = () => {
+        let $buttonMoveCategory = $('#js-move-group');
+        let $buttonDelete = $('#js-delete-chose');
+        $buttonMoveCategory.addClass("active");
+        $buttonMoveCategory.attr("disabled", "disabled");
+        $buttonDelete.addClass("active");
+        $buttonDelete.attr("disabled", "disabled");
+        $buttonMoveCategory.off("click");
+        $buttonDelete.off("click");
+    };
+
+    //构建图片list
+    __buildImageUl__ = () => {
+        let $images = $('#images');
+        $images.html('');
+        this.images.forEach(item => {
+            let $liGetlist = $(` <li class="img-item"> </li>`);
+            let $litop = $(`<div class="bg-warp"></div>`);
+
+            let $libgImg = $(` <span class="cover" style="background-image:url(http://editor.static.cceato.com/${item.key});">
+                           </span>`);
+            let $licheckbox = $(`<span class="check-content">
+                                                  <label class="checkbox-label" for="${item._id}">
+                                                      <input type="checkbox" class="input-checkbox" name="inputcheckbox"  id="${item._id}"><i class=" "></i>
+                                                          <span class="bottom-content">${item.name}</span>
                                                   </label>
-                                        </span>
-                                </div>
+                              </span>`);
 
-                                <div class="list-card-ft">
-                                    <ul>
-                                        <li> <a href="#"><span><i class="fa fa-pencil"></i></span></a></li>
-                                        <li> <a href="#"><span><i class="fa fa-arrows"></i></span></a></li>
-                                        <li> <a href="#"><span><i class="fa fa-trash-o"></i></span></a></li>
-                                    </ul>
-                                </div>
-                           </li> `
-            );
+            $licheckbox.click(() => {
+                var arrayCheckbox = document.getElementsByName('inputcheckbox');
+                var isTrue = false;
+                for (var i = 0; i < arrayCheckbox.length; i++) {
+                    if (arrayCheckbox[i].checked == true) {
+                        isTrue = true;
+                        if (isTrue) {
+                            this.__activeStatus__();
+                            let $buttonDelete = $('#js-delete-chose');
+                            $buttonDelete.on("click", ()=> {
+                                var arrayCheckbox = document.getElementsByName('inputcheckbox');
+                                var arrayImageId = [];
+                                for (var i = 0; i < arrayCheckbox.length; i++) {
+                                    if (arrayCheckbox[i].checked) {
+                                        arrayImageId.push(arrayCheckbox[i].id)
+                                    }
+                                }
+                                this.__deleteImageList__(arrayImageId);
+                            });
+                        }
 
-            $imgUL.append($liGetlist);
+                    }
+
+                    if (isTrue == false) {
+                        this.__disableStatus__();
+                    }
+
+
+                }
+            });
+
+            let $libottom = $('<div class="list-card-ft"></div>');
+            let $liToolBar = $(`<ul></ul>`);
+            let $editImageName = $(`<li> <a href="javascript:;"><span><i class="fa fa-pencil"></i></span></a></li>`);
+            let $moveGroup = $(`<li> <a href="javascript:;"><span><i class="fa fa-arrows"></i></span></a></li>`);
+            let $deleteImage = $(`<li> <a href="javascript:;"><span><i class="fa fa-trash-o"></i></span></a></li>`);
+
+
+            //删除单个图
+            $deleteImage.click(()=> {
+                let arrayImageId = [];
+                arrayImageId.push(item._id);
+                this.__deleteImageList__(arrayImageId);
+            });
+
+            $liToolBar.append($editImageName);
+            $liToolBar.append($moveGroup);
+            $liToolBar.append($deleteImage);
+
+            $litop.append($libgImg);
+            $litop.append($licheckbox);
+            $libottom.append($liToolBar);
+            $liGetlist.append($litop);
+            $liGetlist.append($libottom);
+
+            $images.append($liGetlist);
 
         });
     };
 
     render() {
-
 
         let $modalBody = $('<div class="modal-content modal-pic-body"></div>');
         let $row = $('<div class="row"></div>');
@@ -102,36 +187,40 @@ export default class extends Component {
 
         //modal 右边区域的图片列表
         let $modalRightBody = $(`<div id="img-list-warp"></div>`);
-        let $imgUL = $(`<ul id="checkul" class="clearfix"> </ul>`);
-        $modalRightBody.append($imgUL);
+        let $images = $(`<ul id="images" class="clearfix"> </ul>`);
+        $modalRightBody.append($images);
 
         this.__loadTypes__(types => {
             types.forEach(type => {
-                let $liGetlist = $(`<li class="col col-md-12" categoryId='${type._id}'><a href="#">${type.name}</a></li>`);
+                let $liGetlist = $(`<li class="col col-md-12" categoryId='${type._id}'><a href="javascript:;">${type.name}</a></li>`);
                 $ul.append($liGetlist);
                 $liGetlist.click(this.__typeOnClick__(type, items => {
                     $liGetlist.addClass("active").siblings().removeClass("active");
-                    this.__buildImageUl__($imgUL, items);
+                    this.images = items;
+                    if (this.images.length < 1) {
+                        this.__disableStatus__();
+                    }
+                    this.__buildImageUl__();
                 }));
             });
             $ul.children('li').eq(0).click();
         });
 
 
-        let $addGroup = $(`<li class="col col-md-12" style="padding-left: 10px;"><a href="#"> <i class="fa fa-plus"></i>新建分组</a></li>`);
+        let $addGroup = $(`<li class="col col-md-12" style="padding-left: 10px;"><a href="javascript:;"> <i class="fa fa-plus"></i>新建分组</a></li>`);
 
         let $createGroupDiv = $(`<div class="create-group-div"></div>`);
         let $createGroupText = $(`<label class="create-group-text">创建分组</label>`);
         let $createGroupInput = $(`<input type="text" value="111" class="category-input">`);
-        let $btnCommit = $(`<a class="btn-tool btn-commit" href="#">确定</a>`);
+        let $btnCommit = $(`<a class="btn-tool btn-commit" href="javascript:;">确定</a>`);
         $btnCommit.click(() => {
-            $.post('/images/categories/save', {name: " "}, json => {
+            $.post('/images/categories/save', {name: "测试目1"}, json => {
                 if (json.status == "ok") {
                 }
                 $createGroupDiv.hide();
             });
         });
-        let $btnCanncel = $(`<a class="btn-tool btn-canncel" href="#">取消</a>`);
+        let $btnCanncel = $(`<a class="btn-tool btn-canncel" href="javascript:;">取消</a>`);
         $btnCanncel.click(() => {
             $createGroupDiv.hide();
         });
@@ -175,8 +264,6 @@ export default class extends Component {
 
                                   `);
 
-
-
         let $buttonMoveCategory = $('<a id="js-move-group" class="move-category button active" href="javascript:;" disabled="disabled">移动分组</a>');
         let $buttonDelete = $(`<a id="js-delete-chose" class="delete-pic button active" href="javascript:;" disabled="disabled">删除</a>`);
         $operationArea.append($buttonChooseAll);
@@ -185,36 +272,51 @@ export default class extends Component {
         $rightHeaderLeft.append($operationArea);
 
 
-        //全选,全不选以及相应的删除和移动分组功能
-        $buttonChooseAll.click( () => {
-            if ($("#js-check-all").prop("checked")) {
-                /*var arrayCheckbox = document.getElementsByName('inputcheckbox');
-                 for (var i = 0; i < arrayCheckbox.length; i++) {
-                 arrayCheckbox[i].checked="checked";
-                 }*/
-                $("[name=inputcheckbox]:checkbox").prop("checked", true);
-                $buttonMoveCategory.removeClass("active");
-                $buttonMoveCategory.removeAttr("disabled");
-                $buttonDelete.removeClass("active");
-                $buttonDelete.removeAttr("disabled");
-                $buttonMoveCategory.on("click",()=> {
-                        alert("move");
-                });
-                $buttonDelete.on("click",()=> {
-                        alert("delete");
-                });
+        /*$buttonDelete.on("click", ()=> {
+         var arrayCheckbox = document.getElementsByName('inputcheckbox');
+         var arrayImageId = [];
+         for (var i = 0; i < arrayCheckbox.length; i++) {
+         if (arrayCheckbox[i].checked) {
+         arrayImageId.push(arrayCheckbox[i].id)
+         }
+         }
+         this.__deleteImageList__(arrayImageId);
+         });*/
 
+
+        //全选,全不选以及相应的删除和移动分组功能
+        $buttonChooseAll.click(() => {
+
+            if (this.images.length < 1) {
+                this.__disableStatus__();
             } else {
-                $("[name=inputcheckbox]:checkbox").prop("checked", false);
-                $buttonMoveCategory.addClass("active");
-                $buttonMoveCategory.attr("disabled","disabled");
-                $buttonDelete.addClass("active");
-                $buttonDelete.attr("disabled","disabled");
-                $buttonMoveCategory.off("click");
-                $buttonDelete.off("click");
+                if ($("#js-check-all").prop("checked")) {
+                    $("[name=inputcheckbox]:checkbox").prop("checked", true);
+                    this.__activeStatus__();
+
+                    $buttonMoveCategory.on("click", ()=> {
+                        alert("move");
+                    });
+
+                    $buttonDelete.on("click", ()=> {
+                        var arrayCheckbox = document.getElementsByName('inputcheckbox');
+                        var arrayImageId = [];
+                        for (var i = 0; i < arrayCheckbox.length; i++) {
+                            if (arrayCheckbox[i].checked) {
+                                arrayImageId.push(arrayCheckbox[i].id)
+                            }
+                        }
+                        this.__deleteImageList__(arrayImageId);
+                    });
+
+                } else {
+                    $("[name=inputcheckbox]:checkbox").prop("checked", false);
+                    this.__disableStatus__();
+                }
             }
 
         });
+
 
         let $buttonUpload = $(`<span>大小不超过2M</span><span class="button-upload-local">本地上传</span>`);
         $buttonUpload.click(() => {
@@ -224,7 +326,8 @@ export default class extends Component {
 
 
         this.__showImageCategoryList__(items => {
-            this.__buildImageUl__($imgUL, items);
+            this.images = items;
+            this.__buildImageUl__();
         });
 
         $modalRight.append($modalRightBody);

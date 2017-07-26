@@ -16,6 +16,7 @@ export default function ({name, url, change, success, error, timeout}) {
         form.appendTo(iframeBody);
         form.attr('action', typeof(url) === 'string'? url: url());
         form.append(input.clone());
+        form.append("<input type='text' name='categoryId' value='59783445078858eab5a63fad'>");
         if(change? change() : true) {
             form.submit();
             let checkCount = 0;

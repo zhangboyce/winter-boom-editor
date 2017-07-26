@@ -98,10 +98,10 @@ router.get('/images/categories/delete/:id', function * () {
 });
 
 router.get('/images/list', function * () {
-    let category = this.query.category;
+    let category = this.query.categoryId;
     let accountId = this.session.account._id;
     let query = {account: accountId};
-    category && (query[category] = category);
+    category && (query['category'] = category);
 
     let count = yield ImageUploadFile.count(query);
     let page = _.toInteger(this.query.page) || 1;
@@ -204,7 +204,7 @@ router.get('/images/delete', function * () {
 function * subImageCount4Category(imageList) {
     let gr = _.groupBy(imageList, i => i.category);
     for(let k in  gr) {
-        if(k != 'null' || k != 'undefined') {
+        if(k && k != 'null' || k != 'undefined') {
             yield ImageCategory.update({_id: k}, {$inc: {imageCount: -gr[k].length}});
         }
     }
@@ -213,12 +213,13 @@ function * subImageCount4Category(imageList) {
 router.post('/upload/image', KoaUploadMiddleware, function *() {
     let files = this.files;
     let image = files.image;
-    let category = this.data && this.data.category;
+    let category = this.data && this.data.categoryId;
+
     if(image) {
         let accountId = this.session.account._id;
         let uploadFile = yield upload(image, category, accountId);
         if(uploadFile) {
-            this.body = 'success:' + JSON.stringify({key: uploadFile.key});
+            this.body = 'success:' + JSON.stringify({ key: uploadFile.key, item: uploadFile });
             return;
         }
     }
@@ -237,7 +238,7 @@ function * upload(imageFile, categoryId, accountId) {
         }
 
         let result = yield QiniuFileUtils.uploadLocalFile({
-            localFilePath: imagePath,
+            localFilePath: imageFile.path,
             targetDir: dir,
             targetFileName: md5FileName,
             forceUpload: true
