@@ -4,6 +4,11 @@ import { isFunction } from '../../common/TypeUtils';
 
 export default class extends Component {
 
+    constructor(props) {
+        super(props);
+        this.inject();
+    }
+
     __handleLogout__ = () => {
         this.confirm("确定退出编辑器?", () => {
             let auth_callback = encodeURIComponent(window.config['SSO_CLIENT'] + '/api/getToken');
@@ -11,8 +16,7 @@ export default class extends Component {
         });
     };
 
-    render() {
-        let account = window.account || {};
+    __rendered__() {
         let modules = window.modules || [];
 
         let menus = [];
@@ -25,33 +29,57 @@ export default class extends Component {
         menus.push('<li class="divider"></li>');
         menus.push(new DropdownMenu({ name: '退出', icon: 'fa icon-logout', onClick: this.__handleLogout__ }));
 
-        let $dropdownMenu = $('<ul class="dropdown-menu">');
+        let $dropdownMenu = this.find('ul.dropdown-menu');
         menus.forEach(menu => {
-            $dropdownMenu.append(menu.render ? menu.render(): menu);
+            if (menu instanceof Component) {
+                menu = menu.rendered();
+            }
+            $dropdownMenu.append(menu);
         });
+    }
 
-        let $avatar = $(`<a data-toggle="dropdown" class="ripple" href="javascript:;" aria-expanded="false">
+    render() {
+        let account = window.account || {};
+
+        return $(`
+            <div class="row header">
+                <ul class="nav navbar-nav navbar-right hidden-xs" style="margin-right: 30px">
+                    <li>
+                        <a data-toggle="dropdown" class="ripple" href="javascript:;" aria-expanded="false">
                             <span class="imgwarp">
                                 <img class="avatar" width="30px" height="30px" src="${ 'http://boom-static.static.cceato.com/boom/imgs/avatars/' + (account.avatar || '01.png') }"/>
                                 &nbsp;${ account.nickname || account.username }
                             </span>
-                        </a>`);
+                        </a>
+                        <ul class="dropdown-menu">
 
-        let $li = $('<li>')
-            .append($avatar)
-            .append($dropdownMenu);
-
-        let $ul = $(`<ul class="nav navbar-nav navbar-right hidden-xs" style="margin-right: 30px"></ul>`)
-            .append($li);
-
-        return $(`<div class="row header"></div>`).append($ul);
+                        </ul>
+                    </li>
+                </ul>
+            </div>`
+        );
     }
 }
 
 class DropdownMenu extends Component {
+
+    constructor(props) {
+        super(props);
+        this.inject();
+    }
+
+    __rendered__() {
+        let onClick = this.onClick;
+        if (onClick && isFunction(onClick)) {
+            this.click(() => {
+                onClick();
+            });
+        }
+    }
+
     render() {
-        let { href, icon, name, onClick } = this;
-        let menu = $(
+        let { href, icon, name, } = this;
+        return $(
             `<li role="presentation">
                 <a role="menuitem" tabindex="-1" class="dropdown-menu-list" href=${ href || 'javascript:;' } target="_blank">
                     <i class=${ icon }></i>
@@ -59,11 +87,5 @@ class DropdownMenu extends Component {
                 </a>
             </li>`
         );
-        if (onClick && isFunction(onClick)) {
-            menu.click(function () {
-                onClick();
-            });
-        }
-        return menu;
     }
 }
