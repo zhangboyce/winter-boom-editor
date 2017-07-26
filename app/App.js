@@ -4,14 +4,20 @@ import Header from './components/Header';
 import Main from './components/Main';
 
 export default class extends Component {
+    constructor(props) {
+        super(props);
+        this.header = new Header();
+        this.main = new Main();
+
+        this.inject();
+    }
+
+    __rendered__() {
+        this.append(this.header);
+        this.append(this.main);
+    }
+
     render() {
-        let header = new Header();
-        let main = new Main();
-
-        let $app = $(`<div id="app" class="container-fluid"></div>`);
-        $app.append(header.render());
-        $app.append(main.render());
-
-        return $app;
+       return $(`<div id="app" class="container-fluid"></div>`);
     }
 }

@@ -12,16 +12,17 @@ export default class extends Component {
         this.columnEditor = new ColumnEditor({ parent: this });
         this.columnStyle = new ColumnStyle({ editor: this.columnEditor });
         this.columnArticle = new ColumnArticle({ editor: this.columnEditor });
+
+        this.inject();
+    }
+
+    __rendered__() {
+        this.append(this.columnStyle.render());
+        this.append(this.columnEditor.render());
+        this.append(this.columnArticle.render());
     }
 
     render() {
-        let $main = $(`<div class="row main"></div>`);
-
-        $main.append(this.columnStyle.render());
-        $main.append(this.columnEditor.render());
-        $main.append(this.columnArticle.render());
-
-
-        return $main;
+        return $(`<div class="row main"></div>`);
     }
 }
