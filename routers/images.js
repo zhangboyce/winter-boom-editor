@@ -19,7 +19,13 @@ const target_dir = 'upload/image/';
 
 router.get('/images/categories/list', function * () {
     let accountId = this.session.account._id;
-    this.body = yield ImageCategory.find({account: accountId});
+    let total = yield ImageUploadFile.count({account: accountId});
+    let list = yield ImageCategory.find({account: accountId});
+    this.body = {
+        total: total,
+        nocategoryCount: (total - _.sum(_.map(list, o=>o.imageCount))),
+        list: list
+    };
 });
 
 router.post('/images/categories/save', function * () {
@@ -94,7 +100,7 @@ router.get('/images/categories/delete/:id', function * () {
 router.get('/images/list', function * () {
     let category = this.query.category;
     let accountId = this.session.account._id;
-    let query = { account: accountId };
+    let query = {account: accountId};
     category && (query[category] = category);
 
     let count = yield ImageUploadFile.count(query);
@@ -106,10 +112,41 @@ router.get('/images/list', function * () {
     this.body = {list, pagination};
 });
 
+router.post('/images/update/:id', function * () {
+    let id = this.params.id;
+    if(!id) {
+        this.body = {status: 'error', errmsg: '未提交id'};
+        return;
+    }
+    let accountId = this.session.account._id;
+    let data = yield parse(this);
+    let name = data.name;
+    if(!name || _.trim(name).length == 0) {
+        this.body = {status: 'error', errmsg: '未提交name'};
+        return;
+    }
+    if(name.length > 30) {
+        name = name.substring(0, 30);
+    }
+    try {
+        let image = yield ImageUploadFile.findOne({
+            _id: id,
+            account: accountId
+        });
+        if(image) {
+            yield image.update({$set: {name: name}});
+        }
+        this.body = {status: 'ok'};
+    }catch (e) {
+        console.error(e);
+        this.body = {status: 'error', errmsg: '更新报错'};
+    }
+});
+
 router.get('/images/move', function * () {
+    let accountId = this.session.account._id;
     let category;
     try {
-        let accountId = this.session.account._id;
         category = yield ImageCategory.findOne({_id: this.query.category, account: accountId});
     }catch(e){
         console.error(e);
@@ -130,22 +167,33 @@ router.get('/images/move', function * () {
     if(typeof(imageIdList) === 'string') {
         imageIdList = [imageIdList];
     }
-    yield ImageUploadFile.update({_id: {$in: imageIdList}}, {$set: {category: category.id}}, {multi: true});
+    let imageList = ImageUploadFile.find({_id: {$in: imageIdList}, account: accountId});
+    yield ImageUploadFile.update({_id: {$in: _.map(imageList, i => i._id)}}, {$set: {category: category.id}}, {multi: true});
+    yield subImageCount4Category(imageList);
     this.body = {status: 'ok'};
 });
 
-router.get('/images/delete/:id', function * () {
+router.get('/images/delete', function * () {
     let accountId = this.session.account._id;
-    let id = this.params.id;
+    let imageIdList = this.query['image[]'];
+    if(!imageIdList) {
+        imageIdList = this.query['image'];
+    }
+    if(!imageIdList) {
+        this.body = {status: 'error', errmsg: 'image is not found'};
+        return;
+    }
     try {
-        let image = yield ImageUploadFile.findOne({
-            _id: id,
+        let imageList = yield ImageUploadFile.find({
+            _id: {$in: imageIdList},
             account: accountId
         });
-        if(image) {
+        for(let image of imageList) {
             yield QiniuFileUtils.deleteResource(image.key);
             yield image.remove();
         }
+
+        yield subImageCount4Category(imageList);
         this.body = {status: 'ok'};
     }catch (e) {
         console.error(e);
@@ -153,13 +201,22 @@ router.get('/images/delete/:id', function * () {
     }
 });
 
+function * subImageCount4Category(imageList) {
+    let gr = _.groupBy(imageList, i => i.category);
+    for(let k in  gr) {
+        if(k != 'null' || k != 'undefined') {
+            yield ImageCategory.update({_id: k}, {$inc: {imageCount: -gr[k].length}});
+        }
+    }
+}
+
 router.post('/upload/image', KoaUploadMiddleware, function *() {
     let files = this.files;
     let image = files.image;
     let category = this.data && this.data.category;
     if(image) {
         let accountId = this.session.account._id;
-        let uploadFile = yield upload(image.path, category, accountId);
+        let uploadFile = yield upload(image, category, accountId);
         if(uploadFile) {
             this.body = 'success:' + JSON.stringify({key: uploadFile.key});
             return;
@@ -168,12 +225,17 @@ router.post('/upload/image', KoaUploadMiddleware, function *() {
     this.body = 'error:not found';
 });
 
-function * upload(imagePath, category, accountId) {
-    let md5FileName = yield QiniuFileUtils.md5(imagePath);
+function * upload(imageFile, categoryId, accountId) {
+    let md5FileName = yield QiniuFileUtils.md5(imageFile.path);
     let dir = target_dir + accountId + '/';
     let key = dir + md5FileName;
     let uploadFile = yield ImageUploadFile.findOne({ account: accountId, key: key });
     if (!uploadFile) {
+        let category;
+        if(categoryId) {
+            category = yield ImageCategory.findOne({_id: categoryId, account: accountId});
+        }
+
         let result = yield QiniuFileUtils.uploadLocalFile({
             localFilePath: imagePath,
             targetDir: dir,
@@ -188,12 +250,16 @@ function * upload(imagePath, category, accountId) {
 
         uploadFile = new ImageUploadFile({
             account: accountId,
-            category: category,
+            name: imageFile.filename,
+            category: category && category.id,
             key: key,
             size: stat.fsize,
             mimeType: stat.mimeType
         });
         yield uploadFile.save();
+        if(category) {
+            yield category.update({$inc: {imageCount: 1}});
+        }
     }
     return uploadFile;
 }
@@ -219,3 +285,7 @@ module.exports = {
     download,
     target_dir
 };
+
+
+
+

@@ -1,30 +1,65 @@
 'use strict';
 const Article = require('../models/editor/Article');
 const ArticleContent = require('../models/editor/ArticleContent');
+const ImageUploadFile = require('../models/image/ImageUploadFile');
+const imageRouter = require('./images');
+const target_dir = imageRouter.target_dir;
 const router = require('koa-router')();
+const parse = require('co-body');
 const _ = require('lodash');
+const fs = require('fs');
+require('bluebird').promisifyAll(fs);
 const rp = require('request-promise');
 const {SSO_API_Client} = require('koa-sso-auth-cli');
+const env = process.env;
 
 router.get('/wechat/mplist', function * () {
+    // let mpList = yield rp(env.SSO_SERVER + '/api/getMPList' + '?token=' + this.session.token);
     let mpList = yield SSO_API_Client.getMPList(this.session.token);
     this.body = mpList;
 });
 
-router.get('/wechat/sync', function * () {
+function getArticleIdList(ctx) {
     let articleIdList = this.query['article[]'];
     if(typeof(articleIdList) === 'string') {
         articleIdList = [articleIdList];
     }
     articleIdList = _.uniq(articleIdList);
+    return articleIdList;
+}
 
+router.get('/wechat/push', function * () {
+    let articleIdList = getArticleIdList(this);
     let mpId = this.query.mp;
-    let accountId = this.session.account._id;
     let mpAccessToken = yield getMpToken(mpId, this.session.token);
     if(!mpAccessToken) {
         this.body = {errmsg: '未能获取 access token'};
         return;
     }
+    let merge = _.eq('1', this.query.merge);
+    if(merge) {
+        if(articleIdList.length > 8) {
+            this.body = {errmsg: '多图文最多一次8篇内容'};
+            return;
+        }
+    }
+    let accountId = this.session.account._id;
+    this.body = yield Article.find({_id: {$in: articleIdList}, account: accountId});
+});
+
+/**
+ * 同步更新这部分代码可能会被废弃被push取代
+ */
+router.get('/wechat/sync', function * () {
+    let articleIdList = getArticleIdList(this);
+
+    let mpId = this.query.mp;
+    let mpAccessToken = yield getMpToken(mpId, this.session.token);
+    if(!mpAccessToken) {
+        this.body = {errmsg: '未能获取 access token'};
+        return;
+    }
+    let accountId = this.session.account._id;
 
     let successList = [];
     let failList = [];
@@ -45,17 +80,23 @@ router.get('/wechat/sync', function * () {
 function * sync(articleId, accountId, mpId, token) {
     let article = yield Article.findOne({_id: articleId});
     if(!article || article.account != accountId) {
-        return {errmsg: 'article is not found,' + articleId};
+        return {errcode: 900404, errmsg: 'article is not found,' + articleId};
     }
+
+    let thumbMediaId = yield getImageMediaId(token, mpId, accountId, article.cover);
+    if(!thumbMediaId) {
+        return {errcode: 900406, errmsg: '没有设置封面图'};
+    }
+
     let content = yield ArticleContent.findOne({_id: article._id});
 
     let data = {
-        title: article.title,
-        thumb_media_id: yield getImageMediaId(token, mpId, accountId, article.cover),
+        title: article.title || '未定义标题',
+        thumb_media_id: thumbMediaId,
         show_cover_pic: 1,
         author: article.author,
         digest: article.digest,
-        content: content.content,
+        content: content.content || '',
         content_source_url: article.sourceUrl
     };
 
@@ -106,24 +147,25 @@ function * sync(articleId, accountId, mpId, token) {
 function * getImageMediaId(token, mpId, accountId, url) {
     let uploadFile, filePath;
     if(!url) {
-        url = 'http://boom.static.cceato.com/null.jpg';
+        return null;
     }
-    if(url.indexOf('editor.static.cceato.com/' + target_dir)) {
+    let dir = target_dir + accountId + '/';
+    if(url.indexOf('editor.static.cceato.com/' + dir)) {
         let arr = url.split('/');
         let filename = arr[arr.length - 1];
-        let key = target_dir + filename;
-        uploadFile = yield UploadFile.findOne({account: accountId, key: key});
+        let key = dir + filename;
+        uploadFile = yield ImageUploadFile.findOne({account: accountId, key: key});
     }
 
     if(!uploadFile) {
-
+        return null;
     }
 
     let mediaMap = uploadFile.mpMap && uploadFile.mpMap[mpId];
 
     if(!mediaMap) {
         if(!filePath) {
-            filePath = yield download(url);
+            filePath = yield imageRouter.download(url);
         }
         let mpResult = JSON.parse(yield post(
             `https://api.weixin.qq.com/cgi-bin/material/add_material?access_token=${token}&type=image`,
@@ -132,7 +174,7 @@ function * getImageMediaId(token, mpId, accountId, url) {
         if(!mpResult.errcode || mpResult.errcode == 0) {
             mediaMap = mpResult;
             uploadFile.mpMap[mpId] = mediaMap;
-            yield UploadFile.update({
+            yield ImageUploadFile.update({
                 _id: uploadFile._id
             }, {
                 $set: {
@@ -147,77 +189,6 @@ function * getImageMediaId(token, mpId, accountId, url) {
     }
 
     return mediaMap.media_id;
-}
-
-/**
- * 上传图片功能
- */
-const KoaUploadMiddleware = require('../common/KoaUpload');
-const IDUtils = require('../common/IDUtils');
-const QiniuFileUtils = require('../common/QiniuFileUtils');
-const UploadFile = require('../models/common/UploadFile');
-const request = require('request');
-const path = require('path');
-const os = require('os');
-const fs = require('fs');
-require('bluebird').promisifyAll(fs);
-
-const target_dir = 'upload/image/';
-
-router.post('/upload/image', KoaUploadMiddleware, function *() {
-    let files = this.files;
-    let image = files.image;
-    if(image) {
-        let accountId = this.session.account._id;
-        let uploadFile = yield upload(image.path, accountId);
-        this.body = 'success:' + JSON.stringify({key: uploadFile.key});
-    }else {
-        this.body = 'error:not found';
-    }
-});
-
-function * upload(imagePath, accountId) {
-    let md5FileName = yield QiniuFileUtils.md5(imagePath);
-    let key = target_dir + md5FileName;
-    let uploadFile = yield UploadFile.findOne({ account: accountId, key: key });
-    if (!uploadFile) {
-        let result = yield QiniuFileUtils.uploadLocalFile({
-            localFilePath: imagePath,
-            targetDir: target_dir,
-            targetFileName: md5FileName,
-            forceUpload: true
-        });
-        if(result != key) {
-            console.error(result, key);
-            return null;
-        }
-        let stat = yield QiniuFileUtils.stat(key);
-
-        uploadFile = new UploadFile({
-            account: accountId,
-            key: key,
-            size: stat.fsize,
-            mimeType: stat.mimeType
-        });
-        yield uploadFile.save();
-    }
-    return uploadFile;
-}
-
-function * download(url) {
-    let tempFileName = IDUtils.md5ByString(url);
-    let arr = url.split('/');
-    let filePath = path.join(os.tmpDir(), tempFileName + arr[arr.length - 1]);
-    yield new Promise((rl, rj) => {
-        let stream = fs.createWriteStream(filePath);
-        stream.on('finish',function(){
-            rl();
-        });
-        request.get(url).on('error', function (err) {
-            rj(err);
-        }).pipe(stream);
-    });
-    return filePath;
 }
 
 

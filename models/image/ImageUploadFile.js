@@ -3,6 +3,7 @@ const DB = require('../DB');
 
 var ImageUploadSchema = new mongoose.Schema({
     account: String,
+    name: String,
     category: String,
     key: String,
     dir: String,

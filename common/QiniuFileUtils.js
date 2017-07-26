@@ -54,6 +54,12 @@ function* deleteResource(key) {
     });
 }
 
+function* deleteResources(keyList) {
+    for(let key of keyList) {
+        yield deleteResource(key);
+    }
+}
+
 function* stat(key) {
     let client = new qiniu.rs.Client();
     return yield new Promise((resolve, reject) => {
@@ -82,6 +88,7 @@ function * md5(localFilePath) {
 module.exports = {
     uploadLocalFile,
     deleteResource,
+    deleteResources,
     md5,
     stat
 };
