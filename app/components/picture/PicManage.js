@@ -47,10 +47,14 @@ export default class extends Component {
         };
     };
 
+
     __showImageCategoryList__ = (type, callback) => {
         $.get('/images/list', {category: type._id}, json => {
             let items = json.list;
-            callback(items);
+            if (typeof callback === 'function') {
+                callback(items);
+            }
+
         });
     };
 
@@ -63,8 +67,8 @@ export default class extends Component {
                                         <span class="cover" style="background-image:url(http://editor.static.cceato.com/${item.key});">
                                         </span>
                                         <span class="check-content">
-                                                  <label class="checkbox-label" for="checkbox10">
-                                                        <input type="checkbox" class="input-checkbox"  id="checkbox10"><i class=" "></i>
+                                                  <label class="checkbox-label" for="${item.key}">
+                                                        <input type="checkbox" class="input-checkbox" name="inputcheckbox"  id="${item.key}"><i class=" "></i>
                                                         <span class="bottom-content">${item._id}</span>
                                                   </label>
                                         </span>
@@ -98,7 +102,7 @@ export default class extends Component {
 
         //modal 右边区域的图片列表
         let $modalRightBody = $(`<div id="img-list-warp"></div>`);
-        let $imgUL = $(`<ul class="clearfix"> </ul>`);
+        let $imgUL = $(`<ul id="checkul" class="clearfix"> </ul>`);
         $modalRightBody.append($imgUL);
 
         this.__loadTypes__(types => {
@@ -164,18 +168,54 @@ export default class extends Component {
 
         let $operationArea = $(`<div class="operation-area"></div>`);
         let $buttonChooseAll = $(`
-                                    <label class="chose_checkbox_label" for="js-check_all">
-                                    <input id="js-check_all" type="checkbox" class="frm_checkbox" data-label="全选">
+                                    <label class="chose_checkbox_label" for="js-check-all">
+                                    <input id="js-check-all" type="checkbox" class="frm_checkbox" data-label="全选">
                                     <i class="icon_checkbox"></i>
                                     <span class="content">&nbsp;全选</span></label>
 
                                   `);
-        let $buttonMoveCategory = $('<span class="move-category button active">移动分组</span>');
-        let $buttonDelete = $(`<span class="delete-pic button active">删除</span>`);
+
+
+
+        let $buttonMoveCategory = $('<a id="js-move-group" class="move-category button active" href="javascript:;" disabled="disabled">移动分组</a>');
+        let $buttonDelete = $(`<a id="js-delete-chose" class="delete-pic button active" href="javascript:;" disabled="disabled">删除</a>`);
         $operationArea.append($buttonChooseAll);
         $operationArea.append($buttonMoveCategory);
         $operationArea.append($buttonDelete);
         $rightHeaderLeft.append($operationArea);
+
+
+        //全选,全不选以及相应的删除和移动分组功能
+        $buttonChooseAll.click( () => {
+            if ($("#js-check-all").prop("checked")) {
+                /*var arrayCheckbox = document.getElementsByName('inputcheckbox');
+                 for (var i = 0; i < arrayCheckbox.length; i++) {
+                 arrayCheckbox[i].checked="checked";
+                 }*/
+                $("[name=inputcheckbox]:checkbox").prop("checked", true);
+                $buttonMoveCategory.removeClass("active");
+                $buttonMoveCategory.removeAttr("disabled");
+                $buttonDelete.removeClass("active");
+                $buttonDelete.removeAttr("disabled");
+                $buttonMoveCategory.on("click",()=> {
+                        alert("move");
+                });
+                $buttonDelete.on("click",()=> {
+                        alert("delete");
+                });
+
+            } else {
+                $("[name=inputcheckbox]:checkbox").prop("checked", false);
+                $buttonMoveCategory.addClass("active");
+                $buttonMoveCategory.attr("disabled","disabled");
+                $buttonDelete.addClass("active");
+                $buttonDelete.attr("disabled","disabled");
+                $buttonMoveCategory.off("click");
+                $buttonDelete.off("click");
+            }
+
+        });
+
         let $buttonUpload = $(`<span>大小不超过2M</span><span class="button-upload-local">本地上传</span>`);
         $buttonUpload.click(() => {
             this.upload.click();
