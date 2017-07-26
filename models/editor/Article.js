@@ -9,7 +9,7 @@ const ArticleSchema = new mongoose.Schema({
     digest: String,
     sourceUrl: String,
     status: Number, //0:临时  1:保存未同步 2:同步后有更新 3:同步
-    mpMap: {type: mongoose.Schema.Types.Mixed, default: {}}, //公众号 media_id 映射
+    mpMap: {type: mongoose.Schema.Types.Mixed, default: {}}, //公众号 media_id 映射，如果是发布模式，未必能用的上。
     dateCreated: {type: Date, default: Date.now},
     lastSynced: {type: Date, default: Date.now},
     lastUpdated: {type: Date, default: Date.now},
@@ -17,3 +17,4 @@ const ArticleSchema = new mongoose.Schema({
 
 // module.exports = mongoose.model('Article', ArticleSchema);
 module.exports = DB.get('editor').model('Article', ArticleSchema);
+
