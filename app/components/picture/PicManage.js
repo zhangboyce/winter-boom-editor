@@ -12,6 +12,7 @@ export default class extends Component {
         this.modal = new Modal({id: 'pictureManagementModal'});
         this.render();
 
+
         this.upload = upload({
             name: 'image',
             url: () => ('/upload/image/'),
@@ -27,9 +28,10 @@ export default class extends Component {
 
         this.page = 1 / 1;
         this.size = 6 / 1;
-        this.paginationInfo={};
-        this.paginationInfo.maxPage='';
+        this.paginationInfo = {};
+        this.paginationInfo.maxPage = '';
     }
+
 
     open = () => {
         return () => {
@@ -58,7 +60,6 @@ export default class extends Component {
     //不同分类显示不同图片
     __showImageCategoryList__ = (type, callback, page, size) => {
         $.get('/images/list', {page: page, size: size, categoryId: type._id}, json => {
-            console.log("json", json);
             let items = json.list;
             this.paginationInfo = json.pagination;
             $(".show-number").text(page + " / " + this.paginationInfo.maxPage);
@@ -134,8 +135,11 @@ export default class extends Component {
         this.__buildImageUl__();
     };
 
+
     //构建图片list
     __buildImageUl__ = () => {
+
+
         let $images = $('#images');
         $images.html('');
         this.images.forEach(item => {
@@ -168,11 +172,18 @@ export default class extends Component {
                 }
             });
 
+/*
+
+            $(() => {
+                $('[data-toggle="tooltip"]').tooltip();
+            });
+*/
+
             let $libottom = $('<div class="list-card-ft"></div>');
             let $liToolBar = $(`<ul></ul>`);
-            let $editImageName = $(`<li> <a href="javascript:;"><span><i class="fa fa-pencil"></i></span></a></li>`);
-            let $moveGroup = $(`<li> <a href="javascript:;"><span><i class="fa fa-arrows"></i></span></a></li>`);
-            let $deleteImage = $(`<li> <a href="javascript:;"><span><i class="fa fa-trash-o"></i></span></a></li>`);
+            let $editImageName = $(`<li> <a href="javascript:;" data-toggle="tooltip" data-placement="top" title="编辑名称"><span><i class="fa fa-pencil"></i></span></a></li>`);
+            let $moveGroup = $(`<li> <a href="javascript:;" data-toggle="tooltip" data-placement="top" title="移动分组"><span><i class="fa fa-arrows"></i></span></a></li>`);
+            let $deleteImage = $(`<li> <a href="javascript:;" data-toggle="tooltip" data-placement="top" title="删除"><span><i class="fa fa-trash-o"></i></span></a></li>`);
 
             //编辑图片名称
             $editImageName.click(()=> {
@@ -204,6 +215,7 @@ export default class extends Component {
     };
 
     render() {
+
 
         let $modalBody = $('<div class="modal-content modal-pic-body"></div>');
         let $row = $('<div class="row"></div>');
@@ -251,8 +263,8 @@ export default class extends Component {
         }).css("ime-mode", "disabled");
 
         $goHandle.click(() => {
-            this.page = $inputPage.val()/1;
-            if(this.page>this.paginationInfo.maxPage){
+            this.page = $inputPage.val() / 1;
+            if (this.page > this.paginationInfo.maxPage) {
                 this.page = this.paginationInfo.maxPage;
                 $inputPage.val(this.page);
             }
@@ -383,6 +395,8 @@ export default class extends Component {
 
         $modalRight.append($modalRightBody);
         this.modal.$body = $modalBody;
+
+
     }
 }
 

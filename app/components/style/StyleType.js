@@ -81,6 +81,7 @@ export default class extends Component {
 
         $imgManagement.trigger( "click" );
 
+
         let $styleTypes = $(`<div class="col col-md-2 col-style-type"></div>`);
         $styleTypes.append($ul);
         $styleTypes.append($imgManagement);
