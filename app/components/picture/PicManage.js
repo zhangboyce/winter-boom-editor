@@ -128,26 +128,12 @@ export default class extends Component {
                         isTrue = true;
                         if (isTrue) {
                             this.__activeStatus__();
-                            let $buttonDelete = $('#js-delete-chose');
-                            $buttonDelete.on("click", ()=> {
-                                var arrayCheckbox = document.getElementsByName('inputcheckbox');
-                                var arrayImageId = [];
-                                for (var i = 0; i < arrayCheckbox.length; i++) {
-                                    if (arrayCheckbox[i].checked) {
-                                        arrayImageId.push(arrayCheckbox[i].id)
-                                    }
-                                }
-                                this.__deleteImageList__(arrayImageId);
-                            });
                         }
-
                     }
 
                     if (isTrue == false) {
                         this.__disableStatus__();
                     }
-
-
                 }
             });
 
@@ -168,9 +154,7 @@ export default class extends Component {
 
             //删除单个图
             $deleteImage.click(()=> {
-                let arrayImageId = [];
-                arrayImageId.push(item._id);
-                this.__deleteImageList__(arrayImageId);
+                this.__deleteImageList__([item._id]);
             });
 
             $liToolBar.append($editImageName);
@@ -296,6 +280,18 @@ export default class extends Component {
         $operationArea.append($buttonDelete);
         $rightHeaderLeft.append($operationArea);
 
+        $buttonDelete.click(()=> {
+            var arrayCheckbox = document.getElementsByName('inputcheckbox');
+            var arrayImageId = [];
+            for (var i = 0; i < arrayCheckbox.length; i++) {
+                if (arrayCheckbox[i].checked) {
+                    arrayImageId.push(arrayCheckbox[i].id)
+                }
+            }
+            if (arrayImageId.length == 0) return;
+
+            this.__deleteImageList__(arrayImageId);
+        });
 
 
         //全选,全不选以及相应的删除和移动分组功能
