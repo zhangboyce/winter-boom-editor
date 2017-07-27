@@ -12,6 +12,7 @@
 .col-style-type {
   padding: 0;
 }
+
 .col-style-type > ul {
   padding: 0;
   list-style: none;
@@ -49,6 +50,7 @@
   border-right: 1px solid @light-grey;
   border-top: 1px solid @light-grey;
 }
+
 .col-style-type > ul > li:first-child > ul {
   border-top: none;
   top: 0;
@@ -58,7 +60,6 @@
   display: block;
   color: @dark-grey;
 }
-
 
 .col-style-item {
   overflow-y: scroll;
@@ -76,153 +77,177 @@
   cursor: pointer;
 }
 
-#pic-management{
+#pic-management {
   width: 86%;
   height: 30px;
   border: 1px solid rgb(89, 89, 90);
-  color:rgb(89, 89, 90);
+  color: rgb(89, 89, 90);
   line-height: 30px;
   text-align: center;
-  margin:50px auto 0;
+  margin: 50px auto 0;
   border-radius: 5px;
   cursor: pointer;
   font-size: 12px;
 }
-#pictureManagementModal ul,#pictureManagementModal li{
+
+#pictureManagementModal ul, #pictureManagementModal li {
   list-style: none;
 }
-#pictureManagementModal .modal-dialog{
+
+#pictureManagementModal .modal-dialog {
   width: 900px;
 }
-#pic-management:hover{
+
+#pic-management:hover {
   background-color: @purple;
-  color:@white;
+  color: @white;
 }
 
-.modal-pic-body{
-  border:0 none;
+.modal-pic-body {
+  border: 0 none;
 }
 
-.modal-pic-left{
-  border-right:1px solid @grey;
-  height: 550px;
+.modal-pic-left {
+  border-right: 1px solid @grey;
+  height: 570px;
   //border:1px solid red;
 }
-.modal-pic-left ul li{
+
+.modal-pic-left ul li {
   text-align: left;
-  height:32px;
+  height: 32px;
   line-height: 32px;
   padding-left: 10px;
 }
-.modal-pic-left ul li.active a{
-  color:@purple;
-}
-.modal-pic-left ul li a:hover{
-  color:@purple;
+
+.modal-pic-left ul li.active a {
+  color: @purple;
 }
 
-.modal-pic-right{
-  height: 550px;
+.modal-pic-left ul li a:hover {
+  color: @purple;
+}
+
+.modal-pic-right {
+  height: 570px;
   //border:1px solid red;
 }
-.button-upload-local{
+
+.button-upload-local {
   height: 28px;
   line-height: 28px;
-  width:76px;
+  width: 76px;
   text-align: center;
-  background-color:@purple;
-  color:@white;
+  background-color: @purple;
+  color: @white;
   display: inline-block;
   border-radius: 5px;
-  cursor:pointer;
+  cursor: pointer;
   margin-top: 15px;
   margin-left: 10px;
 
 }
-.chose_checkbox_label{
-  margin-right:20px;
+
+.chose_checkbox_label {
+  margin-right: 20px;
 }
-.modal-right-header{
+
+.modal-right-header {
   height: 100px;
 }
-.modal-right-header .img-text{
-  font-size:16px;
+
+.modal-right-header .img-text {
+  font-size: 16px;
 }
-.modal-right-header .operation-area{
+
+.modal-right-header .operation-area {
   margin-top: 20px;
 }
-.modal-right-header .operation-area a.button{
+
+.modal-right-header .operation-area a.button {
   height: 28px;
   line-height: 28px;
   width: 76px;
   text-align: center;
   border: 1px solid @grey;
-  color:#444;
+  color: #444;
   display: inline-block;
   border-radius: 5px;
   margin-right: 10px;
 }
-.modal-right-header .operation-area .active{
+
+.modal-right-header .operation-area .active {
   background-color: #e7e7eb;
   border-color: #dadbe0;
   color: #a5a6aa;
   cursor: default;
 }
-.modal-right-header .padd{
+
+.modal-right-header .padd {
   padding-left: 15px;
 }
-.modal-right-header .text-right{
+
+.modal-right-header .text-right {
   text-align: right;
 }
 
-#img-list-warp{
-  height: 450px;
+#img-list-warp {
+  height: 470px;
   margin-left: 15px;
-  border-top:1px solid @light-grey;
-  //overflow-y: scroll;
-  overflow-x: hidden;
+  border-top: 1px solid @light-grey;
 
 }
-#img-list-warp li,#img-list-warp ul{
+#img-list-warp ul {
+  min-height: 400px;
+}
+
+#img-list-warp li, #img-list-warp ul {
   padding: 0;
   margin: 0;
 }
-#img-list-warp li.img-item{
-  float:left;
+
+#img-list-warp li.img-item {
+  float: left;
   text-align: center;
   margin-top: 10px;
-  margin-right:15px;
+  margin-right: 15px;
   border: 1px solid #e7e7eb;
 }
-#img-list-warp .bg-warp{
+
+#img-list-warp .bg-warp {
   position: relative;
 
 }
+
 #img-list-warp .bg-warp .cover {
   display: block;
   background-repeat: no-repeat;
   background-position: center center;
   background-size: cover;
-  width:180px;
-  height:130px;
+  width: 180px;
+  height: 130px;
 
 }
-.check-content{
+
+.check-content {
   height: 32px;
   line-height: 32px;
   display: block;
   overflow: hidden;
 }
-.checkbox-label{
+
+.checkbox-label {
   display: inline-block;
   text-align: left;
   cursor: pointer;
 }
-.checkbox-label .input-checkbox{
+
+.checkbox-label .input-checkbox {
   vertical-align: 12px;
   margin-right: 0;
 }
-.bottom-content{
+
+.bottom-content {
   height: 32px;
   line-height: 32px;
   text-align: left;
@@ -234,27 +259,28 @@
   width: 118px;
 
 }
-.list-card-ft{
+
+.list-card-ft {
   background-color: #f4f5f9;
   border-top: 1px solid #e7e7eb;
   text-align: center;
   height: 30px;
 }
-.list-card-ft ul li{
+
+.list-card-ft ul li {
   width: 33.3%;
   float: left;
   height: 30px;
   line-height: 30px;
 }
 
-
-.create-group-div{
-  width:250px;
-  height:170px;
+.create-group-div {
+  width: 250px;
+  height: 170px;
   position: absolute;
   z-index: 9999;
   top: 200px;
-  left:200px;
+  left: 200px;
   border: 1px solid #d9dadc;
   word-wrap: break-word;
   word-break: break-all;
@@ -264,23 +290,26 @@
   -moz-box-shadow: none;
   -webkit-box-shadow: none;
 }
-.create-group-text{
+
+.create-group-text {
 
 }
-.create-group-div .category-input{
+
+.create-group-div .category-input {
   display: inline-block;
   position: relative;
   height: 30px;
   line-height: 30px;
   vertical-align: middle;
-  width:185px;
+  width: 185px;
   font-size: 14px;
   padding: 0 10px;
   border: 1px solid #e7e7eb;
   background-color: #fff;
   margin-top: 10px;
 }
-.create-group-div a.btn-tool{
+
+.create-group-div a.btn-tool {
 
   width: 76px;
   height: 28px;
@@ -290,17 +319,59 @@
   text-align: center;
   display: inline-block;
 
-
 }
-.btn-commit{
-  background-color:@purple;
+
+.btn-commit {
+  background-color: @purple;
   color: @white;
 
-
 }
-.btn-canncel{
+
+.btn-canncel {
   background-color: @white;
   border: 1px solid @light-grey;
   color: #666;
   margin-left: 33px;
+}
+
+//分页
+#paginationArea {
+  text-align: right;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid @light-grey;
+  width: 100%;
+}
+
+#paginationArea span.last-page,
+#paginationArea span.next-page,
+#paginationArea span.go-page {
+  width: 86px;
+  height: 28px;
+  line-height: 28px;
+  text-align: center;
+  background-color: @purple;
+  color: @white;
+  border-radius: 5px;
+  display: inline-block;
+  cursor: pointer;
+}
+
+#paginationArea .show-number {
+  padding: 0 15px;
+  font-size: 14px;
+
+}
+
+#paginationArea .input-number {
+  vertical-align: middle;
+  width: 75px;
+  height: 26px;
+  line-height: 26px;
+  padding: 0 2px;
+  border: 1px solid #666;
+  border-radius: 3px;
+  text-align: center;
+  font-size: 14px;
+  margin:0 5px;
 }
