@@ -202,11 +202,9 @@ router.get('/images/delete', function * () {
 });
 
 function * subImageCount4Category(imageList) {
-    let gr = _.groupBy(imageList, i => i.category);
+    let gr = _.groupBy(imageList, i => i.category || '');
     for(let k in  gr) {
-        if(k && k != 'null' || k != 'undefined') {
-            yield ImageCategory.update({_id: k}, {$inc: {imageCount: -gr[k].length}});
-        }
+        if (k) yield ImageCategory.update({_id: k}, {$inc: {imageCount: -gr[k].length}});
     }
 }
 

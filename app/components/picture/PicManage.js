@@ -21,6 +21,7 @@ export default class extends Component {
             }
         });
 
+        this.categoryId = '';
         this.images = [];
     }
 
@@ -29,6 +30,8 @@ export default class extends Component {
             this.modal.open();
         };
     };
+
+
 
 
     __loadTypes__ = callback => {
@@ -61,18 +64,20 @@ export default class extends Component {
 
     //删除图片
     __deleteImageList__ = imageIds => {
-        $.get('/images/delete', {image: imageIds}, json => {
-            if (json.status == "ok") {
+        this.confirm('是否确定删除该图片?', () => {
+            $.get('/images/delete', {image: imageIds}, json => {
+                if (json.status == "ok") {
 
-                for (let imageId of imageIds) {
-                    let index = this.images.findIndex(img => img._id == imageId);
-                    if (index != -1) this.images.splice(index, 1);
+                    for (let imageId of imageIds) {
+                        let index = this.images.findIndex(img => img._id == imageId);
+                        if (index != -1) this.images.splice(index, 1);
+                    }
+                    this.__buildImageUl__();
+                    if (this.images.length < 1) {
+                        this.__disableStatus__();
+                    }
                 }
-                this.__buildImageUl__();
-                if (this.images.length < 1) {
-                    this.__disableStatus__();
-                }
-            }
+            });
         });
     };
 
@@ -109,10 +114,10 @@ export default class extends Component {
             let $libgImg = $(` <span class="cover" style="background-image:url(http://editor.static.cceato.com/${item.key});">
                            </span>`);
             let $licheckbox = $(`<span class="check-content">
-                                                  <label class="checkbox-label" for="${item._id}">
-                                                      <input type="checkbox" class="input-checkbox" name="inputcheckbox"  id="${item._id}"><i class=" "></i>
-                                                          <span class="bottom-content">${item.name}</span>
-                                                  </label>
+                                  <label class="checkbox-label" for="${item._id}">
+                                      <input type="checkbox" class="input-checkbox" name="inputcheckbox"  id="${item._id}"><i class=" "></i>
+                                          <span class="bottom-content">${item.name}</span>
+                                  </label>
                               </span>`);
 
             $licheckbox.click(() => {
@@ -152,6 +157,14 @@ export default class extends Component {
             let $moveGroup = $(`<li> <a href="javascript:;"><span><i class="fa fa-arrows"></i></span></a></li>`);
             let $deleteImage = $(`<li> <a href="javascript:;"><span><i class="fa fa-trash-o"></i></span></a></li>`);
 
+            //编辑图片名称
+            $editImageName.click(()=> {
+                alert("编辑图片名称");
+            });
+            //移动单个分组
+            $moveGroup.click( ()=> {
+                alert("移动单个分组");
+            });
 
             //删除单个图
             $deleteImage.click(()=> {
@@ -196,6 +209,7 @@ export default class extends Component {
                 $ul.append($liGetlist);
                 $liGetlist.click(this.__typeOnClick__(type, items => {
                     $liGetlist.addClass("active").siblings().removeClass("active");
+                    this.categoryId = type._id;
                     this.images = items;
                     if (this.images.length < 1) {
                         this.__disableStatus__();
@@ -207,6 +221,7 @@ export default class extends Component {
         });
 
 
+
         let $addGroup = $(`<li class="col col-md-12" style="padding-left: 10px;"><a href="javascript:;"> <i class="fa fa-plus"></i>新建分组</a></li>`);
 
         let $createGroupDiv = $(`<div class="create-group-div"></div>`);
@@ -214,10 +229,10 @@ export default class extends Component {
         let $createGroupInput = $(`<input type="text" value="111" class="category-input">`);
         let $btnCommit = $(`<a class="btn-tool btn-commit" href="javascript:;">确定</a>`);
         $btnCommit.click(() => {
-            $.post('/images/categories/save', {name: "测试目1"}, json => {
+            $.post('/images/categories/save', {name: "测试目2"}, json => {
                 if (json.status == "ok") {
                 }
-                $createGroupDiv.hide();
+                $createGroupDiv.remove();
             });
         });
         let $btnCanncel = $(`<a class="btn-tool btn-canncel" href="javascript:;">取消</a>`);
@@ -230,9 +245,19 @@ export default class extends Component {
         $createGroupDiv.append($btnCanncel);
         let $body = $('body');
 
-        $addGroup.click(function () {
-            $body.append($createGroupDiv);
+        $addGroup.popover({
+            trigger:'click',
+            template: '<div>1111111</div>',
+            html: true,
+            placement:"bottom",
+            title:"这是一个弹出层",
+            content:"这特么的是内容！"
+
         });
+        $addGroup.popover('show');
+        //$addGroup.click(function () {
+        //    $body.append($createGroupDiv);
+        //});
         $addGroup.insertAfter($ul);
 
 
@@ -272,17 +297,6 @@ export default class extends Component {
         $rightHeaderLeft.append($operationArea);
 
 
-        /*$buttonDelete.on("click", ()=> {
-         var arrayCheckbox = document.getElementsByName('inputcheckbox');
-         var arrayImageId = [];
-         for (var i = 0; i < arrayCheckbox.length; i++) {
-         if (arrayCheckbox[i].checked) {
-         arrayImageId.push(arrayCheckbox[i].id)
-         }
-         }
-         this.__deleteImageList__(arrayImageId);
-         });*/
-
 
         //全选,全不选以及相应的删除和移动分组功能
         $buttonChooseAll.click(() => {
@@ -295,7 +309,7 @@ export default class extends Component {
                     this.__activeStatus__();
 
                     $buttonMoveCategory.on("click", ()=> {
-                        alert("move");
+                        alert("多个移动分组");
                     });
 
                     $buttonDelete.on("click", ()=> {
@@ -320,7 +334,7 @@ export default class extends Component {
 
         let $buttonUpload = $(`<span>大小不超过2M</span><span class="button-upload-local">本地上传</span>`);
         $buttonUpload.click(() => {
-            this.upload.click();
+            this.upload.uploadWithCategory(this.categoryId);
         });
         $rightHeaderRight.append($buttonUpload);
 
