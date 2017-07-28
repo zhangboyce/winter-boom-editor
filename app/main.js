@@ -4,4 +4,4 @@ import App from './App';
 
 let app = new App();
 
-$('#winter-boom-editor').html(app.rendered());
+$('#winter-boom-editor').html(app);

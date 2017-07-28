@@ -13,13 +13,13 @@ export default class extends Component {
         this.columnStyle = new ColumnStyle({ editor: this.columnEditor });
         this.columnArticle = new ColumnArticle({ editor: this.columnEditor });
 
-        this.inject();
+        this.rendered();
     }
 
-    __rendered__() {
-        this.append(this.columnStyle.render());
-        this.append(this.columnEditor.render());
-        this.append(this.columnArticle.render());
+    rendered() {
+        this.append(this.columnStyle);
+        this.append(this.columnEditor);
+        this.append(this.columnArticle);
     }
 
     render() {

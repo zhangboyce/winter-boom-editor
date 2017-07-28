@@ -6,54 +6,62 @@ export default class extends Component {
     constructor(props){
         super(props);
 
-        this.$sourceInput = {};
-        this.$digestTextarea = {};
+        this.$sourceInput = null;
+        this.$digestTextarea = null;
+
+        this.rendered();
     }
 
-    getDigest = () => {
-        return this.$digestTextarea.val();
+    rendered = () => {
+        this.$sourceInput = this.find('.col-editor-footer-source input');
+        this.$digestTextarea = this.find('.col-editor-footer-digest textarea');
     };
 
-    getSource = () => {
-        return this.$sourceInput.val();
+    digest = val => {
+        if (val == undefined) {
+            return this.$digestTextarea.val();
+        } else {
+            this.$digestTextarea.val(val);
+        }
     };
 
-    setDigest = digest => {
-        this.$digestTextarea.val(digest);
-    };
-
-    setSource = source => {
-        this.$sourceInput.val(source);
+    source = val => {
+        if (val == undefined) {
+            return this.$sourceInput.val();
+        } else {
+            this.$sourceInput.val(val);
+        }
     };
 
     clear = () => {
-        this.setDigest('');
-        this.setSource('');
+        this.digest('');
+        this.source('');
+    };
+
+    isEmpty = () => {
+        let digest = this.digest();
+        let source = this.source();
+
+        return !(digest && digest.trim() || source && source.trim());
     };
 
     render() {
-        let $editorFooter = $(`<div class="row col-editor-footer"></div>`);
-
-        let $sourceEditor = $(`<div class="col-editor-footer-source"></div>`);
-        this.$sourceInput = $('<input type="text" placeholder="请输入原文链接"/>');
-        let $label = $(`<label>原文链接</label>`);
-        $sourceEditor.append($label);
-        $sourceEditor.append($(`<div></div>`).append(this.$sourceInput));
-
-        let $digestEditor = $(
-            `<div class="col-editor-footer-digest">
-                <div>
-                    <label>摘要</label>
-                    <span>选填，如果不填写会默认抓取正文前54个字</span>
+        return $(`
+            <div class="row col-editor-footer">
+                <div class="col-editor-footer-source">
+                    <label>原文链接</label>
+                    <div>
+                        <input type="text" placeholder="请输入原文链接" />
+                    </div>
                 </div>
-            </div>`
-        );
-        this.$digestTextarea = $('<textarea></textarea>');
-        $digestEditor.append(this.$digestTextarea);
-
-        $editorFooter.append($sourceEditor);
-        $editorFooter.append($digestEditor);
-
-        return $editorFooter;
+                <div class="col-editor-footer-digest">
+                    <div>
+                        <label>摘要</label>
+                        <span>选填，如果不填写会默认抓取正文前54个字</span>
+                    </div>
+                    <textarea></textarea>
+                </div>
+            </div>
+        `);
     }
 }

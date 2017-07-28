@@ -3,10 +3,9 @@ import Component from './Component';
 import { isFunction } from '../../common/TypeUtils';
 
 export default class extends Component {
-
     constructor(props) {
         super(props);
-        this.inject();
+        this.rendered();
     }
 
     __handleLogout__ = () => {
@@ -16,9 +15,8 @@ export default class extends Component {
         });
     };
 
-    __rendered__() {
+    rendered = () => {
         let modules = window.modules || [];
-
         let menus = [];
         menus.push(new DropdownMenu({ name: '个人设置', href: window.config['SSO_SERVER'] + '/userCenter/info', icon: 'fa icon-users' }));
         menus.push(new DropdownMenu({ name: '修改密码', href: window.config['SSO_SERVER'] + '/userCenter/account', icon: 'fa fa-gear' }));
@@ -36,7 +34,7 @@ export default class extends Component {
             }
             $dropdownMenu.append(menu);
         });
-    }
+    };
 
     render() {
         let account = window.account || {};
@@ -51,9 +49,7 @@ export default class extends Component {
                                 &nbsp;${ account.nickname || account.username }
                             </span>
                         </a>
-                        <ul class="dropdown-menu">
-
-                        </ul>
+                        <ul class="dropdown-menu"></ul>
                     </li>
                 </ul>
             </div>`
@@ -65,10 +61,10 @@ class DropdownMenu extends Component {
 
     constructor(props) {
         super(props);
-        this.inject();
+        this.rendered();
     }
 
-    __rendered__() {
+    rendered() {
         let onClick = this.onClick;
         if (onClick && isFunction(onClick)) {
             this.click(() => {

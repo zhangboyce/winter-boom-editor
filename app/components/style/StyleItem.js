@@ -4,10 +4,8 @@ import Component from './../Component';
 import { isArray } from '../../../common/TypeUtils';
 
 export default class extends Component {
-
     constructor(props) {
         super(props);
-        this.$columnItem = $(`<div class="col col-md-10 col-style-item"></div>`);
     }
 
     __section__ = style => {
@@ -23,8 +21,8 @@ export default class extends Component {
     setItems = items => {
         if (!isArray(items)) return;
 
-        this.$columnItem.html('');
-        let $ul = $('<ul></ul>').appendTo(this.$columnItem);
+        this.html('');
+        let $ul = $('<ul></ul>').appendTo(this);
         items.forEach(style => {
             let $li = $(`<li rel="${style._id}"></li>`).appendTo($ul);
             $li.append(this.__section__(style));
@@ -37,6 +35,6 @@ export default class extends Component {
     };
 
     render() {
-        return this.$columnItem;
+        return $(`<div class="col col-md-10 col-style-item"></div>`);
     }
 }

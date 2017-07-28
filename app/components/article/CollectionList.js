@@ -7,10 +7,10 @@ import Component from './../Component';
 import Modal from '../common/Modal';
 
 export default class extends Component {
-
     constructor(props) {
         super(props);
         this.modal = new Modal({ id: 'collectionArticleModal' });
+        this.rendered();
     }
 
     __supplyText__ = data => {
@@ -91,20 +91,6 @@ export default class extends Component {
 
     __showArticleDetails__ = c => {
         $.getJSON('/collection/getText/' + c._id, pt => {
-            let $t = $(`<div class="modal-body boom-content">
-                    <div class="boom-content-header">
-                        <div class="title-box col-xs-9">
-                            <div class="title">${c.title}</div>
-                            <!--<div class="extend"><span>/ </span>2016-10-31</div>-->
-                        </div>
-                        <div class="views-box col-xs-3 row">
-                            <div class="views col-sm-6"><span class="number">${c.views}</span>Views</div>
-                            <div class="views col-sm-6"><span class="number">${c.likes}</span>Likes</div>
-                        </div>
-                        <div style="clear: both;"></div>
-                    </div>
-
-                </div>`);
 
             let $header = $('<div class="collection-content-header"></div>');
             $header.append(`<h4>${c.title}</h4>`);
@@ -136,7 +122,7 @@ export default class extends Component {
         });
     };
 
-    render() {
+    rendered = () => {
         this.__getCollectionList__(list => {
             list.forEach(c => {
                 let card = $(`<div class="card bg-white card-simple">
@@ -148,11 +134,12 @@ export default class extends Component {
                             </div>`).click(e => {
                     this.__showArticleDetails__(c);
                 });
-                card.appendTo($collectionList);
+                card.appendTo(this);
             });
         });
-        let $collectionList = $(`<div class="col col-md-12 collection-list-container"></div>`);
+    };
 
-        return $collectionList;
+    render() {
+        return $(`<div class="col col-md-12 collection-list-container"></div>`);
     }
 }

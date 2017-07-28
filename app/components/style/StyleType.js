@@ -6,7 +6,9 @@ export default class extends Component {
 
     constructor(props) {
         super(props);
-        this.picManage = new PicManage();
+        //this.picManage = new PicManage();
+
+        this.rendered();
     }
 
     __loadTypes__ = callback => {
@@ -47,8 +49,11 @@ export default class extends Component {
         };
     };
 
-    render() {
-        let $ul = $(`<ul></ul>`);
+    rendered = () => {
+        let $ul = this.children('ul');
+        this.find('#pic-management').click(() => {
+            //this.picManage.open()
+        });
 
         this.__loadTypes__(types => {
             types.forEach(type => {
@@ -74,16 +79,14 @@ export default class extends Component {
             });
             $ul.children('li').eq(1).click();
         });
+    };
 
-
-        let $imgManagement = $('<div id="pic-management" data-toggle="modal" data-target="#myModal">图片管理</div>');
-        $imgManagement.click(this.picManage.open());
-
-        $imgManagement.trigger( "click" );
-
-        let $styleTypes = $(`<div class="col col-md-2 col-style-type"></div>`);
-        $styleTypes.append($ul);
-        $styleTypes.append($imgManagement);
-        return $styleTypes;
+    render() {
+        return $(`
+            <div class="col col-md-2 col-style-type">
+                <ul></ul>
+                <div id="pic-management" data-toggle="modal" data-target="#myModal">图片管理</div>
+            </div>
+        `);
     }
 }

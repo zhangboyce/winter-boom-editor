@@ -9,10 +9,10 @@ export default class extends Component {
         this.header = new Header();
         this.main = new Main();
 
-        this.inject();
+        this.rendered();
     }
 
-    __rendered__() {
+    rendered() {
         this.append(this.header);
         this.append(this.main);
     }

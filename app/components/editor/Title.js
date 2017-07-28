@@ -6,83 +6,94 @@ export default class extends Component {
     constructor(props){
         super(props);
 
-        this.$titleInput = $('<input name="title" type="text" placeholder="请输入标题"/>');
-        this.$authorInput = $('<input name="author" type="text" placeholder="请输入作者"/>');
-        this.$coverImg = $(`<img src="/static/images/default_cover.jpg">`);
+        this.$titleInput = null;
+        this.$authorInput = null;
+        this.$coverImg = null;
 
-        this.upload = upload({
-            name: 'image',
-            url: () => ('/upload/image/'),
-            change: () => confirm('确认上传新图片？'),
-            success: result => {
-                let json = JSON.parse(result);
-                this.$coverImg.attr('src', 'http://editor.static.cceato.com/' + json.key);
-            }
-        });
-
-        this.$titleCover = $(`<div class="title">标题</div>`);
-        this.$titleInput.keyup(() => {
-            let val = this.$titleInput.val();
-            val = (val && val.trim()) || '标题';
-            this.$titleCover.text(val.trim());
-        });
+        this.rendered();
     }
 
-    getTitle = () => {
-        return this.$titleInput.val();
+    title = val => {
+        if (val == undefined) {
+            return this.$titleInput.val();
+        } else {
+            this.$titleInput.val(val);
+        }
     };
 
-    setTitle = title => {
-        this.$titleInput.val(title);
+    author = val => {
+        if (val == undefined) {
+            return this.$authorInput.val();
+        } else {
+            this.$authorInput.val(val);
+        }
     };
 
-    getAuthor = () => {
-        return this.$authorInput.val();
-    };
-
-    setAuthor = author => {
-        this.$authorInput.val(author);
-    };
-
-    getCover = () => {
-        return this.$coverImg.attr('src');
-    };
-
-    setCover = cover => {
-        if(cover) {
-            this.$coverImg.attr('src', cover);
-        }else {
-            this.$coverImg.removeAttr('src');
+    cover = val => {
+        if (val == undefined) {
+            return this.$coverImg.val();
+        } else {
+            if(val) {
+                this.$coverImg.attr('src', val);
+            }else {
+                this.$coverImg.removeAttr('src');
+            }
         }
     };
 
     clear = () => {
-        this.setTitle('');
-        this.setAuthor('');
-        this.setCover('');
+        this.title('');
+        this.author('');
+        this.cover('');
+    };
+
+    rendered = () => {
+        this.$coverImg = this.find('.cover > img');
+
+        let $cover = this.find('.cover');
+        let $cover_desc;
+        $cover.click(() => {
+            upload({
+                name: 'image',
+                url: () => ('/upload/image/'),
+                change: () => confirm('确认上传新图片？'),
+                success: result => {
+                    let json = JSON.parse(result);
+                    this.cover('http://editor.static.cceato.com/' + json.key);
+                }
+            }).click();
+        }).hover(() => {
+            $cover_desc = $(`<div class="cover-desc">添加封面</div>`);
+            $cover.append($cover_desc);
+        }, () => {
+            $cover_desc.remove();
+        });
+
+        this.$titleInput = this.find('input[name="title"]');
+        this.$authorInput = this.find('input[name="author"]');
+
+        let $titleCover = this.find('.title');
+        this.$titleInput.keyup(() => {
+            let val = this.$titleInput.val();
+            val = (val && val.trim()) || '标题';
+            $titleCover.text(val.trim());
+        });
     };
 
     render() {
-        let $titlePanel = $(`<div class="row col-editor-title"></div>`);
-        let $titlePanelLeft = $(`<div class="col-md-8"></div>`);
-        let $titlePanelRight = $(`<div class="col-md-4"></div>`);
-        $titlePanel.append($titlePanelLeft);
-        $titlePanel.append($titlePanelRight);
-
-        $titlePanelLeft.append(this.$titleInput);
-        $titlePanelLeft.append(this.$authorInput);
-
-        let $coverDiv = $(`<div class="cover"></div>`);
-        $titlePanelRight.append($coverDiv);
-        $titlePanelRight.append(this.$titleCover);
-
-        $coverDiv.append(`<div>添加封面</div>`);
-        $coverDiv.append(this.$coverImg);
-
-        $coverDiv.click(() => {
-            this.upload.click();
-        });
-
-        return $titlePanel;
+        return $(`
+            <div class="row col-editor-title">
+                <div class="col-md-8">
+                    <input name="title" type="text" placeholder="请输入标题" />
+                    <input name="author" type="text" placeholder="请输入作者" />
+                </div>
+                <div class="col-md-4">
+                    <div class="cover">
+                        <img src="/static/images/default_cover.jpg">
+                    </div>
+                    <div class="title">标题</div>
+                </div>
+            </div>
+        `);
     }
 }

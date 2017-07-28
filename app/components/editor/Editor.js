@@ -14,6 +14,8 @@ export default class extends Component {
         this.editable = {};
         this.lastSection = '';
         this.styleTool = {};
+
+        this.rendered();
     }
 
     insert = $node => {
@@ -43,12 +45,12 @@ export default class extends Component {
         return dom.isEmpty(this.editable[0]) || dom.emptyPara === this.editable.html();
     };
 
-    getContent = () => {
-        return this.context.invoke('editor.isEmpty') ? '' : this.context.code()
-    };
-
-    setContent = content => {
-        this.context.code(content || '');
+    content = val => {
+        if (val == undefined) {
+            return this.context.invoke('editor.isEmpty') ? '' : this.context.code()
+        } else {
+            this.context.code(val || '');
+        }
     };
 
     __insertSection__ = $node => {
@@ -143,11 +145,10 @@ export default class extends Component {
         }
     };
 
-    render() {
-        let $wrapper = $(`<div class="row col-editor-wrapper"></div>`);
-        let $editorDom = $('<div style="width: 100%;height: 100%;"></div>');
+    rendered = () => {
+        let $editorDom = $(`<div id="editor-dom" style="width: 100%;height: 100%;"></div>`);
+        this.append($editorDom);
 
-        $wrapper.append($editorDom);
         this.__buildSummerEditor__($editorDom);
 
         this.editorDom = $editorDom;
@@ -168,7 +169,11 @@ export default class extends Component {
         this.editable.css('min-height', editorHeight)
             .parent().css('min-height', editorHeight)
             .parent().css('min-height', editorHeight);
+    };
 
-        return $wrapper;
+    render() {
+         return $(`
+            <div class="row col-editor-wrapper"></div>`
+        );
     }
 }

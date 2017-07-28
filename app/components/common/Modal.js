@@ -1,16 +1,15 @@
 'use strict';
 
-export default class {
+export default class  {
     constructor(props) {
         this.$header = null;
         this.$body = null;
         this.$footer = null;
-
         this.id = props.id;
     }
 
     open = options => {
-        $('body').append(this.render());
+        $('body').append(this.rendered());
 
         let $this = $('#' + this.id);
         $this.modal(options);
@@ -24,33 +23,38 @@ export default class {
         $('#' + this.id).modal('hide');
     };
 
+    rendered = () => {
+        let $this = this.render();
+        let $content = $this.find('.modal-content');
+
+        if (this.$header) {
+            let $modal_header = $(`
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true" style="font-size: 32px">&times;</span>
+                    </button>
+                </div>
+            `);
+            $modal_header.append(this.$header);
+            $content.append($modal_header);
+        }
+        this.$body && $content.append($(`<div class="modal-body"></div>`).append(this.$body));
+        this.$footer && $content.append($(`<div class="modal-footer"></div>`).append(this.$footer));
+
+        $this.attr('id', this.id);
+
+        return $this;
+    };
+
     render() {
-        let $header = $(`<div class="modal-header"></div>`);
-        $header.append(`
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true" style="font-size: 32px">&times;</span>
-            </button>`
-        );
-        $header.append(this.$header);
+        return $(`
+            <div class="modal fade" tabindex="-1" role="dialog" aria-hidden="true" aria-labelledby="modalLabel">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
 
-        let $body = $(`<div class="modal-body"></div>`);
-        $body.append(this.$body);
-
-        let $footer = $(`<div class="modal-footer"></div>`);
-        $footer.append(this.$footer);
-
-        let $content = $(`<div class="modal-content"></div>`);
-        this.$header && $content.append($header);
-        this.$body && $content.append($body);
-        this.$footer && $content.append($footer);
-
-        let $modal = $(`
-            <div class="modal fade" id=${ this.id } tabindex="-1" role="dialog" aria-hidden="true" aria-labelledby="modalLabel">
-            </div>`
-        );
-        let $dialog = $(`<div class="modal-dialog" role="document"></div>`);
-        $dialog.append($content).appendTo($modal);
-
-        return $modal;
+                    </div>
+                </div>
+            </div>
+        `)
     }
 }

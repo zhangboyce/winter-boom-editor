@@ -9,19 +9,25 @@ export default class extends Component {
 
         this.styleType = new StyleType({ parent: this });
         this.styleItem = new StyleItem({ parent: this });
+
+        this.rendered();
     }
 
     getItems = items => {
         this.styleItem.setItems(items);
     };
 
+    rendered = () => {
+        let $row = this.find('.row');
+        $row.append(this.styleType);
+        $row.append(this.styleItem);
+    };
+
     render() {
-        let $columnStyle = $(`<div class="col col-md-4 col-style"></div>`);
-        let $row = $(`<div class="row"></div>`).appendTo($columnStyle);
-
-        $row.append(this.styleType.render());
-        $row.append(this.styleItem.render());
-
-        return $columnStyle;
+        return $(`
+            <div class="col col-md-4 col-style">
+                <div class="row"></div>
+            </div>`
+        );
     }
 }

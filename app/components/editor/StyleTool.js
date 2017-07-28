@@ -135,7 +135,7 @@ function StyleTool(editable, options = {}) {
         });
 
         clipboard.on('error', function(e) {
-            callback && callback('success');
+            callback && callback('error');
             document.removeEventListener('copy', handleCopy);
             e.clearSelection();
             clipboard.destroy();

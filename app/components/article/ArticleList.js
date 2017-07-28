@@ -2,13 +2,19 @@
 import _ from 'lodash';
 import Component from './../Component';
 import SyncArticle from './SyncArticle';
-export default class extends Component {
 
+export default class extends Component {
     constructor(props) {
         super(props);
-        this.$articleList = $('<div class="body-content"></div>');
+        this.$articleList = {};
         this.articles = [];
+
+        this.rendered();
     }
+
+    empty = () => {
+        this.$articleList.empty();
+    };
 
     addArticle = article => {
         if (!article) return;
@@ -99,18 +105,27 @@ export default class extends Component {
         });
     };
 
-    render() {
-        let $column = $(`<div class=" col col-md-12 article-list-container"></div>`);
-        $column.append($('<div class="header-content"></div>').append($('<div class="sync-article-btn">同步文章</div>').click(() => {
-            SyncArticle();
-        })));
-        $column.append(this.$articleList);
-
+    rendered = () => {
+        this.$articleList = this.find('.body-content');
         this.__getArticleList__(() => {
             this.articles.forEach(article => {
                 this.$articleList.append(this.__build$Article__(article));
             });
         });
-        return $column;
+
+        this.find('.sync-article-btn').click(() => {
+            SyncArticle();
+        });
+    };
+
+    render() {
+        return $(`
+            <div class=" col col-md-12 article-list-container">
+                <div class="header-content">
+                    <div class="sync-article-btn">同步文章</div>
+                </div>
+                <div class="body-content"></div>
+            </div>
+        `);
     }
 }

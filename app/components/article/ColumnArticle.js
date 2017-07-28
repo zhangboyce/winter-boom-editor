@@ -9,6 +9,8 @@ export default class extends Component {
         super(props);
         this.articleList = new ArticleList({ parent: this });
         this.collectionList = new CollectionList({ parent: this });
+
+        this.rendered();
     }
 
     showArticle = article => {
@@ -19,41 +21,46 @@ export default class extends Component {
         this.articleList.addArticle(article);
     };
 
-    render() {
-        let $columnArticle = $(`<div class="col col-md-2 col-article"></div>`);
-        let $row = $(`<div class="row"></div>`).appendTo($columnArticle);
-        let $tabNavbar = $('<div class="col col-md-2 tab-nav-bar"></div>');
-        $row.append($tabNavbar);
+    rendered = () => {
+        let $articleList = this.find('.article-list');
+        let $collectionList = this.find('.collection-list');
+        let $leftTab = this.find('.save-article-bar');
+        let $rightTab = this.find('.collection-article-bar');
 
-        let $List = $('<div class="col change-list"></div>');
-        $List.appendTo($row);
-        let $articleList = $('<div class="col article-list"></div>');
-        let $collectionList = $('<div class="col collection-list"></div>');
-        $List.append($articleList);
-        $List.append($collectionList);
-
-        let $leftTab = $(`<span class="col col-md-6 save-article-bar">保存的文章</span>`);
         $leftTab.click(() => {
             $leftTab.addClass("active").siblings().removeClass("active");
             $articleList.empty();
-
-            $articleList.append(this.articleList.render());
+            $articleList.append(this.articleList);
             $articleList.show();
             $collectionList.hide();
-        }).appendTo($tabNavbar);
+        });
 
-        let $rightTab = $(`<span class="col col-md-6 collection-article-bar">我的收藏</span>`);
         $rightTab.click(() => {
             $rightTab.addClass("active").siblings().removeClass("active");
             $collectionList.empty();
-            $('.body-content').empty();
-            $collectionList.append(this.collectionList.render());
+            this.articleList.empty();
+            $collectionList.append(this.collectionList);
             $articleList.hide();
             $collectionList.show();
-        }).appendTo($tabNavbar);
+        });
 
         $leftTab.click();
+    };
 
-        return $columnArticle;
+    render() {
+        return $(`
+            <div class="col col-md-2 col-article">
+                <div class="row">
+                    <div class="col col-md-2 tab-nav-bar">
+                        <span class="col col-md-6 save-article-bar">保存的文章</span>
+                        <span class="col col-md-6 collection-article-bar">我的收藏</span>
+                    </div>
+                    <div class="col change-list">
+                        <div class="col article-list"></div>
+                        <div class="col collection-list"></div>
+                    </div>
+                </div>
+            </div>
+        `)
     }
 }

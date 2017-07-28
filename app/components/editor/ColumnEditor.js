@@ -8,7 +8,6 @@ import Message from '../common/Message';
 import ConfirmModal from '../common/ConfirmModal';
 
 export default class extends Component {
-
     constructor(props) {
         super(props);
         this.title = new Title({ parent: this});
@@ -16,6 +15,8 @@ export default class extends Component {
         this.editorFooter = new EditorFooter({ parent: this });
         this.operator = new Operator({ parent: this});
         this.originArticle = new Article({});
+
+        this.rendered()
     }
 
     insert = $node => {
@@ -26,12 +27,12 @@ export default class extends Component {
         this.__check__(() => {
             this.originArticle = new Article(article);
 
-            this.title.setTitle(article.title || '');
-            this.title.setAuthor(article.author || '');
-            this.title.setCover(article.cover || '');
-            this.editorFooter.setSource(article.source || '');
-            this.editorFooter.setDigest(article.digest || '');
-            this.editor.setContent(article.content || '');
+            this.title.title(article.title || '');
+            this.title.author(article.author || '');
+            this.title.cover(article.cover || '');
+            this.editorFooter.source(article.source || '');
+            this.editorFooter.digest(article.digest || '');
+            this.editor.content(article.content || '');
         });
     };
 
@@ -94,23 +95,24 @@ export default class extends Component {
 
     __getArticle__ = () => {
         return new Article({
-            title: this.title.getTitle(),
-            author: this.title.getAuthor(),
-            cover: this.title.getCover(),
-            source: this.editorFooter.getSource(),
-            digest: this.editorFooter.getDigest() ,
-            content: this.editor.getContent()
+            title: this.title.title(),
+            author: this.title.author(),
+            cover: this.title.cover(),
+            source: this.editorFooter.source(),
+            digest: this.editorFooter.digest() ,
+            content: this.editor.content()
         });
     };
 
-    render() {
-        let $columnEditor = $(`<div class="col col-md-6 col-editor"></div>`);
-        $columnEditor.append(this.title.render());
-        $columnEditor.append(this.editor.render());
-        $columnEditor.append(this.editorFooter.render());
-        $columnEditor.append(this.operator.render());
+    rendered() {
+        this.append(this.title);
+        this.append(this.editor);
+        this.append(this.editorFooter);
+        this.append(this.operator);
+    }
 
-        return $columnEditor;
+    render() {
+        return $(`<div class="col col-md-6 col-editor"></div>`);
     }
 }
 
@@ -127,7 +129,6 @@ function Article(options) {
     this.cover = options.cover || '';
     this.digest = options.digest || '';
     this.content = options.content || '';
-
 }
 
 Article.prototype.isEmpty = function() {

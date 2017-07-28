@@ -5,35 +5,38 @@ import upload from '../../utils/upload';
 export default class extends Component {
     constructor(props){
         super(props);
+
+        this.rendered();
     }
 
-    render() {
-        let $operator = $(`<div class="row col-editor-operator"></div>`);
-
-        let $saveBtn = $(`<span class="btn save">保存</span>`).appendTo($operator);
-        let $clearBtn = $(`<span class="btn">清空</span>`).appendTo($operator);
-        let $newBtn = $(`<span class="btn">新建</span>`).appendTo($operator);
-        let $copyBtn = $(`<span id="copy-all" class="btn">全文复制</span>`).appendTo($operator);
-        let $previewBtn = $(`<span class="btn">预览</span>`)//.appendTo($operator);
-
-        $saveBtn.click(() => {
+    rendered = () => {
+        this.find('.save').click(() => {
             this.parent.save(() => {
 
             });
         });
 
-        $clearBtn.click(() => {
+        this.find('.clear').click(() => {
             this.parent.clear();
         });
 
-        $newBtn.click(() => {
+        this.find('.new').click(() => {
             this.parent.deepClear();
         });
 
-        $copyBtn.click(() => {
+        this.find('.copy').click(() => {
             this.parent.editor.copy('#copy-all');
         });
+    };
 
-        return $operator;
+    render() {
+        return $(`
+            <div class="row col-editor-operator">
+                <span class="btn save">保存</span>
+                <span class="btn clear">清空</span>
+                <span class="btn new">新建</span>
+                <span id="copy-all" class="btn copy">全文复制</span>
+            </div>`
+        );
     }
 }
