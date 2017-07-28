@@ -91,12 +91,45 @@ export default class extends Component {
         });
     };
 
+    //创建新的分类
+    __createCategory__ = (imgname) => {
+
+        $.post('/images/categories/save', {name: imgname}, json => {
+            if (json.status == "ok") {
+                let $createGroupDiv = $(`<div class="create-group-div"></div>`);
+                $createGroupDiv.remove();
+            }
+
+        });
+    };
+
+    //编辑图片名称
+    __editImageName__ = (imageIds,imageName) =>{
+        $.post('/images/update/'+imageIds,{name:imageName}, json => {
+            if(json.status == "ok"){
+
+            }
+        });
+    };
+
+    //移动分组
+    __moveImageList__ = (imageIds, categoryId) => {
+        $.get('/images/move', {image: imageIds, category: categoryId}, json => {
+            if(json.status == "ok"){
+                for (let imageId of imageIds) {
+                    let index = this.images.findIndex(img => img._id == imageId);
+                    if (index != -1) this.images.splice(index, 1);
+                }
+                this.__buildImageUl__();
+            }
+        });
+    };
+
     //删除图片
     __deleteImageList__ = imageIds => {
         this.confirm('是否确定删除该图片?', () => {
             $.get('/images/delete', {image: imageIds}, json => {
                 if (json.status == "ok") {
-
                     for (let imageId of imageIds) {
                         let index = this.images.findIndex(img => img._id == imageId);
                         if (index != -1) this.images.splice(index, 1);
@@ -138,14 +171,11 @@ export default class extends Component {
 
     //构建图片list
     __buildImageUl__ = () => {
-
-
         let $images = $('#images');
         $images.html('');
         this.images.forEach(item => {
             let $liGetlist = $(` <li class="img-item"> </li>`);
             let $litop = $(`<div class="bg-warp"></div>`);
-
             let $libgImg = $(` <span class="cover" style="background-image:url(http://editor.static.cceato.com/${item.key});">
                            </span>`);
             let $licheckbox = $(`<span class="check-content">
@@ -172,12 +202,9 @@ export default class extends Component {
                 }
             });
 
-/*
-
             $(() => {
                 $('[data-toggle="tooltip"]').tooltip();
             });
-*/
 
             let $libottom = $('<div class="list-card-ft"></div>');
             let $liToolBar = $(`<ul></ul>`);
@@ -187,11 +214,24 @@ export default class extends Component {
 
             //编辑图片名称
             $editImageName.click(()=> {
-                alert("编辑图片名称");
+                this.__editImageName__(item._id,"changename.jpg");
             });
+
+            var editAlertHtml =`<div class="edit-image-alet">
+                                        
+                                </div>`;
+
+            $editImageName.popover({
+                trigger:'click',
+                placement:'bottom',
+                html:'true',
+                content:editAlertHtml,
+                animation:true
+            });
+
             //移动单个分组
             $moveGroup.click(()=> {
-                alert("移动单个分组");
+                this.__moveImageList__([item._id], "5979541d4faa98f06680a545");
             });
 
             //删除单个图
@@ -298,23 +338,23 @@ export default class extends Component {
         let $createGroupText = $(`<label class="create-group-text">创建分组</label>`);
         let $createGroupInput = $(`<input type="text" value="111" class="category-input">`);
         let $btnCommit = $(`<a class="btn-tool btn-commit" href="javascript:;">确定</a>`);
+
+        $addGroup.click(() => {
+            $ul.append($createGroupDiv);
+        });
         $btnCommit.click(() => {
-            $.post('/images/categories/save', {name: "测试目2"}, json => {
-                if (json.status == "ok") {
-                }
-                $createGroupDiv.remove();
-            });
+            this.__createCategory__("分类测试001");
+
         });
         let $btnCanncel = $(`<a class="btn-tool btn-canncel" href="javascript:;">取消</a>`);
         $btnCanncel.click(() => {
-            $createGroupDiv.hide();
+            $createGroupDiv.remove();
         });
         $createGroupDiv.append($createGroupText);
         $createGroupDiv.append($createGroupInput);
         $createGroupDiv.append($btnCommit);
         $createGroupDiv.append($btnCanncel);
         let $body = $('body');
-
         $addGroup.insertAfter($ul);
 
 
@@ -353,6 +393,7 @@ export default class extends Component {
         $operationArea.append($buttonDelete);
         $rightHeaderLeft.append($operationArea);
 
+        //多个删除
         $buttonDelete.on("click", () => {
             var arrayCheckbox = document.getElementsByName('inputcheckbox');
             var arrayImageId = [];
@@ -366,11 +407,20 @@ export default class extends Component {
             this.__deleteImageList__(arrayImageId);
         });
 
+        //多个移动分组
         $buttonMoveCategory.on("click", ()=> {
-            alert("多个移动分组");
+            var arrayCheckbox = document.getElementsByName('inputcheckbox');
+            var arrayImageId = [];
+            for (var i = 0; i < arrayCheckbox.length; i++) {
+                if (arrayCheckbox[i].checked) {
+                    arrayImageId.push(arrayCheckbox[i].id)
+                }
+            }
+            if (arrayImageId.length == 0) return;
+            this.__moveImageList__(arrayImageId, "5979541d4faa98f06680a545");
         });
 
-        //全选,全不选以及相应的删除和移动分组功能
+        //全选,全不选以及相应的样式变化
         $buttonChooseAll.click(() => {
             if (this.images.length < 1) {
                 this.__disableStatus__();
@@ -383,7 +433,6 @@ export default class extends Component {
                     this.__disableStatus__();
                 }
             }
-
         });
 
 
