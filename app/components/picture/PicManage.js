@@ -3,6 +3,7 @@ import _ from 'lodash';
 import Component from './../Component';
 import Modal from '../common/Modal';
 import upload from '../../utils/uploadImageNew';
+import { isFunction } from '../../../common/TypeUtils';
 
 
 export default class extends Component {
@@ -10,6 +11,7 @@ export default class extends Component {
         super(props);
         this.modal = new Modal({id: 'pictureManagementModal'});
         this.render();
+
 
         this.upload = upload({
             name: 'image',
@@ -21,8 +23,15 @@ export default class extends Component {
             }
         });
 
+        this.categoryId = '';
         this.images = [];
+
+        this.page = 1 / 1;
+        this.size = 6 / 1;
+        this.paginationInfo = {};
+        this.paginationInfo.maxPage = '';
     }
+
 
     open = () => {
         return () => {
@@ -43,36 +52,94 @@ export default class extends Component {
     __typeOnClick__ = (type, callback) => {
         return e => {
             e.stopPropagation();
-            this.__showImageCategoryList__(type, callback);
+            this.__showImageCategoryList__(type, callback, this.page, this.size);
         };
     };
 
 
     //不同分类显示不同图片
-    __showImageCategoryList__ = (type, callback) => {
-        $.get('/images/list', {categoryId: type._id}, json => {
+    __showImageCategoryList__ = (type, callback, page, size) => {
+        $.get('/images/list', {page: page, size: size, categoryId: type._id}, json => {
             let items = json.list;
-            if (typeof callback === 'function') {
+            this.paginationInfo = json.pagination;
+            $(".show-number").text(page + " / " + this.paginationInfo.maxPage);
+            if (items.length < 1) {
+                $('#paginationArea').css({"display": "none"});
+            } else {
+                $('#paginationArea').css({"display": "inline-block"});
+            }
+            if (this.paginationInfo.hasPrev === true) {
+                $('.last-page').css({"display": "inline-block"});
+            } else {
+                $('.last-page').css({"display": "none"});
+            }
+            if (this.paginationInfo.hasNext === false) {
+                $('.next-page').css({"display": "none"});
+            } else {
+                $('.next-page').css({"display": "inline-block"});
+            }
+            if (this.paginationInfo.hasPrev === false && this.paginationInfo.hasNext === false) {
+                $("#paginationArea").css({"display": "none"});
+            } else {
+                $("#paginationArea").css({"display": "inline-block"});
+            }
+
+            if (isFunction(callback)) {
                 callback(items);
             }
 
         });
     };
 
-    //删除图片
-    __deleteImageList__ = imageIds => {
-        $.get('/images/delete', {image: imageIds}, json => {
-            if (json.status == "ok") {
+    //创建新的分类
+    __createCategory__ = (imgname) => {
 
+        $.post('/images/categories/save', {name: imgname}, json => {
+            if (json.status == "ok") {
+                let $createGroupDiv = $(`<div class="create-group-div"></div>`);
+                $createGroupDiv.remove();
+            }
+
+        });
+    };
+
+    //编辑图片名称
+    __editImageName__ = (imageIds,imageName) =>{
+        $.post('/images/update/'+imageIds,{name:imageName}, json => {
+            if(json.status == "ok"){
+
+            }
+        });
+    };
+
+    //移动分组
+    __moveImageList__ = (imageIds, categoryId) => {
+        $.get('/images/move', {image: imageIds, category: categoryId}, json => {
+            if(json.status == "ok"){
                 for (let imageId of imageIds) {
                     let index = this.images.findIndex(img => img._id == imageId);
                     if (index != -1) this.images.splice(index, 1);
                 }
                 this.__buildImageUl__();
-                if (this.images.length < 1) {
-                    this.__disableStatus__();
-                }
             }
+        });
+    };
+
+    //删除图片
+    __deleteImageList__ = imageIds => {
+        this.confirm('是否确定删除该图片?', () => {
+            $.get('/images/delete', {image: imageIds}, json => {
+                if (json.status == "ok") {
+                    for (let imageId of imageIds) {
+                        let index = this.images.findIndex(img => img._id == imageId);
+                        if (index != -1) this.images.splice(index, 1);
+                    }
+                    this.__buildImageUl__();
+                    if (this.images.length < 1) {
+                        this.__disableStatus__();
+                    }
+                }
+            });
         });
     };
 
@@ -94,9 +161,13 @@ export default class extends Component {
         $buttonMoveCategory.attr("disabled", "disabled");
         $buttonDelete.addClass("active");
         $buttonDelete.attr("disabled", "disabled");
-        $buttonMoveCategory.off("click");
-        $buttonDelete.off("click");
     };
+
+    __loadImages__ = items => {
+        this.images = items;
+        this.__buildImageUl__();
+    };
+
 
     //构建图片list
     __buildImageUl__ = () => {
@@ -105,14 +176,13 @@ export default class extends Component {
         this.images.forEach(item => {
             let $liGetlist = $(` <li class="img-item"> </li>`);
             let $litop = $(`<div class="bg-warp"></div>`);
-
             let $libgImg = $(` <span class="cover" style="background-image:url(http://editor.static.cceato.com/${item.key});">
                            </span>`);
             let $licheckbox = $(`<span class="check-content">
-                                                  <label class="checkbox-label" for="${item._id}">
-                                                      <input type="checkbox" class="input-checkbox" name="inputcheckbox"  id="${item._id}"><i class=" "></i>
-                                                          <span class="bottom-content">${item.name}</span>
-                                                  </label>
+                                  <label class="checkbox-label" for="${item._id}">
+                                      <input type="checkbox" class="input-checkbox" name="inputcheckbox"  id="${item._id}"><i class=" "></i>
+                                          <span class="bottom-content">${item.name}</span>
+                                  </label>
                               </span>`);
 
             $licheckbox.click(() => {
@@ -123,41 +193,50 @@ export default class extends Component {
                         isTrue = true;
                         if (isTrue) {
                             this.__activeStatus__();
-                            let $buttonDelete = $('#js-delete-chose');
-                            $buttonDelete.on("click", ()=> {
-                                var arrayCheckbox = document.getElementsByName('inputcheckbox');
-                                var arrayImageId = [];
-                                for (var i = 0; i < arrayCheckbox.length; i++) {
-                                    if (arrayCheckbox[i].checked) {
-                                        arrayImageId.push(arrayCheckbox[i].id)
-                                    }
-                                }
-                                this.__deleteImageList__(arrayImageId);
-                            });
                         }
-
                     }
 
                     if (isTrue == false) {
                         this.__disableStatus__();
                     }
-
-
                 }
+            });
+
+            $(() => {
+                $('[data-toggle="tooltip"]').tooltip();
             });
 
             let $libottom = $('<div class="list-card-ft"></div>');
             let $liToolBar = $(`<ul></ul>`);
-            let $editImageName = $(`<li> <a href="javascript:;"><span><i class="fa fa-pencil"></i></span></a></li>`);
-            let $moveGroup = $(`<li> <a href="javascript:;"><span><i class="fa fa-arrows"></i></span></a></li>`);
-            let $deleteImage = $(`<li> <a href="javascript:;"><span><i class="fa fa-trash-o"></i></span></a></li>`);
+            let $editImageName = $(`<li> <a href="javascript:;" data-toggle="tooltip" data-placement="top" title="编辑名称"><span><i class="fa fa-pencil"></i></span></a></li>`);
+            let $moveGroup = $(`<li> <a href="javascript:;" data-toggle="tooltip" data-placement="top" title="移动分组"><span><i class="fa fa-arrows"></i></span></a></li>`);
+            let $deleteImage = $(`<li> <a href="javascript:;" data-toggle="tooltip" data-placement="top" title="删除"><span><i class="fa fa-trash-o"></i></span></a></li>`);
 
+            //编辑图片名称
+            $editImageName.click(()=> {
+                this.__editImageName__(item._id,"changename.jpg");
+            });
+
+            var editAlertHtml =`<div class="edit-image-alet">
+                                        
+                                </div>`;
+
+            $editImageName.popover({
+                trigger:'click',
+                placement:'bottom',
+                html:'true',
+                content:editAlertHtml,
+                animation:true
+            });
+
+            //移动单个分组
+            $moveGroup.click(()=> {
+                this.__moveImageList__([item._id], "5979541d4faa98f06680a545");
+            });
 
             //删除单个图
             $deleteImage.click(()=> {
-                let arrayImageId = [];
-                arrayImageId.push(item._id);
-                this.__deleteImageList__(arrayImageId);
+                this.__deleteImageList__([item._id]);
             });
 
             $liToolBar.append($editImageName);
@@ -177,6 +256,7 @@ export default class extends Component {
 
     render() {
 
+
         let $modalBody = $('<div class="modal-content modal-pic-body"></div>');
         let $row = $('<div class="row"></div>');
         let $col2 = $(' <div class="col col-md-2"></div>');
@@ -190,17 +270,62 @@ export default class extends Component {
         let $images = $(`<ul id="images" class="clearfix"> </ul>`);
         $modalRightBody.append($images);
 
+
+        //分页
+        let $paginationModal = $(`<div id="paginationArea"></div>`);
+        let $lastPage = $(`<span class="last-page">上一页</span>`);
+        let $totalNumber = $(`<span class="show-number"></span>`);
+        let $nextPage = $(`<span class="next-page">下一页</span>`);
+        let $inputPage = $(`<input class="input-number" type="text">`);
+        let $goHandle = $('<span class="go-page">跳转</span>');
+
+        $paginationModal.append($lastPage);
+        $paginationModal.append($totalNumber);
+        $paginationModal.append($nextPage);
+        $paginationModal.append($inputPage);
+        $paginationModal.append($goHandle);
+
+        $nextPage.click(() => {
+            this.page = this.page + 1;
+            this.__showImageCategoryList__(this.categoryId, this.__loadImages__, this.page, this.size);
+        });
+
+        $lastPage.click(() => {
+            this.page = this.page - 1;
+            this.__showImageCategoryList__(this.categoryId, this.__loadImages__, this.page, this.size);
+        });
+
+
+        $inputPage.keyup(function () {
+            $(this).val($(this).val().replace(/\D|^0/g, ''));
+        }).bind("paste", function () {
+            $(this).val($(this).val().replace(/\D|^0/g, ''));
+        }).css("ime-mode", "disabled");
+
+        $goHandle.click(() => {
+            this.page = $inputPage.val() / 1;
+            if (this.page > this.paginationInfo.maxPage) {
+                this.page = this.paginationInfo.maxPage;
+                $inputPage.val(this.page);
+            }
+            this.__showImageCategoryList__(this.categoryId, this.__loadImages__, this.page, this.size);
+        });
+
+
+        $modalRightBody.append($paginationModal);
+
         this.__loadTypes__(types => {
             types.forEach(type => {
                 let $liGetlist = $(`<li class="col col-md-12" categoryId='${type._id}'><a href="javascript:;">${type.name}</a></li>`);
                 $ul.append($liGetlist);
                 $liGetlist.click(this.__typeOnClick__(type, items => {
                     $liGetlist.addClass("active").siblings().removeClass("active");
-                    this.images = items;
+                    this.categoryId = type._id;
+                    this.page = 1;
                     if (this.images.length < 1) {
                         this.__disableStatus__();
                     }
-                    this.__buildImageUl__();
+                    this.__loadImages__(items);
                 }));
             });
             $ul.children('li').eq(0).click();
@@ -213,26 +338,23 @@ export default class extends Component {
         let $createGroupText = $(`<label class="create-group-text">创建分组</label>`);
         let $createGroupInput = $(`<input type="text" value="111" class="category-input">`);
         let $btnCommit = $(`<a class="btn-tool btn-commit" href="javascript:;">确定</a>`);
+
+        $addGroup.click(() => {
+            $ul.append($createGroupDiv);
+        });
         $btnCommit.click(() => {
-            $.post('/images/categories/save', {name: "测试目1"}, json => {
-                if (json.status == "ok") {
-                }
-                $createGroupDiv.hide();
-            });
+            this.__createCategory__("分类测试001");
+
         });
         let $btnCanncel = $(`<a class="btn-tool btn-canncel" href="javascript:;">取消</a>`);
         $btnCanncel.click(() => {
-            $createGroupDiv.hide();
+            $createGroupDiv.remove();
         });
         $createGroupDiv.append($createGroupText);
         $createGroupDiv.append($createGroupInput);
         $createGroupDiv.append($btnCommit);
         $createGroupDiv.append($btnCanncel);
         let $body = $('body');
-
-        $addGroup.click(function () {
-            $body.append($createGroupDiv);
-        });
         $addGroup.insertAfter($ul);
 
 
@@ -271,67 +393,59 @@ export default class extends Component {
         $operationArea.append($buttonDelete);
         $rightHeaderLeft.append($operationArea);
 
+        //多个删除
+        $buttonDelete.on("click", () => {
+            var arrayCheckbox = document.getElementsByName('inputcheckbox');
+            var arrayImageId = [];
+            for (var i = 0; i < arrayCheckbox.length; i++) {
+                if (arrayCheckbox[i].checked) {
+                    arrayImageId.push(arrayCheckbox[i].id)
+                }
+            }
+            if (arrayImageId.length == 0) return;
 
-        /*$buttonDelete.on("click", ()=> {
-         var arrayCheckbox = document.getElementsByName('inputcheckbox');
-         var arrayImageId = [];
-         for (var i = 0; i < arrayCheckbox.length; i++) {
-         if (arrayCheckbox[i].checked) {
-         arrayImageId.push(arrayCheckbox[i].id)
-         }
-         }
-         this.__deleteImageList__(arrayImageId);
-         });*/
+            this.__deleteImageList__(arrayImageId);
+        });
 
+        //多个移动分组
+        $buttonMoveCategory.on("click", ()=> {
+            var arrayCheckbox = document.getElementsByName('inputcheckbox');
+            var arrayImageId = [];
+            for (var i = 0; i < arrayCheckbox.length; i++) {
+                if (arrayCheckbox[i].checked) {
+                    arrayImageId.push(arrayCheckbox[i].id)
+                }
+            }
+            if (arrayImageId.length == 0) return;
+            this.__moveImageList__(arrayImageId, "5979541d4faa98f06680a545");
+        });
 
-        //全选,全不选以及相应的删除和移动分组功能
+        //全选,全不选以及相应的样式变化
         $buttonChooseAll.click(() => {
-
             if (this.images.length < 1) {
                 this.__disableStatus__();
             } else {
                 if ($("#js-check-all").prop("checked")) {
                     $("[name=inputcheckbox]:checkbox").prop("checked", true);
                     this.__activeStatus__();
-
-                    $buttonMoveCategory.on("click", ()=> {
-                        alert("move");
-                    });
-
-                    $buttonDelete.on("click", ()=> {
-                        var arrayCheckbox = document.getElementsByName('inputcheckbox');
-                        var arrayImageId = [];
-                        for (var i = 0; i < arrayCheckbox.length; i++) {
-                            if (arrayCheckbox[i].checked) {
-                                arrayImageId.push(arrayCheckbox[i].id)
-                            }
-                        }
-                        this.__deleteImageList__(arrayImageId);
-                    });
-
                 } else {
                     $("[name=inputcheckbox]:checkbox").prop("checked", false);
                     this.__disableStatus__();
                 }
             }
-
         });
 
 
         let $buttonUpload = $(`<span>大小不超过2M</span><span class="button-upload-local">本地上传</span>`);
         $buttonUpload.click(() => {
-            this.upload.click();
+            this.upload.uploadWithCategory(this.categoryId);
         });
         $rightHeaderRight.append($buttonUpload);
 
-
-        this.__showImageCategoryList__(items => {
-            this.images = items;
-            this.__buildImageUl__();
-        });
-
         $modalRight.append($modalRightBody);
         this.modal.$body = $modalBody;
+
+
     }
 }
 

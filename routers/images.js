@@ -167,7 +167,8 @@ router.get('/images/move', function * () {
     if(typeof(imageIdList) === 'string') {
         imageIdList = [imageIdList];
     }
-    let imageList = ImageUploadFile.find({_id: {$in: imageIdList}, account: accountId});
+    let imageList = yield ImageUploadFile.find({_id: {$in: imageIdList}, account: accountId});
+
     yield ImageUploadFile.update({_id: {$in: _.map(imageList, i => i._id)}}, {$set: {category: category.id}}, {multi: true});
     yield subImageCount4Category(imageList);
     this.body = {status: 'ok'};
@@ -202,10 +203,10 @@ router.get('/images/delete', function * () {
 });
 
 function * subImageCount4Category(imageList) {
-    let gr = _.groupBy(imageList, i => i.category);
+    let gr = _.groupBy(imageList, i => i.category || '');
     for(let k in  gr) {
-        if(k && k != 'null' || k != 'undefined') {
-            yield ImageCategory.update({_id: k}, {$inc: {imageCount: -gr[k].length}});
+        if(k) {
+
         }
     }
 }
