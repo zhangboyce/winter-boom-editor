@@ -1,12 +1,12 @@
 'use strict';
 import Component from './../Component';
-import PicManage from '../picture/PicManage';
+import PictureManager from '../picture/PictureManager';
 
 export default class extends Component {
 
     constructor(props) {
         super(props);
-        //this.picManage = new PicManage();
+        this.pictureManager = new PictureManager();
 
         this.rendered();
     }
@@ -52,9 +52,8 @@ export default class extends Component {
     rendered = () => {
         let $ul = this.children('ul');
         this.find('#pic-management').click(() => {
-            //this.picManage.open()
+            this.pictureManager.open()
         });
-
         this.__loadTypes__(types => {
             types.forEach(type => {
                 let $li_1 = $(`<li>${type.name}</li>`).appendTo($ul);

@@ -48,6 +48,7 @@ function Component(props) {
             this__proto__[p] = p_prototype[p];
         }
     }
+
     Object.setPrototypeOf(this__proto__, Object.getPrototypeOf($this));
     Object.setPrototypeOf(this, this__proto__);
     Object.setPrototypeOf($this, this);
