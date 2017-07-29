@@ -18,7 +18,6 @@ export default class extends Component {
         this.pagination = new Pagination({ parent: this });
         this.toolBar = new ToolBar({ parent: this });
 
-        console.log(this);
         this.rendered();
     }
 
@@ -30,7 +29,7 @@ export default class extends Component {
         this.find('#img-list-warp').append(this.imageList);
         this.find('.modal-pic-right').prepend(this.toolBar);
         this.find('.modal-pic-left').append(this.categoryList);
-        this.find('.modal-pic-left').append(this.pagination);
+        this.find('#img-list-warp').append(this.pagination);
 
         this.modal.$body = this;
     };

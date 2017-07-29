@@ -49,10 +49,12 @@ function Component(props) {
         }
     }
 
+    let cs = $this.constructor;
     Object.setPrototypeOf(this__proto__, Object.getPrototypeOf($this));
-    Object.setPrototypeOf(this, this__proto__);
+    //Object.setPrototypeOf(this, this__proto__);
     Object.setPrototypeOf($this, this);
 
+    $this.constructor = cs;
     return $this;
 }
 

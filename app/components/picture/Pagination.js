@@ -109,7 +109,7 @@ export default class extends Component {
 
     render() {
         return $(`
-            <div>
+            <div id="paginationArea">
                 <span class="last-page">上一页</span>
                 <span class="show-number"></span>
                 <span class="next-page">下一页</span>

@@ -63,7 +63,7 @@ export default class extends Component {
 
     render() {
         return $(`
-            <ul class="col col-md-12">
+            <ul class="col col-md-12 ul-category">
                 <li id="create-category" class="col col-md-12" style="padding-left: 10px;">
                     <a href="javascript:;"><i class="fa fa-plus"></i>新建分组</a>
                 </li>

@@ -9,7 +9,7 @@ export default class extends Component {
     }
 
     rendered = () => {
-        let $checkbox = this.find('.check-content');
+        let $checkbox = this.find('.input-checkbox');
         $checkbox.click(() => {
             this.parent.select(this.find('.input-checkbox').attr('id'));
         });
