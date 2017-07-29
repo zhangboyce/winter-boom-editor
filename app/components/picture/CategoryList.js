@@ -11,7 +11,7 @@ export default class extends Component {
     __loadTypes__ = callback => {
         $.get('/images/categories/list', json => {
             let types = json.list;
-            types = [{_id: '', name: '全部图片'}, ...types];
+            types = [{_id: '', name: '全部图片'}, ...types].reverse();
             callback(types);
         });
     };
