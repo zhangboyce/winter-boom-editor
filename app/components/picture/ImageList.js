@@ -34,11 +34,10 @@ export default class extends Component {
 
     unSelectAll = () => {
         this.selectedImages = [];
-
         this.parent.toolBar.changeStatus();
     };
 
-    isSelected = () => {
+    hasSelected = () => {
         return this.selectedImages.length > 0;
     };
 

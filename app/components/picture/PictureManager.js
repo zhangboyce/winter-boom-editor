@@ -18,7 +18,6 @@ export default class extends Component {
         this.pagination = new Pagination({ parent: this });
         this.toolBar = new ToolBar({ parent: this });
 
-        console.log(this);
         this.rendered();
     }
 

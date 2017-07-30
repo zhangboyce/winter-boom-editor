@@ -6,16 +6,23 @@ export default function ({name, url, change, success, error, timeout}) {
 
     let input = $(`<input type="file" accept="image/jpg,image/jpeg,image/png,image/gif" name="${name || 'file'}"/>`).hide().insertAfter(body);
     let iframe = $('<iframe src="javascript:void(0);"></iframe>').hide().appendTo(body)[0];
-
     let getBody = () => $((iframe.contentDocument || iframe.contentWindow.document).body);
 
+    let extra = { };
     input.change(e => {
+        let form = $('<form method="post" enctype="multipart/form-data"></form>');
         let iframeBody = getBody();
         iframeBody.empty();
-        let form = $('<form method="post" enctype="multipart/form-data"></form>');
         form.appendTo(iframeBody);
         form.attr('action', typeof(url) === 'string'? url: url());
         form.append(input.clone());
+
+        for (let k in extra) {
+            if (extra.hasOwnProperty(k)) {
+                form.append($(`<input type='text' name='${ k }' value='${ extra[k] }'>`));
+            }
+        }
+
         if(change? change() : true) {
             form.submit();
             let checkCount = 0;
@@ -31,14 +38,15 @@ export default function ({name, url, change, success, error, timeout}) {
                 }else {
                     timeout && timeout();
                 }
-            }
+            };
 
             checkResult();
         }
     });
 
     return {
-        click: function () {
+        click: function (options) {
+            Object.assign(extra, options);
             input.click();
         }
     }

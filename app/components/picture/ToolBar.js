@@ -1,7 +1,7 @@
 'use strict';
 
 import Component from './../Component';
-import upload from '../../utils/uploadImageNew';
+import upload from '../../utils/upload';
 
 export default class extends Component {
     constructor(props) {
@@ -30,7 +30,7 @@ export default class extends Component {
     };
 
     changeStatus = () => {
-        if (this.parent.imageList.isSelected()) {
+        if (this.parent.imageList.hasSelected()) {
             this.__activeStatus__();
         } else {
             this.__disableStatus__();
@@ -39,22 +39,14 @@ export default class extends Component {
 
     //激活状态[可操作]
     __activeStatus__ = () => {
-        let $buttonMoveCategory = $('#js-move-group');
-        let $buttonDelete = $('#js-delete-chose');
-        $buttonMoveCategory.removeClass("active");
-        $buttonMoveCategory.removeAttr("disabled");
-        $buttonDelete.removeClass("active");
-        $buttonDelete.removeAttr("disabled");
+        this.find('#js-move-group').removeAttr("disabled");
+        this.find('js-delete-chose').removeAttr("disabled");
     };
 
     //不可操作状态
     __disableStatus__ = () => {
-        let $buttonMoveCategory = $('#js-move-group');
-        let $buttonDelete = $('#js-delete-chose');
-        $buttonMoveCategory.addClass("active");
-        $buttonMoveCategory.attr("disabled", "disabled");
-        $buttonDelete.addClass("active");
-        $buttonDelete.attr("disabled", "disabled");
+        this.find('#js-move-group').attr("disabled", "disabled");
+        this.find('js-delete-chose').attr("disabled", "disabled");
     };
 
     rendered = () => {
@@ -84,7 +76,7 @@ export default class extends Component {
         });
 
         this.find('.button-upload-local').click(() => {
-            this.upload.uploadWithCategory(this.category());
+            this.upload.click({ categoryId: this.category() });
         });
     };
 
@@ -98,8 +90,8 @@ export default class extends Component {
                         <input id="js-check-all" type="checkbox" class="frm_checkbox" data-label="全选">
                         <i class="icon_checkbox"></i>
                         <span class="content">&nbsp;全选</span></label>
-                        <a id="js-move-group" class="move-category button active" href="javascript:;" disabled="disabled">移动分组</a>
-                        <a id="js-delete-chose" class="delete-pic button active" href="javascript:;" disabled="disabled">删除</a>
+                        <a id="js-move-group" href="javascript:;" disabled="disabled">移动分组</a>
+                        <a id="js-delete-chose" href="javascript:;" disabled="disabled">删除</a>
                     </div>
                 </div>
                 <div class="col col-md-4 text-right">
