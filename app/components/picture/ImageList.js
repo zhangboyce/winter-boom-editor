@@ -19,16 +19,12 @@ export default class extends Component {
         } else {
             this.selectedImages.splice(index, 1);
         }
-
-        console.log(this.selectedImages);
-
         this.parent.toolBar.changeStatus();
     };
 
     selectAll = () => {
         this.selectedImages = [];
-        this.selectedImages.push([...this.images.map(it => it._id)]);
-
+        this.selectedImages.push(...this.images.map(it => it._id));
         this.parent.toolBar.changeStatus();
     };
 

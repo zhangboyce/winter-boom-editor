@@ -49,7 +49,7 @@ export default class extends Component {
         $.get('/images/list', { page: this.page(), size: this.size(), categoryId: this.category() }, json => {
             let items = json.list;
             let paginationInfo = json.pagination;
-            $(".show-number").text(this.page() + " / " + paginationInfo.maxPage);
+            $('.show-number').text(this.page() + " / " + paginationInfo.maxPage);
             if (items.length < 1) {
                 this.css({"display": "none"});
             } else {
@@ -72,6 +72,7 @@ export default class extends Component {
             }
 
             this.paginationInfo = paginationInfo;
+
             if (isFunction(callback)) {
                 callback(items);
             }
@@ -80,6 +81,7 @@ export default class extends Component {
     };
 
     rendered = () => {
+
         this.find('.last-page').click(() => {
             this.page(this.page() - 1);
             this.pagination(this.parent.imageList.loadImages);
@@ -109,7 +111,7 @@ export default class extends Component {
 
     render() {
         return $(`
-            <div>
+            <div id="paginationArea">
                 <span class="last-page">上一页</span>
                 <span class="show-number"></span>
                 <span class="next-page">下一页</span>

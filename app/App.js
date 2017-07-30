@@ -8,14 +8,13 @@ export default class extends Component {
         super(props);
         this.header = new Header();
         this.main = new Main();
-
         this.rendered();
     }
 
-    rendered() {
+    rendered = () => {
         this.append(this.header);
         this.append(this.main);
-    }
+    };
 
     render() {
        return $(`<div id="app" class="container-fluid"></div>`);
