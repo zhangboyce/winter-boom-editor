@@ -24,7 +24,7 @@ export default class extends Component {
     category = category => {
         if (category == undefined) {
             return this.__category__;
-        }else {
+        } else {
             this.__category__ = category;
         }
     };
@@ -99,14 +99,26 @@ export default class extends Component {
         });
 
         this.find('.button-upload-local').click(() => {
-            this.upload.click({ categoryId: this.category() });
+            this.upload.click({categoryId: this.category()});
         });
     };
 
     render() {
         return $(`
             <div class="modal-right-header">
-                <div class="col col-md-8 padd">
+               <div class="change-category">
+                         <div class="col col-md-8">
+                                <div>
+                                        <span></span>
+                                        <span></span>
+                                        <span></span>
+                                </div>
+                        </div>
+                        <div class="col col-md-4 text-right">
+                            <span>大小不超过2M</span><span class="button-upload-local">本地上传</span>
+                        </div>
+               </div>
+                <div class="col col-md-12">
                     <div class="operation-area">
                         <label class="chose_checkbox_label" for="js-check-all">
                         <input id="js-check-all" type="checkbox" class="frm_checkbox" data-label="全选">
@@ -115,9 +127,6 @@ export default class extends Component {
                         <a id="js-move-group" href="javascript:;" disabled="disabled">移动分组</a>
                         <a id="js-delete-chose" href="javascript:;" disabled="disabled">删除</a>
                     </div>
-                </div>
-                <div class="col col-md-4 text-right">
-                    <span>大小不超过2M</span><span class="button-upload-local">本地上传</span>
                 </div>
             </div>
         `);
