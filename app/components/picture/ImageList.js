@@ -49,12 +49,13 @@ export default class extends Component {
         });
     };
 
-    moveImages = (imageIds, categoryId) => {
+    moveImages = (imageIds, categoryId, callback) => {
         if (!imageIds || imageIds.length == 0) return;
 
         $.get('/images/move', { image: imageIds, category: categoryId }, json => {
             if(json.status == "ok"){
                 this.__delFromImageList__(imageIds);
+                callback();
             }
         });
     };

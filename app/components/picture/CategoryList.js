@@ -10,7 +10,7 @@ export default class extends Component {
         this.categories = [];
     }
 
-    categories() {
+    getCategories() {
         return this.categories;
     }
 
