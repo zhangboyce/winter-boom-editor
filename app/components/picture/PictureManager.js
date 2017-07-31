@@ -10,18 +10,21 @@ import ToolBar from './ToolBar';
 export default class extends Component {
     constructor(props) {
         super(props);
-
         this.modal = new Modal({id: 'pictureManagementModal'});
+    }
 
+    uploadCallback() {
+        this.pagination.page(1);
+        this.pagination.pagination(this.imageList.loadImages);
+    }
+
+    open = () => {
         this.imageList = new ImageList({ parent: this });
         this.categoryList = new CategoryList({ parent: this });
         this.pagination = new Pagination({ parent: this });
         this.toolBar = new ToolBar({ parent: this });
 
         this.rendered();
-    }
-
-    open = () => {
         this.modal.open();
     };
 
@@ -31,6 +34,7 @@ export default class extends Component {
         this.find('.modal-pic-left').append(this.categoryList);
         this.find('#img-list-warp').append(this.pagination);
 
+        this.modal.$header = $(`<h4>图片管理</h4>`);
         this.modal.$body = this;
     };
 

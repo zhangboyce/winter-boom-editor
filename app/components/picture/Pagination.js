@@ -48,37 +48,40 @@ export default class extends Component {
     pagination = callback => {
         $.get('/images/list', { page: this.page(), size: this.size(), categoryId: this.category() }, json => {
             let items = json.list;
-            let paginationInfo = json.pagination;
-            $('.show-number').text(this.page() + " / " + paginationInfo.maxPage);
-            if (items.length < 1) {
-                this.css({"display": "none"});
-            } else {
-                this.css({"display": "inline-block"});
-            }
-            if (paginationInfo.hasPrev === true) {
-                $('.last-page').css({"display": "inline-block"});
-            } else {
-                $('.last-page').css({"display": "none"});
-            }
-            if (paginationInfo.hasNext === false) {
-                $('.next-page').css({"display": "none"});
-            } else {
-                $('.next-page').css({"display": "inline-block"});
-            }
-            if (paginationInfo.hasPrev === false && paginationInfo.hasNext === false) {
-                this.css({"display": "none"});
-            } else {
-                this.css({"display": "inline-block"});
-            }
-
-            this.paginationInfo = paginationInfo;
+            this.paginationInfo = json.pagination;
 
             if (isFunction(callback)) {
                 callback(items);
             }
 
+            this.flush();
         });
     };
+
+    flush() {
+        console.log(this.page() + " / " + this.paginationInfo.maxPage);
+        $('.show-number').text(this.page() + " / " + this.paginationInfo.maxPage);
+        if (this.parent.imageList.isEmpty()) {
+            this.css({"display": "none"});
+        } else {
+            this.css({"display": "inline-block"});
+        }
+        if (this.paginationInfo.hasPrev === true) {
+            $('.last-page').css({"display": "inline-block"});
+        } else {
+            $('.last-page').css({"display": "none"});
+        }
+        if (this.paginationInfo.hasNext === false) {
+            $('.next-page').css({"display": "none"});
+        } else {
+            $('.next-page').css({"display": "inline-block"});
+        }
+        if (this.paginationInfo.hasPrev === false && this.paginationInfo.hasNext === false) {
+            this.css({"display": "none"});
+        } else {
+            this.css({"display": "inline-block"});
+        }
+    }
 
     rendered = () => {
 

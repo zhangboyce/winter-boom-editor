@@ -12,7 +12,7 @@ export default class extends Component {
             url: () => ('/upload/image/'),
             success: result => {
                 let json = JSON.parse(result);
-                this.parent.imageList.addItem(json.item);
+                this.parent.uploadCallback();
             }
         });
 
@@ -40,13 +40,13 @@ export default class extends Component {
     //激活状态[可操作]
     __activeStatus__ = () => {
         this.find('#js-move-group').removeAttr("disabled");
-        this.find('js-delete-chose').removeAttr("disabled");
+        this.find('#js-delete-chose').removeAttr("disabled");
     };
 
     //不可操作状态
     __disableStatus__ = () => {
         this.find('#js-move-group').attr("disabled", "disabled");
-        this.find('js-delete-chose').attr("disabled", "disabled");
+        this.find('#js-delete-chose').attr("disabled", "disabled");
     };
 
     rendered = () => {
@@ -84,7 +84,6 @@ export default class extends Component {
         return $(`
             <div class="modal-right-header">
                 <div class="col col-md-8 padd">
-                    <div class="img-text">图片管理</div>
                     <div class="operation-area">
                         <label class="chose_checkbox_label" for="js-check-all">
                         <input id="js-check-all" type="checkbox" class="frm_checkbox" data-label="全选">

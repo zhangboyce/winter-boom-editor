@@ -57,11 +57,6 @@ export default class extends Component {
                 this.prepend($li);
                 $li.click(this.__typeOnClick__(type, items => {
                     $li.addClass("active").siblings().removeClass("active");
-                    //this.categoryId = type._id;
-                    //this.page = 1;
-                    //if (this.images.length < 1) {
-                    //    this.__disableStatus__();
-                    //}
                     this.parent.imageList.loadImages(items);
                 }));
             });
