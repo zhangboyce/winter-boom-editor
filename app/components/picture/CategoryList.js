@@ -26,29 +26,19 @@ export default class extends Component {
         };
     };
 
-    //创建新的分类
-    __createCategory__ = (imgname) => {
+    __hideAlert__ = () => {
+        let $createCategory = this.find('#create-category');
+        $createCategory.trigger("click");
+    };
 
+    __createCategory__ = (imgname) => {
         $.post('/images/categories/save', {name: imgname}, json => {
             if (json.status == "ok") {
                 this.__hideAlert__();
                 this.__loadTypes__();
-
             }
         });
     };
-
-    //hide alert
-    __hideAlert__ = () =>{
-        $(document).ready( ()=> {
-            $(document).on("click", ".js-canncel-btn", () => {
-                let $createCategory  = this.find('#create-category');
-                $createCategory.popover('hide');
-            });
-        });
-
-    };
-
 
     rendered = () => {
         this.__loadTypes__(types => {
@@ -57,22 +47,13 @@ export default class extends Component {
                 this.prepend($li);
                 $li.click(this.__typeOnClick__(type, items => {
                     $li.addClass("active").siblings().removeClass("active");
-                    //this.categoryId = type._id;
-                    //this.page = 1;
-                    //if (this.images.length < 1) {
-                    //    this.__disableStatus__();
-                    //}
                     this.parent.imageList.loadImages(items);
                 }));
             });
             this.children('li').eq(0).click();
         });
 
-       let $createCategory  = this.find('#create-category');
-
-        //$createCategory.click(() => {
-        //});
-
+        let $createCategory = this.find('#create-category');
         let createCategoryHtml = (`
                     <div class="edit-popover-warp">
                             <div class="popover-inner">
@@ -92,39 +73,36 @@ export default class extends Component {
                                 </div>
                             </div>
                     </div>
-
-            `);
+        `);
 
         $createCategory.popover(
             {
                 trigger: 'click',
                 html: true,
-                placement: "bottom",
+                placement: "right",
                 content: createCategoryHtml
             }
         );
 
-
-        $(document).ready( ()=> {
+        $(document).ready(()=> {
             $(document).on("click", ".js-commitb-btn", () => {
                 let val = $(".edit-input").val();
-                this.__createCategory__(val);
+                let valCategory = val.trim().length;
+                if (valCategory < 7 && valCategory > 0) {
+                    this.__createCategory__(val);
+                } else {
+                    alert("分组名称为1-6个字符");
+                }
             });
 
-            this.__hideAlert__();
-
-
+            $(document).on("click", ".js-canncel-btn", () => {
+                this.__hideAlert__();
+            });
         });
 
-        /*
-         $createCategory.on('hidden.bs.popover',  () => {
-            $createCategory.trigger("click");
-         })
-        */
-
-
-
-
+        $createCategory.on('shown.bs.popover', () => {
+            $(".edit-input").focus();
+        })
     };
 
     render() {
