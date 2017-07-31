@@ -136,7 +136,6 @@
 
 .modal-pic-right {
   height: 570px;
-  margin-right: 15px;
 }
 
 .button-upload-local {
@@ -151,6 +150,7 @@
   cursor: pointer;
   margin-top: 15px;
   margin-left: 10px;
+  margin-right:15px;
 
 }
 
@@ -158,16 +158,20 @@
   margin-right: 20px;
 }
 
-.modal-right-header {
-  height: 60px;
-}
+/*.modal-right-header {
+  height: 100px;
+}*/
 
 .modal-right-header .img-text {
   font-size: 16px;
 }
 
 .modal-right-header .operation-area {
-  margin-top: 20px;
+  margin-top: 10px;
+  background:@wx-bg-grey;
+  height: 40px;
+  line-height: 40px;
+  padding-left: 15px;
 }
 
 .modal-right-header .operation-area a {
@@ -180,6 +184,7 @@
   display: inline-block;
   border-radius: 5px;
   margin-right: 10px;
+  background-color: @white;
 }
 
 .modal-right-header .operation-area a[disabled="disabled"] {
@@ -189,22 +194,22 @@
   cursor: default;
 }
 
-.modal-right-header .padd {
+/*.modal-right-header .padd {
   padding-left: 15px;
-}
+}*/
 
 .modal-right-header .text-right {
   text-align: right;
 }
 
 #img-list-warp {
-  height: 470px;
+  //height: 470px;
   margin-left: 15px;
   border-top: 1px solid @light-grey;
 
 }
 #img-list-warp ul {
-  min-height: 400px;
+  min-height: 512px;
 }
 
 #img-list-warp li, #img-list-warp ul {
@@ -215,7 +220,7 @@
 #img-list-warp li.img-item {
   float: left;
   text-align: center;
-  margin-top: 10px;
+  margin-top: 15px;
   margin-right: 15px;
   border: 1px solid #e7e7eb;
 }
@@ -360,6 +365,9 @@
   border-radius: 5px;
   display: inline-block;
   cursor: pointer;
+}
+#paginationArea span.go-page{
+  margin-right: 15px;
 }
 
 #paginationArea .show-number {
