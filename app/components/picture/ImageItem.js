@@ -38,21 +38,29 @@ export default class extends Component {
 
 
         let content = ``;
+        let choseCategoryList = this.parent.parent.categoryList.getCategories();
+        let activeCategory = this.parent.parent.pagination.category();
+        let index = choseCategoryList.findIndex(it => it._id == activeCategory);
+        if (index != -1) choseCategoryList.splice(index, 1);
+        console.log(choseCategoryList);
+        choseCategoryList.forEach(item => {
+            content += `<label class="edit-radio-label" for="${item._id}">
+                <input type="radio" class="edit-radio" name="category"  id="${item._id}">
+                    <span class="content">${item.name}</span>
+            </label>`
+        });
+
+
         let $moveCategory = this.find('li.move-li');
         this.__popover__($moveCategory, {
             title: `移动分组`,
             content: content,
             ok: ($popover, callback) => {
-                let itemName = $popover.find('.item-name-input').val();
-                if (itemName && itemName.trim() && itemName != this.item.name) {
-                    this.parent.editImageName(this.item._id, itemName, () => {
-                        this.item.name = itemName;
-                        this.find('.bottom-content').text(itemName);
-                        callback();
-                    });
-                } else {
-                    this.message.warn('名称不完美!');
-                }
+                let category = $popover.find('input:radio[name="category"]:checked').attr('id');
+                this.parent.moveImages([this.item._id], category, () => {
+                    callback();
+                    this.parent.parent.categoryList.flushCount({ category: category });
+                });
             }
         });
 
