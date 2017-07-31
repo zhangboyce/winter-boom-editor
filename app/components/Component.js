@@ -2,10 +2,12 @@
 
 import ConfirmModal from './common/ConfirmModal';
 import Message from './common/Message';
+import Popover from './common/Popover';
 import { isFunction } from '../../common/TypeUtils';
 
 const confirmModal = new ConfirmModal();
 const message = new Message();
+const popover = new Popover();
 
 const hasOwnProperty = Object.prototype.hasOwnProperty;
 const __defineProperty__ = (self, name, value, options = {}) => {
@@ -31,6 +33,7 @@ function Component(props) {
     // add some common objects or functions to this
     __defineProperty__(this, 'confirm', confirmModal.confirm);
     __defineProperty__(this, 'message', message);
+    __defineProperty__(this, '__popover__', popover.popover);
 
     if (!isFunction(this.render)) {
         throw new Error(`Component must have a render function.`);

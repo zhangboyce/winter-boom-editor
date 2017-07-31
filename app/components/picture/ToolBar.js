@@ -12,7 +12,7 @@ export default class extends Component {
             url: () => ('/upload/image/'),
             success: result => {
                 let json = JSON.parse(result);
-                this.parent.uploadCallback();
+                this.parent.uploadCallback(json.item);
             }
         });
 

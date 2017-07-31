@@ -1,21 +1,42 @@
 'use strict';
 import Component from './../Component';
+import { isFunction } from '../../../common/TypeUtils';
 
 export default class extends Component {
     constructor(props) {
         super(props);
-
         this.rendered();
+
+        this.categories = [];
     }
+
+    categories() {
+        return this.categories;
+    }
+
+    flushCount(item) {
+        this.__addCategoryCount__('ALL');
+        let category = item.category || 'NO_CATEGORY';
+        this.__addCategoryCount__(category);
+    }
+
+    __addCategoryCount__ = category => {
+        let $li = this.find(`li[categoryId=${category}] > i`);
+        let total = $li.text();
+        $li.text(total / 1 + 1);
+    };
 
     __loadTypes__ = callback => {
         $.get('/images/categories/list', json => {
-            let types = json.list;
-            types = [{_id: '', name: '全部图片'}, ...types].reverse();
-            callback(types);
+            let categories = json.list;
+            this.categories = categories;
+            categories = [
+                {_id: 'ALL', name: '全部图片', imageCount: json.total},
+                {_id: 'NO_CATEGORY', name: '未分组图片', imageCount: json.nocategoryCount},
+                ...categories];
+            callback(categories);
         });
     };
-
 
     __typeOnClick__ = (type, callback) => {
         return e => {
@@ -26,92 +47,54 @@ export default class extends Component {
         };
     };
 
-    __hideAlert__ = () => {
-        let $createCategory = this.find('#create-category');
-        $createCategory.trigger("click");
-    };
+    __createCategory__ (name, callback) {
+        if (name && name.trim() && name.trim().length < 7) {
+            $.post('/images/categories/save', { name: name }, json => {
+                if (json.status == "ok") {
+                    if (isFunction(callback)) callback();
+                    this.__buildCategoryLi__(json.category);
+                }
+            });
+        } else {
+            this.message.warn('分组名称为1~6个字符');
+        }
+    }
 
-    __createCategory__ = (imgname) => {
-        $.post('/images/categories/save', {name: imgname}, json => {
-            if (json.status == "ok") {
-                this.__hideAlert__();
-                this.__loadTypes__();
-            }
-        });
+    __buildCategoryLi__ = category => {
+        let $li = $(`<li class="col col-md-12" categoryId='${category._id}'>${category.name}(<i style="font-style: inherit">${ category.imageCount }</i>)</li>`);
+        this.find('ul').append($li);
+        $li.click(this.__typeOnClick__(category, items => {
+            $li.addClass("active").siblings().removeClass("active");
+            this.parent.imageList.loadImages(items);
+        }));
     };
 
     rendered = () => {
         this.__loadTypes__(types => {
             types.forEach(type => {
-                let $li = $(`<li class="col col-md-12" categoryId='${type._id}'><a href="javascript:;">${type.name}</a></li>`);
-                this.prepend($li);
-                $li.click(this.__typeOnClick__(type, items => {
-                    $li.addClass("active").siblings().removeClass("active");
-                    this.parent.imageList.loadImages(items);
-                }));
+                this.__buildCategoryLi__(type);
             });
-            this.children('li').eq(0).click();
+            this.find('ul > li').eq(0).click();
         });
 
-        let $createCategory = this.find('#create-category');
-        let createCategoryHtml = (`
-                    <div class="edit-popover-warp">
-                            <div class="popover-inner">
-                                <div class="edit-popover-content">
-                                    <div class="popover-edit">
-                                        <label for="" class="edit-label"></label>
-                                        <div class="edit-controls">
-                                        <span class="edit-input-box">
-                                            <input type="text" class="edit-input js-name" value=''>
-                                        </span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="popover-bar">
-                                     <a href="javascript:;" class="btn btn-primary js-commitb-btn">确定</a>
-                                     <a href="javascript:;" class="btn btn-default js-canncel-btn">取消</a>
-                                </div>
-                            </div>
-                    </div>
-        `);
-
-        $createCategory.popover(
-            {
-                trigger: 'click',
-                html: true,
-                placement: "right",
-                content: createCategoryHtml
+        this.__popover__(this.find('#create-category'), {
+            title: `新建分组`,
+            content: `<input type="text" class="create-category-input" value=''>`,
+            ok: ($popover, callback) => {
+                let categoryName = $popover.find('.create-category-input').val();
+                this.__createCategory__(categoryName, callback);
             }
-        );
-
-        $(document).ready(()=> {
-            $(document).on("click", ".js-commitb-btn", () => {
-                let val = $(".edit-input").val();
-                let valCategory = val.trim().length;
-                if (valCategory < 7 && valCategory > 0) {
-                    this.__createCategory__(val);
-                } else {
-                    alert("分组名称为1-6个字符");
-                }
-            });
-
-            $(document).on("click", ".js-canncel-btn", () => {
-                this.__hideAlert__();
-            });
         });
-
-        $createCategory.on('shown.bs.popover', () => {
-            $(".edit-input").focus();
-        })
     };
 
     render() {
         return $(`
-            <ul class="col col-md-12 ul-category">
-                <li id="create-category" class="col col-md-12" style="padding-left: 10px;">
-                    <a href="javascript:;"><i class="fa fa-plus"></i>新建分组</a>
-                </li>
-            </ul>
+            <div>
+                <ul class="col col-md-12 ul-category"></ul>
+                <div class="col col-md-12" style="padding-left: 10px;">
+                    <a id="create-category" href="javascript:;"><i class="fa fa-plus"></i>新建分组</a>
+                </div>
+            </div>
         `);
     }
 }

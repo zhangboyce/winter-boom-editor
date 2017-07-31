@@ -4,7 +4,7 @@ const DB = require('../DB');
 var ImageCategorySchema = new mongoose.Schema({
     account: String,
     name: String,
-    imageCount: {type: Number, default: 1},
+    imageCount: {type: Number, default: 0},
     orderIndex: {type: Number, default: 1}
 });
 

@@ -59,7 +59,6 @@ export default class extends Component {
     };
 
     flush() {
-        console.log(this.page() + " / " + this.paginationInfo.maxPage);
         $('.show-number').text(this.page() + " / " + this.paginationInfo.maxPage);
         if (this.parent.imageList.isEmpty()) {
             this.css({"display": "none"});

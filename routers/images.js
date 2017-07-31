@@ -44,7 +44,7 @@ router.post('/images/categories/save', function * () {
         name: name
     });
     yield category.save();
-    this.body = {status: 'ok'};
+    this.body = { status: 'ok', category: category };
 });
 
 router.post('/images/categories/update/:id', function * () {
@@ -101,7 +101,14 @@ router.get('/images/list', function * () {
     let category = this.query.categoryId;
     let accountId = this.session.account._id;
     let query = {account: accountId};
-    category && (query['category'] = category);
+
+    if (category != 'ALL') {
+        if (category == 'NO_CATEGORY') {
+            query['$or'] = [{category: {$exists: false}}, {category: ''}, {category: null}]
+        } else {
+            query['category'] = category
+        }
+    }
 
     let count = yield ImageUploadFile.count(query);
     let page = _.toInteger(this.query.page) || 1;

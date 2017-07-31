@@ -54,6 +54,9 @@ export default class extends Component {
         this.find('#pic-management').click(() => {
             this.pictureManager.open()
         });
+
+        this.find('#pic-management').click();
+
         this.__loadTypes__(types => {
             types.forEach(type => {
                 let $li_1 = $(`<li>${type.name}</li>`).appendTo($ul);
@@ -85,6 +88,7 @@ export default class extends Component {
             <div class="col col-md-2 col-style-type">
                 <ul></ul>
                 <div id="pic-management" data-toggle="modal" data-target="#myModal">图片管理</div>
+                <button type="button" class="btn btn-lg btn-danger" data-toggle="popover" title="Popover title" data-content="And here's some amazing content. It's very engaging. Right?">Click to toggle popover</button>
             </div>
         `);
     }

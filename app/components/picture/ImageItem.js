@@ -19,81 +19,42 @@ export default class extends Component {
         });
 
         let $editImageName = this.find('li.edit-li');
-        $editImageName.click(() => {
-            //this.parent.editImageName(this.item._id, "changename.jpg");
+        this.__popover__($editImageName, {
+            title: `编辑名称`,
+            content: `<input type="text" class="item-name-input" value=${ this.item.name } />`,
+            ok: ($popover, callback) => {
+                let itemName = $popover.find('.item-name-input').val();
+                if (itemName && itemName.trim() && itemName != this.item.name) {
+                    this.parent.editImageName(this.item._id, itemName, () => {
+                        this.item.name = itemName;
+                        this.find('.bottom-content').text(itemName);
+                        callback();
+                    });
+                } else {
+                    this.message.warn('名称不完美!');
+                }
+            }
         });
 
-        let editImageNameHtml = (`
-                    <div class="edit-popover-warp">
-                            <div class="popover-inner">
-                                <div class="edit-popover-content">
-                                    <div class="popover-edit">
-                                        <label for="" class="edit-label">编辑名称</label>
-                                        <div class="edit-controls">
-                                        <span class="edit-input-box">
-                                            <input type="text" class="edit-input js-name" value=''>
-                                        </span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="popover-bar">
-                                     <a href="javascript:;" class="btn btn-primary js-commitb-btn">确定</a>
-                                     <a href="javascript:;" class="btn btn-default js-canncel-btn">取消</a>
-                                </div>
-                            </div>
-                    </div>
 
-            `);
-
-        $editImageName.popover(
-            {
-                trigger: 'click',
-                html: true,
-                placement: "bottom",
-                content: editImageNameHtml
-            }
-        );
-
+        let content = ``;
         let $moveCategory = this.find('li.move-li');
-
-        $moveCategory.click(()=> {
-            //this.parent.moveImages([this.item._id], "5979541d4faa98f06680a545");
-        });
-
-
-        let moveCategoyHtml = (`
-                    <div class="edit-popover-warp">
-                            <div class="popover-inner">
-                                <div class="edit-popover-content">
-                                          <label class="edit-radio-label" for="checkbox609">
-                                                  <input type="radio" class="edit-radio" name="categoryRadio" data-label="未分组" id="checkbox609">
-                                                  <span class="content">未分组</span>
-                                          </label>
-
-                                          <label class="frm_radio_label" for="checkbox608">
-                                                  <input type="radio" class="edit-radio" name="categoryRadio" data-label="未分组" id="checkbox608">
-                                                  <span class="content">未分组</span>
-                                          </label>
-
-                                </div>
-                                <div class="popover-bar">
-                                     <a href="javascript:;" class="btn btn-primary js-commitb-btn">确定</a>
-                                     <a href="javascript:;" class="btn btn-default js-canncel-btn">取消</a>
-                                </div>
-                            </div>
-                    </div>
-
-            `);
-
-        $moveCategory.popover(
-            {
-                trigger: 'click',
-                html: true,
-                placement: "bottom",
-                content: moveCategoyHtml
+        this.__popover__($moveCategory, {
+            title: `移动分组`,
+            content: content,
+            ok: ($popover, callback) => {
+                let itemName = $popover.find('.item-name-input').val();
+                if (itemName && itemName.trim() && itemName != this.item.name) {
+                    this.parent.editImageName(this.item._id, itemName, () => {
+                        this.item.name = itemName;
+                        this.find('.bottom-content').text(itemName);
+                        callback();
+                    });
+                } else {
+                    this.message.warn('名称不完美!');
+                }
             }
-        );
-
+        });
 
         this.find('li.delete-li').click(()=> {
             this.parent.deleteImages([this.item._id]);

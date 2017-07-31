@@ -41,10 +41,10 @@ export default class extends Component {
         return this.images.length < 1;
     };
 
-    editImageName = (imageIds, imageName) =>{
-        $.post('/images/update/'+imageIds,{name:imageName}, json => {
+    editImageName = (imageIds, imageName, callback) =>{
+        $.post('/images/update/'+imageIds,{ name:imageName }, json => {
             if(json.status == "ok"){
-
+                callback();
             }
         });
     };

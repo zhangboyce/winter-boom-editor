@@ -11,20 +11,21 @@ export default class extends Component {
     constructor(props) {
         super(props);
         this.modal = new Modal({id: 'pictureManagementModal'});
-    }
-
-    uploadCallback() {
-        this.pagination.page(1);
-        this.pagination.pagination(this.imageList.loadImages);
-    }
-
-    open = () => {
         this.imageList = new ImageList({ parent: this });
         this.categoryList = new CategoryList({ parent: this });
         this.pagination = new Pagination({ parent: this });
         this.toolBar = new ToolBar({ parent: this });
 
         this.rendered();
+    }
+
+    uploadCallback(item) {
+        this.pagination.page(1);
+        this.pagination.pagination(this.imageList.loadImages);
+        this.categoryList.flushCount(item);
+    }
+
+    open = () => {
         this.modal.open();
     };
 
