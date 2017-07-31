@@ -60,11 +60,11 @@ export default class extends Component {
         });
     };
 
-    moveSelectedImages = categoryId => {
-        this.moveImages(this.selectedImages, categoryId);
+    moveSelectedImages = (categoryId, callback) => {
+        this.moveImages(this.selectedImages, categoryId, callback);
     };
 
-    deleteImages = imageIds => {
+    deleteImages = (imageIds, callback) => {
         if (!imageIds || imageIds.length == 0) return;
 
         this.confirm('是否确定删除该图片?', () => {
@@ -76,8 +76,8 @@ export default class extends Component {
         });
     };
 
-    deleteSelectedImages = () => {
-        this.deleteImages(this.selectedImages);
+    deleteSelectedImages = (callback) => {
+        this.deleteImages(this.selectedImages, callback);
     };
 
     __delFromImageList__ = imageIds => {
@@ -91,6 +91,7 @@ export default class extends Component {
 
     loadImages = items => {
         this.images = items;
+        this.selectedImages = [];
         this.__buildImageUl__();
     };
 

@@ -56,8 +56,31 @@ export default class extends Component {
         });
 
         //多个移动分组
-        this.find('#js-move-group').on("click", ()=> {
-            this.parent.imageList.moveSelectedImages("5979541d4faa98f06680a545");
+        let $moveCategory = this.find('#js-move-group');
+        this.__popover__($moveCategory, {
+            title: `移动分组`,
+            content: `<div id="category-radios"></div>`,
+            ok: ($popover, callback) => {
+                let category = $popover.find('input:radio[name="category"]:checked').attr('id');
+                this.parent.imageList.moveSelectedImages(category, () => {
+                    this.parent.flush();
+                    callback();
+                });
+            },
+            shown: $popover => {
+                let choseCategoryList = [...this.parent.categoryList.getCategories()];
+                let activeCategory = this.parent.pagination.category();
+                let index = choseCategoryList.findIndex(it => it._id == activeCategory);
+                if (index != -1) choseCategoryList.splice(index, 1);
+                choseCategoryList.forEach(item => {
+                    $popover.find('#category-radios').append(`
+                    <label class="edit-radio-label" for="${item._id}">
+                        <input type="radio" class="edit-radio" name="category"  id="${item._id}">
+                            <span class="content">${item.name}</span>
+                    </label>`
+                    );
+                });
+            }
         });
 
         //全选,全不选以及相应的样式变化

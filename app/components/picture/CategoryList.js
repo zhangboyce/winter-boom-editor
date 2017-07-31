@@ -40,7 +40,7 @@ export default class extends Component {
             $.post('/images/categories/save', { name: name }, json => {
                 if (json.status == "ok") {
                     if (isFunction(callback)) callback();
-                    this.__buildCategoryLi__(json.category);
+                    this.flush(json.category._id);
                 }
             });
         } else {
@@ -57,17 +57,17 @@ export default class extends Component {
         }));
     };
 
-    flush() {
+    flush(categoryId) {
         this.find('ul').html('');
-        this.rendered();
+        this.rendered(categoryId);
     }
 
-    rendered = () => {
+    rendered = (categoryId) => {
         this.__loadTypes__(types => {
             types.forEach(type => {
                 this.__buildCategoryLi__(type);
             });
-            this.find('ul > li').eq(0).click();
+            this.find(`ul > li[categoryId=${ categoryId || "ALL" }]`).click();
         });
 
         this.__popover__(this.find('#create-category'), {

@@ -36,30 +36,29 @@ export default class extends Component {
             }
         });
 
-
-        let content = ``;
-        let choseCategoryList = this.parent.parent.categoryList.getCategories();
-        let activeCategory = this.parent.parent.pagination.category();
-        let index = choseCategoryList.findIndex(it => it._id == activeCategory);
-        if (index != -1) choseCategoryList.splice(index, 1);
-        console.log(choseCategoryList);
-        choseCategoryList.forEach(item => {
-            content += `<label class="edit-radio-label" for="${item._id}">
-                <input type="radio" class="edit-radio" name="category"  id="${item._id}">
-                    <span class="content">${item.name}</span>
-            </label>`
-        });
-
-
         let $moveCategory = this.find('li.move-li');
         this.__popover__($moveCategory, {
             title: `移动分组`,
-            content: content,
+            content: `<div id="category-radios"></div>`,
             ok: ($popover, callback) => {
                 let category = $popover.find('input:radio[name="category"]:checked').attr('id');
                 this.parent.moveImages([this.item._id], category, () => {
+                    this.parent.parent.flush();
                     callback();
-                    this.parent.parent.categoryList.flushCount({ category: category });
+                });
+            },
+            shown: $popover => {
+                let choseCategoryList = [...this.parent.parent.categoryList.getCategories()];
+                let activeCategory = this.parent.parent.pagination.category();
+                let index = choseCategoryList.findIndex(it => it._id == activeCategory);
+                if (index != -1) choseCategoryList.splice(index, 1);
+                choseCategoryList.forEach(item => {
+                    $popover.find('#category-radios').append(`
+                    <label class="edit-radio-label" for="${item._id}">
+                        <input type="radio" class="edit-radio" name="category"  id="${item._id}">
+                            <span class="content">${item.name}</span>
+                    </label>`
+                    );
                 });
             }
         });
@@ -89,7 +88,7 @@ export default class extends Component {
                 <div class="list-card-ft">
                     <ul>
                         <li class="edit-li"><a href="javascript:;" data-toggle="tooltip" data-placement="top" title="编辑名称"><span><i class="fa fa-pencil"></i></span></a></li>
-                        <li class="move-li"><a href="javascript:;" data-toggle="tooltip" data-placement="top" title="移动分组"><span><i class="fa fa-arrows"></i></span></a></li>
+                        <li class="move-li"><a href="javascript:;" data-toggle="tooltip" data-placement="top" title="移动分组"><span><i class="fa fa-arrows-h"></i></span></a></li>
                         <li class="delete-li"><a href="javascript:;" data-toggle="tooltip" data-placement="top" title="删除"><span><i class="fa fa-trash-o"></i></span></a></li>
                     </ul>
                 </div>

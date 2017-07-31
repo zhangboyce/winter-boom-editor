@@ -104,7 +104,7 @@ router.get('/images/list', function * () {
 
     if (category != 'ALL') {
         if (category == 'NO_CATEGORY') {
-            query['$or'] = [{category: {$exists: false}}, {category: ''}, {category: null}]
+            query['category'] = category
         } else {
             query['category'] = category
         }
@@ -178,6 +178,7 @@ router.get('/images/move', function * () {
 
     yield ImageUploadFile.update({_id: {$in: _.map(imageList, i => i._id)}}, {$set: {category: category.id}}, {multi: true});
     yield subImageCount4Category(imageList);
+    yield incImageCount4Category(category._id, imageList.length);
     this.body = {status: 'ok'};
 });
 
@@ -213,9 +214,13 @@ function * subImageCount4Category(imageList) {
     let gr = _.groupBy(imageList, i => i.category || '');
     for(let k in  gr) {
         if(k) {
-
+            yield ImageCategory.update({_id: k}, {$inc: {imageCount: -gr[k].length}});
         }
     }
+}
+
+function * incImageCount4Category(categoryId, count) {
+    yield ImageCategory.update({ _id: categoryId }, { $inc: { imageCount: count }});
 }
 
 router.post('/upload/image', KoaUploadMiddleware, function *() {

@@ -54,11 +54,16 @@ export default class extends Component {
                 callback(items);
             }
 
-            this.flush();
+            this.__flush__();
         });
     };
 
-    flush() {
+    flush(callback) {
+        this.page(1);
+        this.pagination(callback);
+    }
+
+    __flush__() {
         $('.show-number').text(this.page() + " / " + this.paginationInfo.maxPage);
         if (this.parent.imageList.isEmpty()) {
             this.css({"display": "none"});

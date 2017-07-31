@@ -19,10 +19,10 @@ export default class extends Component {
         this.rendered();
     }
 
-    uploadCallback(item) {
-        this.pagination.page(1);
-        this.pagination.pagination(this.imageList.loadImages);
-        this.categoryList.flush();
+    flush() {
+        this.pagination.flush(this.imageList.loadImages);
+        this.categoryList.flush(this.toolBar.category());
+        this.toolBar.changeStatus();
     }
 
     open = () => {
