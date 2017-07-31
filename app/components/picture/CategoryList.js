@@ -14,18 +14,6 @@ export default class extends Component {
         return this.categories;
     }
 
-    flushCount(item) {
-        this.__addCategoryCount__('ALL');
-        let category = item.category || 'NO_CATEGORY';
-        this.__addCategoryCount__(category);
-    }
-
-    __addCategoryCount__ = category => {
-        let $li = this.find(`li[categoryId=${category}] > i`);
-        let total = $li.text();
-        $li.text(total / 1 + 1);
-    };
-
     __loadTypes__ = callback => {
         $.get('/images/categories/list', json => {
             let categories = json.list;
@@ -68,6 +56,11 @@ export default class extends Component {
             this.parent.imageList.loadImages(items);
         }));
     };
+
+    flush() {
+        this.find('ul').html('');
+        this.rendered();
+    }
 
     rendered = () => {
         this.__loadTypes__(types => {

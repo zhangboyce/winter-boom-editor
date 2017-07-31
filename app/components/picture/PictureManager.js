@@ -22,7 +22,7 @@ export default class extends Component {
     uploadCallback(item) {
         this.pagination.page(1);
         this.pagination.pagination(this.imageList.loadImages);
-        this.categoryList.flushCount(item);
+        this.categoryList.flush();
     }
 
     open = () => {
