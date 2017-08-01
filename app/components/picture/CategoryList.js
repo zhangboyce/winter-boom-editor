@@ -8,6 +8,15 @@ export default class extends Component {
         this.rendered();
 
         this.categories = [];
+
+        this.__popover__(this.find('#create-category'), {
+            title: `新建分组`,
+            content: `<input type="text" class="create-category-input" value=''>`,
+            ok: ($popover, callback) => {
+                let categoryName = $popover.find('.create-category-input').val();
+                this.__createCategory__(categoryName, callback);
+            }
+        });
     }
 
     getCategories() {
@@ -54,30 +63,22 @@ export default class extends Component {
         this.find('ul').append($li);
         $li.click(this.__typeOnClick__(category, items => {
             $li.addClass("active").siblings().removeClass("active");
-            this.parent.imageList.loadImages(items);
+            this.parent.imageList.loadImages(items, this.parent.toolBar.changeStatus);
         }));
     };
 
-    flush(categoryId) {
+    flush() {
         this.find('ul').html('');
-        this.rendered(categoryId);
+        this.rendered();
     }
 
-    rendered = (categoryId) => {
+    rendered = () => {
+        let categoryId = this.parent.toolBar.category();
         this.__loadTypes__(types => {
             types.forEach(type => {
                 this.__buildCategoryLi__(type);
             });
             this.find(`ul > li[categoryId=${ categoryId || "ALL" }]`).click();
-        });
-
-        this.__popover__(this.find('#create-category'), {
-            title: `新建分组`,
-            content: `<input type="text" class="create-category-input" value=''>`,
-            ok: ($popover, callback) => {
-                let categoryName = $popover.find('.create-category-input').val();
-                this.__createCategory__(categoryName, callback);
-            }
         });
     };
 

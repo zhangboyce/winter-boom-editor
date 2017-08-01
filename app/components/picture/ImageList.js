@@ -2,6 +2,7 @@
 
 import Component from './../Component';
 import ImageItem from './ImageItem';
+import { isFunction } from '../../../common/TypeUtils';
 
 export default class extends Component {
     constructor(props) {
@@ -49,50 +50,43 @@ export default class extends Component {
         });
     };
 
-    moveImages = (imageIds, categoryId, callback) => {
+    moveImages = (imageIds, categoryId) => {
         if (!imageIds || imageIds.length == 0) return;
 
         $.get('/images/move', { image: imageIds, category: categoryId }, json => {
             if(json.status == "ok"){
-                this.__delFromImageList__(imageIds);
-                callback();
+                this.parent.categoryList.flush();
             }
         });
     };
 
-    moveSelectedImages = (categoryId, callback) => {
-        this.moveImages(this.selectedImages, categoryId, callback);
+    moveSelectedImages = (categoryId) => {
+        this.moveImages(this.selectedImages, categoryId);
     };
 
-    deleteImages = (imageIds, callback) => {
+    deleteImages = (imageIds) => {
         if (!imageIds || imageIds.length == 0) return;
 
         this.confirm('是否确定删除该图片?', () => {
             $.get('/images/delete', { image: imageIds }, json => {
                 if (json.status == "ok") {
-                    this.__delFromImageList__(imageIds);
+                    this.parent.categoryList.flush();
                 }
             });
         });
     };
 
-    deleteSelectedImages = (callback) => {
-        this.deleteImages(this.selectedImages, callback);
+    deleteSelectedImages = () => {
+        this.deleteImages(this.selectedImages);
     };
 
-    __delFromImageList__ = imageIds => {
-        for (let imageId of imageIds) {
-            let index = this.images.findIndex(img => img._id == imageId);
-            if (index != -1) this.images.splice(index, 1);
-        }
-        this.__buildImageUl__();
-        this.parent.toolBar.changeStatus();
-    };
 
-    loadImages = items => {
+    loadImages = (items, callback) => {
         this.images = items;
         this.selectedImages = [];
         this.__buildImageUl__();
+
+        isFunction(callback) && callback();
     };
 
     addItem = item => {
