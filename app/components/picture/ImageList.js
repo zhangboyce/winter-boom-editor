@@ -56,6 +56,7 @@ export default class extends Component {
         $.get('/images/move', { image: imageIds, category: categoryId }, json => {
             if(json.status == "ok"){
                 this.parent.categoryList.flush();
+                this.parent.toolBar.defaultCheckbox();
             }
         });
     };
@@ -71,6 +72,7 @@ export default class extends Component {
             $.get('/images/delete', { image: imageIds }, json => {
                 if (json.status == "ok") {
                     this.parent.categoryList.flush();
+                    this.parent.toolBar.defaultCheckbox();
                 }
             });
         });

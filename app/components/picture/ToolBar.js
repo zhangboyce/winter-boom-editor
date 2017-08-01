@@ -28,6 +28,10 @@ export default class extends Component {
         }
     };
 
+    defaultCheckbox = ()=>{
+        $("[name=js-check-checkbox]:checkbox").prop("checked", false);
+    };
+
     changeStatus = () => {
         if (this.parent.imageList.hasSelected()) {
             this.__activeStatus__();
@@ -117,7 +121,7 @@ export default class extends Component {
                 <div class="col col-md-12">
                     <div class="operation-area">
                         <label class="chose_checkbox_label" for="js-check-all">
-                        <input id="js-check-all" type="checkbox" class="frm_checkbox" data-label="全选">
+                        <input id="js-check-all" type="checkbox" name="js-check-checkbox" class="js-check-checkbox" data-label="全选">
                         <i class="icon_checkbox"></i>
                         <span class="content">&nbsp;全选</span></label>
                         <a id="js-move-group" class="a-move" href="javascript:;" disabled="disabled">移动分组</a>
