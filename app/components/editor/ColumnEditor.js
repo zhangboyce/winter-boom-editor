@@ -68,12 +68,14 @@ export default class extends Component {
     };
 
     clear = () => {
-        this.__check__(() => {
-            this.editor.clear();
-            this.title.clear();
-            this.editorFooter.clear();
-            this.message.success('已清空内容');
-        });
+        if (!this.originArticle.isEmpty()) {
+            this.confirm('未保存的临时文档，操作后内容将无法恢复,是否确认执行操作?', () => {
+                this.editor.clear();
+                this.title.clear();
+                this.editorFooter.clear();
+                this.message.success('已清空内容');
+            });
+        }
     };
 
     deepClear = () => {
@@ -82,14 +84,10 @@ export default class extends Component {
 
     __check__ = callback => {
         let article = this.__getArticle__();
-        if(!this.originArticle) {
-            if(!article.isEmpty()) {
-                this.confirm('未保存的临时文档，操作后内容将无法恢复,是否确认执行操作?', callback);
-            }
-        }else {
-            if(!article.isEquals(this.originArticle)) {
-                this.confirm('文档内容已更新，操作后内容将无法恢复,是否确认执行操作?', callback);
-            }
+        if (this.originArticle.isEmpty()) {
+            callback()
+        } else if(!article.isEquals(this.originArticle)) {
+            this.confirm('文档内容已更新，操作后内容将无法恢复,是否确认执行操作?', callback);
         }
     };
 

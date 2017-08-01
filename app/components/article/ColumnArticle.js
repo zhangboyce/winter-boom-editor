@@ -22,26 +22,25 @@ export default class extends Component {
     };
 
     rendered = () => {
+
         let $articleList = this.find('.article-list');
         let $collectionList = this.find('.collection-list');
         let $leftTab = this.find('.save-article-bar');
         let $rightTab = this.find('.collection-article-bar');
 
+        $articleList.append(this.articleList);
+        $collectionList.append(this.collectionList);
+
         $leftTab.click(() => {
             $leftTab.addClass("active").siblings().removeClass("active");
-            $articleList.empty();
-            $articleList.append(this.articleList);
             $articleList.show();
             $collectionList.hide();
         });
 
         $rightTab.click(() => {
             $rightTab.addClass("active").siblings().removeClass("active");
-            $collectionList.empty();
-            this.articleList.empty();
-            $collectionList.append(this.collectionList);
-            $articleList.hide();
             $collectionList.show();
+            $articleList.hide();
         });
 
         $leftTab.click();

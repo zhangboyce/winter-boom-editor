@@ -59,9 +59,9 @@ export default class extends Component {
         this.__popover__($moveCategory, {
             title: `移动分组`,
             content: `<div id="category-radios"></div>`,
-            ok: ($popover) => {
+            ok: ($popover, callback) => {
                 let category = $popover.find('input:radio[name="category"]:checked').attr('id');
-                this.parent.imageList.moveSelectedImages(category);
+                this.parent.imageList.moveSelectedImages(category, callback);
             },
             shown: $popover => {
                 let choseCategoryList = [...this.parent.categoryList.getCategories()];

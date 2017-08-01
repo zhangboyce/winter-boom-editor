@@ -1,6 +1,7 @@
 'use strict';
 
 import Component from './../Component';
+import { isFunction } from '../../../common/TypeUtils';
 
 export default class extends Component {
     constructor(props) {
@@ -22,12 +23,14 @@ export default class extends Component {
         this.__popover__($editImageName, {
             title: `编辑名称`,
             content: `<input type="text" class="item-name-input" value=${ this.item.name } />`,
-            ok: ($popover) => {
+            ok: ($popover, callback) => {
                 let itemName = $popover.find('.item-name-input').val();
                 if (itemName && itemName.trim() && itemName != this.item.name) {
                     this.parent.editImageName(this.item._id, itemName, () => {
                         this.item.name = itemName;
                         this.find('.bottom-content').text(itemName);
+
+                        isFunction(callback) && callback();
                     });
                 } else {
                     this.message.warn('名称不完美!');
@@ -39,9 +42,9 @@ export default class extends Component {
         this.__popover__($moveCategory, {
             title: `移动分组`,
             content: `<div id="category-radios"></div>`,
-            ok: ($popover) => {
+            ok: ($popover, callback) => {
                 let category = $popover.find('input:radio[name="category"]:checked').attr('id');
-                this.parent.moveImages([this.item._id], category);
+                this.parent.moveImages([this.item._id], category, callback);
             },
             shown: $popover => {
                 let choseCategoryList = [...this.parent.parent.categoryList.getCategories()];

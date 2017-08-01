@@ -50,27 +50,29 @@ export default class extends Component {
         });
     };
 
-    moveImages = (imageIds, categoryId) => {
+    moveImages = (imageIds, categoryId, callback) => {
         if (!imageIds || imageIds.length == 0) return;
 
         $.get('/images/move', { image: imageIds, category: categoryId }, json => {
             if(json.status == "ok"){
                 this.parent.categoryList.flush();
+                isFunction(callback) && callback();
             }
         });
     };
 
-    moveSelectedImages = (categoryId) => {
-        this.moveImages(this.selectedImages, categoryId);
+    moveSelectedImages = (categoryId, callback) => {
+        this.moveImages(this.selectedImages, categoryId, callback);
     };
 
-    deleteImages = (imageIds) => {
+    deleteImages = (imageIds, callback) => {
         if (!imageIds || imageIds.length == 0) return;
 
         this.confirm('是否确定删除该图片?', () => {
             $.get('/images/delete', { image: imageIds }, json => {
                 if (json.status == "ok") {
                     this.parent.categoryList.flush();
+                    isFunction(callback) && callback();
                 }
             });
         });
