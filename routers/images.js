@@ -104,7 +104,7 @@ router.get('/images/list', function * () {
 
     if (category != 'ALL') {
         if (category == 'NO_CATEGORY') {
-            query['category'] = category
+            query['$or'] = [{category: {$exists: false}}, {category: ''}, {category: null}];
         } else {
             query['category'] = category
         }

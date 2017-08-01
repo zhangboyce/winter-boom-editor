@@ -30,6 +30,7 @@ export default class extends Component {
         return e => {
             e.stopPropagation();
             this.parent.pagination.category(type._id);
+            this.parent.pagination.page(1);
             this.parent.toolBar.category(type._id);
             this.parent.pagination.pagination(callback);
         };
