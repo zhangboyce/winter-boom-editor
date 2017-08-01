@@ -174,7 +174,8 @@
   padding-left: 15px;
 }
 
-.modal-right-header .operation-area a {
+.modal-right-header .operation-area .a-move,
+.modal-right-header .operation-area .a-delete{
   height: 28px;
   line-height: 28px;
   width: 76px;
@@ -187,7 +188,8 @@
   background-color: @white;
 }
 
-.modal-right-header .operation-area a[disabled="disabled"] {
+.modal-right-header .operation-area .a-move[disabled="disabled"],
+.modal-right-header .operation-area .a-delete[disabled="disabled"] {
   background-color: #e7e7eb;
   border-color: #dadbe0;
   color: #a5a6aa;
@@ -418,13 +420,21 @@
   border-radius: 5px;
 }
 .edit-radio-label{
-  width: 49%;
   display: inline-block;
   text-align: left;
   cursor: pointer;
   word-wrap: break-word;
   word-break: break-all;
+  margin-right: 10px;
 }
 .js-commitb-btn{
   margin-right: 5px;
+}
+.create-category-input,
+.item-name-input{
+  outline: none;
+  padding: 2px;
+}
+#category-radios{
+  width: 150px;
 }
