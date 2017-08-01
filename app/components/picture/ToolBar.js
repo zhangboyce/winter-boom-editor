@@ -12,12 +12,11 @@ export default class extends Component {
             url: () => ('/upload/image/'),
             success: result => {
                 let json = JSON.parse(result);
-                this.parent.flush(json.item);
+                this.parent.categoryList.flush();
             }
         });
 
         this.__category__ = '';
-
         this.rendered();
     }
 
@@ -60,12 +59,9 @@ export default class extends Component {
         this.__popover__($moveCategory, {
             title: `移动分组`,
             content: `<div id="category-radios"></div>`,
-            ok: ($popover, callback) => {
+            ok: ($popover) => {
                 let category = $popover.find('input:radio[name="category"]:checked').attr('id');
-                this.parent.imageList.moveSelectedImages(category, () => {
-                    this.parent.flush();
-                    callback();
-                });
+                this.parent.imageList.moveSelectedImages(category);
             },
             shown: $popover => {
                 let choseCategoryList = [...this.parent.categoryList.getCategories()];

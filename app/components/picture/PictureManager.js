@@ -11,18 +11,13 @@ export default class extends Component {
     constructor(props) {
         super(props);
         this.modal = new Modal({id: 'pictureManagementModal'});
-        this.imageList = new ImageList({ parent: this });
-        this.categoryList = new CategoryList({ parent: this });
-        this.pagination = new Pagination({ parent: this });
+
         this.toolBar = new ToolBar({ parent: this });
+        this.categoryList = new CategoryList({ parent: this });
+        this.imageList = new ImageList({ parent: this });
+        this.pagination = new Pagination({ parent: this });
 
         this.rendered();
-    }
-
-    flush() {
-        this.pagination.flush(this.imageList.loadImages);
-        this.categoryList.flush(this.toolBar.category());
-        this.toolBar.changeStatus();
     }
 
     open = () => {
