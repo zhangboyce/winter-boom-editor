@@ -111,7 +111,7 @@
 }
 
 .modal-pic-left {
-  border-right: 1px solid @grey;
+  border-right: 1px solid @light-grey;
   height: 570px;
   overflow:scroll;
 }
@@ -120,17 +120,17 @@
   text-align: left;
   height: 32px;
   line-height: 32px;
-  padding-left: 10px;
+  padding-left: 15px;
   cursor: pointer;
 }
 
 .modal-pic-left ul li.active {
-  color: @purple;
+  //color: @purple;
   background-color: @light-grey;
 }
 
 .modal-pic-left ul li:hover {
-  color: @purple;
+  //color: @purple;
   background-color: @light-grey;
 }
 
@@ -205,7 +205,7 @@
 #img-list-warp {
   //height: 470px;
   margin-left: 15px;
-  border-top: 1px solid @light-grey;
+  //border-top: 1px solid @light-grey;
 
 }
 #img-list-warp ul {
@@ -360,11 +360,17 @@
   height: 28px;
   line-height: 28px;
   text-align: center;
-  background-color: @purple;
-  color: @white;
+  //background-color: @purple;
+  //color: @white;
   border-radius: 5px;
   display: inline-block;
   cursor: pointer;
+  border: 1px solid @light-grey;
+}
+#paginationArea span.last-page:hover,
+#paginationArea span.next-page:hover,
+#paginationArea span.go-page:hover {
+  background-color: @grey;
 }
 #paginationArea span.go-page{
   margin-right: 15px;
@@ -377,16 +383,15 @@
 }
 
 #paginationArea .input-number {
-  vertical-align: middle;
   width: 75px;
-  height: 26px;
-  line-height: 26px;
-  padding: 0 2px;
-  border: 1px solid #666;
+  height: 28px;
+  line-height: 28px;
+  border: 1px solid @light-grey;
   border-radius: 3px;
   text-align: center;
   font-size: 14px;
   margin:0 5px;
+  outline: 0 none;
 }
 
 

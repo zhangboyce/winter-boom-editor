@@ -246,7 +246,7 @@ function * upload(imageFile, categoryId, accountId) {
     let uploadFile = yield ImageUploadFile.findOne({ account: accountId, key: key });
     if (!uploadFile) {
         let category;
-        if(categoryId) {
+        if(categoryId && categoryId !== 'ALL' && categoryId !== 'NO_CATEGORY') {
             category = yield ImageCategory.findOne({_id: categoryId, account: accountId});
         }
 

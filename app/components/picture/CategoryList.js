@@ -84,8 +84,8 @@ export default class extends Component {
         return $(`
             <div>
                 <ul class="col col-md-12 ul-category"></ul>
-                <div class="col col-md-12" style="padding-left: 10px;">
-                    <a id="create-category" href="javascript:;"><i class="fa fa-plus"></i>新建分组</a>
+                <div class="col col-md-12" style="padding-left:15px;">
+                    <a id="create-category" href="javascript:;"><i class="fa fa-plus"></i> 新建分组</a>
                 </div>
             </div>
         `);
