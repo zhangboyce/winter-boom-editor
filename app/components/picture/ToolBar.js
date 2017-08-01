@@ -17,7 +17,6 @@ export default class extends Component {
         });
 
         this.__category__ = '';
-
         this.rendered();
     }
 
@@ -121,8 +120,8 @@ export default class extends Component {
                         <input id="js-check-all" type="checkbox" class="frm_checkbox" data-label="全选">
                         <i class="icon_checkbox"></i>
                         <span class="content">&nbsp;全选</span></label>
-                        <a id="js-move-group" href="javascript:;" disabled="disabled">移动分组</a>
-                        <a id="js-delete-chose" href="javascript:;" disabled="disabled">删除</a>
+                        <a id="js-move-group" class="a-move" href="javascript:;" disabled="disabled">移动分组</a>
+                        <a id="js-delete-chose" class="a-delete" href="javascript:;" disabled="disabled">删除</a>
                     </div>
                 </div>
             </div>

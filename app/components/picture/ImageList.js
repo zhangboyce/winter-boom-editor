@@ -96,10 +96,15 @@ export default class extends Component {
     //构建图片list
     __buildImageUl__ = () => {
         this.html('');
-        this.images.forEach(item => {
-            let imageItem = new ImageItem({ parent: this, item: item });
-            this.append(imageItem);
-        });
+        if(this.images.length==0){
+            this.html('<div class="tips-no-image">该分组暂时没有图片</div>');
+        }else{
+            this.images.forEach(item => {
+                let imageItem = new ImageItem({ parent: this, item: item });
+                this.append(imageItem);
+            });
+        }
+
     };
 
     rendered = () => {
