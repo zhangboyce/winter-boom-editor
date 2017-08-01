@@ -12,7 +12,7 @@ const popover = new Popover();
 const hasOwnProperty = Object.prototype.hasOwnProperty;
 const __defineProperty__ = (self, name, value, options = {}) => {
     let defaultOpts = {
-        writable: true,
+        writable: false,
         configurable: false,
         enumerable: false
     };

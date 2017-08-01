@@ -20,21 +20,21 @@ export default class extends Component {
 
     open = () => {
         this.toolBar = new ToolBar({ parent: this });
-        this.categoryList = new CategoryList({ parent: this });
-        this.imageList = new ImageList({ parent: this });
         this.pagination = new Pagination({ parent: this });
+        this.imageList = new ImageList({ parent: this });
+        this.categoryList = new CategoryList({ parent: this });
 
         this.rendered();
         this.modal.open();
     };
 
     rendered = () => {
-        let $wrap = this.find('#img-list-warp');
-        $wrap.html('');
+        let $wrap = $('<div id="img-list-warp"></div>');
         $wrap.append(this.imageList);
         $wrap.append(this.pagination);
 
         let $right = this.find('.modal-pic-right');
+        $right.html('');
         $right.html($wrap);
         $right.prepend(this.toolBar);
 
@@ -57,8 +57,7 @@ export default class extends Component {
                     </div>
                     <div class="col col-md-10">
                         <div class="modal-pic-right">
-                            <div id="img-list-warp">
-                            </div>
+                     
                         </div>
                     </div>
                 </div>
