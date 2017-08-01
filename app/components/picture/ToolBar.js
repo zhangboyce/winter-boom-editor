@@ -109,7 +109,7 @@ export default class extends Component {
                <div class="change-category">
                          <div class="col col-md-8">
                                 <div>
-                                        <span></span>
+                                        <span class="change-category-title"></span>
                                         <span></span>
                                         <span></span>
                                 </div>
