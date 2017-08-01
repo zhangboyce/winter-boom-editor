@@ -107,7 +107,13 @@ export default class extends Component {
         }).css("ime-mode", "disabled");
 
         this.find('.go-page').click(() => {
-            this.page($input_number.val() / 1);
+            let goPage = $input_number.val() / 1;
+            if(goPage == 0){
+                this.page(1);
+            }else{
+                this.page($input_number.val() / 1);
+            }
+
             if (this.page() > this.paginationInfo.maxPage) {
                 this.page(this.paginationInfo.maxPage);
                 $input_number.val(this.page());

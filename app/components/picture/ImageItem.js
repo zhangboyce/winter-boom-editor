@@ -10,31 +10,39 @@ export default class extends Component {
     }
 
     rendered = () => {
+        $(() => {
+            $('[data-toggle="tooltip"]').tooltip();
+        });
+
         let $checkbox = this.find('.input-checkbox');
         $checkbox.click(() => {
             this.parent.select(this.find('.input-checkbox').attr('id'));
         });
 
-        $(() => {
-            $('[data-toggle="tooltip"]').tooltip();
-        });
+        this.find('.cover').css("background-image", "url(http://editor.static.cceato.com/" + this.item.key);
+        this.find('.checkbox-label').attr('for', this.item._id);
+        this.find('.input-checkbox').attr('id', this.item._id);
+        this.find('.bottom-content').text(this.item.name);
 
         let $editImageName = this.find('li.edit-li');
+        let oldItemName = '';
         this.__popover__($editImageName, {
             title: `编辑名称`,
-            content: `<input type="text" class="item-name-input" value=${ this.item.name } />`,
+            content: `<input type="text" class="item-name-input" value=''>`,
             ok: ($popover, callback) => {
                 let itemName = $popover.find('.item-name-input').val();
-                if (itemName && itemName.trim() && itemName != this.item.name) {
+                if (itemName && itemName.trim() && itemName != oldItemName) {
                     this.parent.editImageName(this.item._id, itemName, () => {
-                        this.item.name = itemName;
                         this.find('.bottom-content').text(itemName);
-
                         isFunction(callback) && callback();
                     });
                 } else {
                     this.message.warn('名称不完美!');
                 }
+            },
+            shown: $popover => {
+                oldItemName = this.find('.bottom-content').text();
+                $popover.find('.item-name-input').val(oldItemName);
             }
         });
 
@@ -66,10 +74,6 @@ export default class extends Component {
             this.parent.deleteImages([this.item._id]);
         });
 
-        this.find('.cover').css("background-image", "url(http://editor.static.cceato.com/" + this.item.key);
-        this.find('.checkbox-label').attr('for', this.item._id);
-        this.find('.input-checkbox').attr('id', this.item._id);
-        this.find('.bottom-content').text(this.item.name);
     };
 
     render() {
