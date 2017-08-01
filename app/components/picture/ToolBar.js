@@ -11,7 +11,6 @@ export default class extends Component {
             name: 'image',
             url: () => ('/upload/image/'),
             success: result => {
-                let json = JSON.parse(result);
                 this.parent.categoryList.flush();
             }
         });

@@ -225,18 +225,20 @@ function * incImageCount4Category(categoryId, count) {
 
 router.post('/upload/image', KoaUploadMiddleware, function *() {
     let files = this.files;
-    let image = files.image;
+    let images = files.image;
     let category = this.data && this.data.categoryId;
 
-    if(image) {
-        let accountId = this.session.account._id;
-        let uploadFile = yield upload(image, category, accountId);
-        if(uploadFile) {
-            this.body = 'success:' + JSON.stringify({ key: uploadFile.key, item: uploadFile });
-            return;
+    if (Object.prototype.toString.call(images) == '[object Object]') {
+        images = [images];
+    }
+
+    let accountId = this.session.account._id;
+    for (let image of images) {
+        if(image) {
+            yield upload(image, category, accountId);
         }
     }
-    this.body = 'error:not found';
+    this.body = { status: 'ok' };
 });
 
 function * upload(imageFile, categoryId, accountId) {
