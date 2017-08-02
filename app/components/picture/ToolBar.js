@@ -13,7 +13,7 @@ export default class extends Component {
             url: () => ('/upload/image/'),
             multiple: true,
             success: result => {
-                let json = JSON.parse(result);
+                //let json = JSON.parse(result);
                 this.parent.categoryList.flush();
             }
         });
