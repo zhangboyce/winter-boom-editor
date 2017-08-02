@@ -10,6 +10,7 @@ export default class extends Component {
         this.upload = upload({
             name: 'image',
             url: () => ('/upload/image/'),
+            multiple: true,
             success: result => {
                 this.parent.categoryList.flush();
             }

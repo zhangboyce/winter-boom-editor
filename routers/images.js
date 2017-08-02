@@ -232,13 +232,15 @@ router.post('/upload/image', KoaUploadMiddleware, function *() {
         images = [images];
     }
 
+    let keys = [];
     let accountId = this.session.account._id;
     for (let image of images) {
         if(image) {
-            yield upload(image, category, accountId);
+            let uploadFile = yield upload(image, category, accountId);
+            if (uploadFile) keys.push(uploadFile.key);
         }
     }
-    this.body = { status: 'ok' };
+    this.body = { status: 'ok', keys: keys };
 });
 
 function * upload(imageFile, categoryId, accountId) {

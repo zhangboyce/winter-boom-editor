@@ -53,10 +53,30 @@ export default class extends Component {
         }
     };
 
+    __createSection__ = $node => {
+        let $section = $('<section class="winter-section"></section>')
+            .css({
+                'margin-bottom': '5px'
+            });
+
+        let $section_inner = $('<section></section>')
+            .css({
+                'display': 'block',
+                'clear': 'both',
+                'position': 'relative',
+                'width': '100%',
+                'margin': '0 auto',
+                'overflow': 'hidden'
+            });
+
+        $section_inner.append($node);
+        $section.append($section_inner);
+
+        return $section;
+    };
+
     __insertSection__ = $node => {
-        let section = $('<section class="winter-section"></section>')
-            .css({'margin-bottom': '5px'})
-            .append($node);
+        let $section = this.__createSection__($node);
 
         if (this.isEmpty()) {
             this.editable.empty();
@@ -64,11 +84,11 @@ export default class extends Component {
         }
 
         if (this.lastSection) {
-            section.insertAfter(this.lastSection);
+            $section.insertAfter(this.lastSection);
         } else {
-            this.editable.append(section);
+            this.editable.append($section);
         }
-        let textNode = _.find(section.find('*').contents(), c => {
+        let textNode = _.find($section.find('*').contents(), c => {
             if (c.nodeType && c.nodeType === 3 && _.trim(c.textContent).length > 0) {
                 return c;
             }
@@ -78,7 +98,7 @@ export default class extends Component {
             r.select();
             this.editable.focus();
         }
-        return section;
+        return $section;
     };
 
     __buildSummerEditor__ = $dom => {
@@ -97,13 +117,12 @@ export default class extends Component {
 
     __onFocus__ = () => {
         if (dom.isEmpty(this.editable[0]) || dom.emptyPara === this.editable.html()) {
-            let section = $('<section class="winter-section" style="margin-bottom: 5px;"><p><br/></p></section>');
-            $('.note-editable').html(section);
-
-            section.click(() => {
-                this.__setLastSection__(section);
+            let $section = this.__createSection__($('<p><br/></p>'));
+            $('.note-editable').html($section);
+            $section.click(() => {
+                this.__setLastSection__($section);
             });
-            this.__setLastSection__(section);
+            this.__setLastSection__($section);
         }
     };
 
