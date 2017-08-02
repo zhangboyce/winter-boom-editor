@@ -42,9 +42,9 @@ export default class extends Component {
         return this.images.length < 1;
     };
 
-    editImageName = (imageIds, imageName, callback) =>{
-        $.post('/images/update/'+imageIds,{ name:imageName }, json => {
-            if(json.status == "ok"){
+    editImageName = (imageIds, imageName, callback) => {
+        $.post('/images/update/' + imageIds, {name: imageName}, json => {
+            if (json.status == "ok") {
                 callback();
             }
         });
@@ -53,8 +53,8 @@ export default class extends Component {
     moveImages = (imageIds, categoryId, callback) => {
         if (!imageIds || imageIds.length == 0) return;
 
-        $.get('/images/move', { image: imageIds, category: categoryId }, json => {
-            if(json.status == "ok"){
+        $.get('/images/move', {image: imageIds, category: categoryId}, json => {
+            if (json.status == "ok") {
                 this.parent.categoryList.flush();
                 isFunction(callback) && callback();
             }
@@ -67,19 +67,16 @@ export default class extends Component {
 
     deleteImages = (imageIds, callback) => {
         if (!imageIds || imageIds.length == 0) return;
-
-        this.confirm('是否确定删除该图片?', () => {
-            $.get('/images/delete', { image: imageIds }, json => {
-                if (json.status == "ok") {
-                    this.parent.categoryList.flush();
-                    isFunction(callback) && callback();
-                }
-            });
+        $.get('/images/delete', {image: imageIds}, json => {
+            if (json.status == "ok") {
+                this.parent.categoryList.flush();
+                isFunction(callback) && callback();
+            }
         });
     };
 
-    deleteSelectedImages = () => {
-        this.deleteImages(this.selectedImages);
+    deleteSelectedImages = (callback) => {
+        this.deleteImages(this.selectedImages, callback);
     };
 
 
@@ -98,11 +95,11 @@ export default class extends Component {
     //构建图片list
     __buildImageUl__ = () => {
         this.html('');
-        if(this.images.length==0){
+        if (this.images.length == 0) {
             this.html('<div class="tips-no-image">该分组暂时没有图片</div>');
-        }else{
+        } else {
             this.images.forEach(item => {
-                let imageItem = new ImageItem({ parent: this, item: item });
+                let imageItem = new ImageItem({parent: this, item: item});
                 this.append(imageItem);
             });
         }

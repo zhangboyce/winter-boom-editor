@@ -70,9 +70,16 @@ export default class extends Component {
             }
         });
 
-        this.find('li.delete-li').click(()=> {
-            this.parent.deleteImages([this.item._id]);
+
+        let $deleteCategory = this.find('li.delete-li');
+        this.__popover__($deleteCategory, {
+            title: ``,
+            content: `<div style="padding:5px 0">确定删除此素材吗?</div>`,
+            ok: ($popover, callback) => {
+                this.parent.deleteImages([this.item._id], callback);
+            }
         });
+
 
     };
 

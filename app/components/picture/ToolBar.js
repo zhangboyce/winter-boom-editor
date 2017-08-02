@@ -18,7 +18,7 @@ export default class extends Component {
             }
         });
 
-        this.__category__ = {  };
+        this.__category__ = {};
         this.rendered();
     }
 
@@ -28,10 +28,10 @@ export default class extends Component {
         } else {
             this.find('.change-category-title').text(__category__.name);
 
-            if(__category__._id == 'ALL' || __category__._id == 'NO_CATEGORY'){
+            if (__category__._id == 'ALL' || __category__._id == 'NO_CATEGORY') {
                 this.find('.rename-category').hide();
                 this.find('.delete-category').hide();
-            }else{
+            } else {
                 this.find('.rename-category').show();
                 this.find('.delete-category').show();
             }
@@ -49,20 +49,21 @@ export default class extends Component {
         }
     };
 
-    __deleteCategory__ = (categoryId) => {
-        this.confirm('是否确定删除该分组?', () => {
-            $.get('/images/categories/delete/'+categoryId, json => {
-                if (json.status == "ok") {
-                    this.__category__ = {  };
-                    this.parent.categoryList.flush();
-                }
-            });
+    __deleteCategory__ = (categoryId, callback) => {
+        //this.confirm('是否确定删除该分组?', () => {
+        $.get('/images/categories/delete/' + categoryId, json => {
+            if (json.status == "ok") {
+                this.__category__ = {};
+                this.parent.categoryList.flush();
+                callback();
+            }
         });
+        //});
     };
 
-    __editCategoryName__ = (id, categoryName, callback) =>{
-        $.post('/images/categories/update/' + id, { name:categoryName }, json => {
-            if(json.status == "ok"){
+    __editCategoryName__ = (id, categoryName, callback) => {
+        $.post('/images/categories/update/' + id, {name: categoryName}, json => {
+            if (json.status == "ok") {
                 this.parent.categoryList.flush();
                 callback();
             }
@@ -84,9 +85,15 @@ export default class extends Component {
 
     rendered = () => {
         //多个删除
-        this.find('#js-delete-chose').on("click", () => {
-            this.parent.imageList.deleteSelectedImages();
+        let $deleteCategoryTotal = this.find('#js-delete-chose');
+        this.__popover__($deleteCategoryTotal, {
+            title: ``,
+            content: `<div>确定删除选中的素材吗</div>`,
+            ok: ($popover, callback) => {
+                this.parent.imageList.deleteSelectedImages(callback);
+            }
         });
+
 
         //多个移动分组
         let $moveCategory = this.find('#js-move-group');
@@ -131,9 +138,18 @@ export default class extends Component {
         this.find('.button-upload-local').click(() => {
             this.upload.click({categoryId: this.category()._id});
         });
-        this.find('.delete-category').click(() => {
-            this.__deleteCategory__(this.category()._id);
+
+
+        //删除分组
+        let $deleteCategory = this.find('.delete-category');
+        this.__popover__($deleteCategory, {
+            title: ``,
+            content: `<div><p>仅删除分组，不删除图片，组内图片将自动归入未分组</p></div>`,
+            ok: ($popover, callback) => {
+                this.__deleteCategory__(this.category()._id, callback);
+            }
         });
+
 
         let $renameCategory = this.find('.rename-category');
         let oldCategoryName = '';
@@ -142,7 +158,7 @@ export default class extends Component {
             content: `<input type="text" class="item-name-input" value=''>`,
             ok: ($popover, callback) => {
                 let categoryName = $popover.find('.item-name-input').val();
-                if (categoryName && categoryName.trim() && categoryName != oldCategoryName && categoryName.trim().length<7) {
+                if (categoryName && categoryName.trim() && categoryName != oldCategoryName && categoryName.trim().length < 7) {
                     this.__editCategoryName__(this.category()._id, categoryName, () => {
                         this.find('.change-category-title').text(categoryName);
                         isFunction(callback) && callback();
