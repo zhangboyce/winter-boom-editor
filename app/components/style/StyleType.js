@@ -55,7 +55,7 @@ export default class extends Component {
             this.pictureManager.open()
         });
 
-        this.find('#pic-management').click();
+        //this.find('#pic-management').click();
 
         this.__loadTypes__(types => {
             types.forEach(type => {
