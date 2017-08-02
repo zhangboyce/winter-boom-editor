@@ -44,12 +44,6 @@
   position: relative;
   height: 80%;
   cursor: pointer;
-  //border: 1px solid rgb(189, 190, 191);
-  //border-bottom: transparent;
-}
-
-.col-editor-title .cover:hover {
-  //background-color: rgba(89, 89, 90, .2);
 }
 
 .col-editor-title .cover > div {
@@ -249,4 +243,56 @@ div.editor-module-right div.note-editable  section.winter-section-active{
 .style-add-new-block-btn:hover,
 .style-copy-btn:hover {
   background-color: rgba(96, 102, 190, 0.8);
+}
+
+#selectImageModal .modal-body ul {
+  overflow-y: auto;
+  list-style-type: none;
+  padding: 0;
+}
+
+#selectImageModal .modal-body ul > li {
+  width: 115px;
+  height: 115px;
+  float: left;
+  margin: 0 15px 15px 0;
+}
+
+#selectImageModal .modal-body .select-image-icon {
+  width: 115px;
+  height: 115px;
+  background: rgba(0, 0, 0, 0.7) none repeat scroll 0 0;
+  cursor: pointer;
+  text-align: center;
+}
+
+#selectImageModal .modal-body .select-image-icon i {
+ line-height: 115px;
+ font-size: 40px;
+}
+
+#selectImageModal .modal-body .select-image-note {
+  color: @grey;
+}
+
+#selectImageModal .modal-footer {
+  text-align: center;
+}
+
+#selectImageModal .modal-footer span.btn {
+  border-radius: 4px;
+  margin-right: 18px;
+  padding: 0;
+  width: 150px;
+  height: 35px;
+  line-height: 35px;
+  font-size: 14px;
+  color: @white;
+  background-color: @purple;
+  border: 1px solid @purple;
+}
+
+#selectImageModal .modal-footer span.btn:hover {
+  background-color: darken(@purple, 20%);
+  border: 1px solid darken(@purple, 20%);
 }

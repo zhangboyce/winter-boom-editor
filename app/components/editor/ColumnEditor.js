@@ -10,7 +10,7 @@ import ConfirmModal from '../common/ConfirmModal';
 export default class extends Component {
     constructor(props) {
         super(props);
-        this.title = new Title({ parent: this});
+        this.title = new Title({ parent: this });
         this.editor = new Editor({ parent: this});
         this.editorFooter = new EditorFooter({ parent: this });
         this.operator = new Operator({ parent: this});

@@ -8,6 +8,7 @@ export default class extends Component {
         super(props);
 
         this.selectImageModal = new Modal({ id: 'selectImageModal' });
+
         this.$titleInput = null;
         this.$authorInput = null;
         this.$coverImg = null;
@@ -56,9 +57,41 @@ export default class extends Component {
         this.cover('');
     };
 
-    __buildSelectImageModal__ = () => {
-        let images = this.parent.editable.find('img');
+    __buildSelectImageModal__ = onClick => {
+        let $body;
+        let $images = this.parent.editor.editable.find('img');
+        if ($images.length < 1) {
+            $body = `<div class="select-image-note">很抱歉,正文中并没有可供选择的图片,请选择上传封面图片。</div>`
+        } else {
+            let $ul = $(`<ul></ul>`);
+            let $lastIcon;
+            let $selected;
+            $images.each(function() {
+                let $image = this;
+                let $icon = $(`<div class="select-image-icon"><i class="fa fa-check-square"></i></div>`).hide();
+                let $li = $('<li></li>').css({
+                    background: `#fff url("${$image.src}") no-repeat scroll center center / cover `
+                }).append($icon)
+                    .hover(e => {
+                        !($image === $selected) && $icon.show();
+                    }, e => {
+                        !($image === $selected) && $icon.hide();
+                    }).click(e => {
+                        if($selected === $image) return;
+                        $selected = $image;
+                        $lastIcon && $lastIcon.hide();
+                        $lastIcon = $icon;
+                        onClick($selected);
+                    });
 
+                $ul.append($li);
+            });
+
+            $body = $(`<div><p class="select-image-note">请从正文使用过的图片中选择封面:</p></div>`);
+            $body.append($ul);
+        }
+
+        this.selectImageModal.$body = $body;
     };
 
     rendered = () => {
@@ -74,10 +107,22 @@ export default class extends Component {
                 this.upload.click();
             });
 
-        $(`<a href="javascript:;">正文选择封面</a>`)
+        let $selected;
+        this.selectImageModal.$header = $(`<h4>从正文选择封面</h4>`);
+        $(`<a href="javascript:;">从正文选择封面</a>`)
             .appendTo($cover_desc)
             .click(() => {
-                this.__buildSelectImageModal__();
+                this.__buildSelectImageModal__($image => {
+                    $selected = $image;
+                });
+
+                this.selectImageModal.$footer = $(`<span class="btn">确    定</span>`).click(() => {
+                    if ($selected && $selected.src) {
+                        this.cover($selected.src);
+                        $selected = null;
+                    }
+                    this.selectImageModal.close();
+                });
                 this.selectImageModal.open();
             });
         $cover.append($cover_desc.hide());
