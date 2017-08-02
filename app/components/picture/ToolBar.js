@@ -197,8 +197,8 @@ export default class extends Component {
                         <input id="js-check-all" type="checkbox" name="js-check-checkbox" class="js-check-checkbox" data-label="全选">
                         <i class="icon_checkbox"></i>
                         <span class="content">&nbsp;全选</span></label>
-                        <a id="js-move-group" class="a-move" href="javascript:;" disabled="disabled">移动分组</a>
-                        <a id="js-delete-chose" class="a-delete" href="javascript:;" disabled="disabled">删除</a>
+                        <button id="js-move-group" class="a-move" disabled="disabled">移动分组</button>
+                        <button id="js-delete-chose" class="a-delete" disabled="disabled">删除</button>
                     </div>
                 </div>
             </div>
