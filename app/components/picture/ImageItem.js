@@ -59,6 +59,9 @@ export default class extends Component {
                 let activeCategory = this.parent.parent.pagination.category();
                 let index = choseCategoryList.findIndex(it => it._id == activeCategory);
                 if (index != -1) choseCategoryList.splice(index, 1);
+                if(choseCategoryList.length<1){
+                    $popover.find('#category-radios').html("请先新建分组");
+                }
                 choseCategoryList.forEach(item => {
                     $popover.find('#category-radios').append(`
                     <label class="edit-radio-label" for="${item._id}">
