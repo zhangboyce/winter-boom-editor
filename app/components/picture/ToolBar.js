@@ -2,6 +2,7 @@
 
 import Component from './../Component';
 import upload from '../../utils/upload';
+import { isFunction } from '../../../common/TypeUtils';
 
 export default class extends Component {
     constructor(props) {
@@ -11,19 +12,30 @@ export default class extends Component {
             name: 'image',
             url: () => ('/upload/image/'),
             success: result => {
+                let json = JSON.parse(result);
                 this.parent.categoryList.flush();
             }
         });
 
-        this.__category__ = '';
+        this.__category__ = {  };
         this.rendered();
     }
 
-    category = category => {
-        if (category == undefined) {
+    category = __category__ => {
+        if (__category__ == undefined) {
             return this.__category__;
         } else {
-            this.__category__ = category;
+            this.find('.change-category-title').text(__category__.name);
+
+            if(__category__._id == 'ALL' || __category__._id == 'NO_CATEGORY'){
+                this.find('.rename-category').hide();
+                this.find('.delete-category').hide();
+            }else{
+                this.find('.rename-category').show();
+                this.find('.delete-category').show();
+            }
+
+            this.__category__ = __category__;
         }
     };
 
@@ -35,6 +47,27 @@ export default class extends Component {
             this.__disableStatus__();
         }
     };
+
+    __deleteCategory__ = (categoryId) => {
+        this.confirm('是否确定删除该分组?', () => {
+            $.get('/images/categories/delete/'+categoryId, json => {
+                if (json.status == "ok") {
+                    this.__category__ = {  };
+                    this.parent.categoryList.flush();
+                }
+            });
+        });
+    };
+
+    __editCategoryName__ = (id, categoryName, callback) =>{
+        $.post('/images/categories/update/' + id, { name:categoryName }, json => {
+            if(json.status == "ok"){
+                this.parent.categoryList.flush();
+                callback();
+            }
+        });
+    };
+
 
     //激活状态[可操作]
     __activeStatus__ = () => {
@@ -95,8 +128,35 @@ export default class extends Component {
         });
 
         this.find('.button-upload-local').click(() => {
-            this.upload.click({categoryId: this.category()});
+            this.upload.click({categoryId: this.category()._id});
         });
+        this.find('.delete-category').click(() => {
+            this.__deleteCategory__(this.category()._id);
+        });
+
+        let $renameCategory = this.find('.rename-category');
+        let oldCategoryName = '';
+        this.__popover__($renameCategory, {
+            title: `编辑名称`,
+            content: `<input type="text" class="item-name-input" value=''>`,
+            ok: ($popover, callback) => {
+                let categoryName = $popover.find('.item-name-input').val();
+                if (categoryName && categoryName.trim() && categoryName != oldCategoryName && categoryName.trim().length<7) {
+                    this.__editCategoryName__(this.category()._id, categoryName, () => {
+                        this.find('.change-category-title').text(categoryName);
+                        isFunction(callback) && callback();
+                    });
+                } else {
+                    this.message.warn('名称不完美!');
+                }
+            },
+            shown: $popover => {
+                oldCategoryName = this.find('.change-category-title').text();
+                $popover.find('.item-name-input').val(oldCategoryName);
+            }
+        });
+
+
     };
 
     render() {
@@ -105,9 +165,9 @@ export default class extends Component {
                <div class="change-category">
                          <div class="col col-md-8">
                                 <div>
-                                        <span class="change-category-title"></span>
-                                        <span></span>
-                                        <span></span>
+                                        <span class="title change-category-title"></span>
+                                        <span class="title rename-category">重命名</span>
+                                        <span class="title delete-category">删除分组</span>
                                 </div>
                         </div>
                         <div class="col col-md-4 text-right">
