@@ -40,7 +40,7 @@ export default class extends Component {
             e.stopPropagation();
             this.parent.pagination.category(type._id);
             this.parent.pagination.page(1);
-            this.parent.toolBar.category(type._id);
+            this.parent.toolBar.category(type);
             this.parent.pagination.pagination(callback);
         };
     };
@@ -73,12 +73,13 @@ export default class extends Component {
     }
 
     rendered = () => {
-        let categoryId = this.parent.toolBar.category();
         this.__loadTypes__(types => {
             types.forEach(type => {
                 this.__buildCategoryLi__(type);
             });
-            this.find(`ul > li[categoryId=${ categoryId || "ALL" }]`).click();
+
+            let category = this.parent.toolBar.category();
+            this.find(`ul > li[categoryId=${ category._id || "ALL" }]`).click();
         });
     };
 
