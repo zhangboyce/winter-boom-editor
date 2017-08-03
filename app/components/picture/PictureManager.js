@@ -6,6 +6,7 @@ import ImageList from './ImageList';
 import CategoryList from './CategoryList';
 import Pagination from './Pagination';
 import ToolBar from './ToolBar';
+import UploadImage from './UploadImage'
 
 export default class extends Component {
     constructor(props) {
@@ -16,10 +17,13 @@ export default class extends Component {
         this.categoryList = null;
         this.imageList = null;
         this.pagination = null;
+        this.uploadImage = null;
     }
 
     open = () => {
         this.toolBar = new ToolBar({ parent: this });
+        this.uploadImage = new UploadImage({parent:this});
+
         this.pagination = new Pagination({ parent: this });
         this.imageList = new ImageList({ parent: this });
         this.categoryList = new CategoryList({ parent: this });
@@ -37,7 +41,9 @@ export default class extends Component {
         $right.html('');
         $right.html($wrap);
         $right.prepend(this.toolBar);
-
+        $right.prepend(this.uploadImage);
+        let $upImage =  this.find('.change-category');
+        $upImage.append(this.uploadImage);
         let $left = this.find('.modal-pic-left');
         $left.html('');
         $left.html(this.categoryList);
