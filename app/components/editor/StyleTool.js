@@ -106,7 +106,8 @@ function StyleTool(editable, options = {}) {
     copyBtn.click(function () {
         if (lastSection) {
             lastSection = lastSection.removeClass("winter-section-active");
-            let copyText = lastSection.html();
+            let inner = lastSection.find('section.winter-section-inner');
+            let copyText = (inner || lastSection).html();
 
             copy('#style-copy-btn', copyText);
         }

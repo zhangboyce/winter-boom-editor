@@ -1,27 +1,39 @@
-'use strict';
+(function($) {
+    'use strict';
+     $.fn.extend({
+         confirm: confirm
+     });
 
-export default class  {
-    popover($target, props) {
+    function confirm(message, placement= 'top' ) {
+        return __confirm__($(this), {
+            placement: placement,
+            content: message
+        });
+    }
 
-        let default_props = {
+    function __confirm__($target, options) {
+        let defaults = {
             trigger: 'click',
-            html: true,
-            placement: "bottom",
-            title: "A popover title",
-            content: "A popover content"
+            html: true
         };
 
-        props = Object.assign({}, default_props, props);
-        let ok = props.ok || function() {};
-        let cancel = props.cancel || function() {};
-        let shown = props.shown || function() {};
-        let hidden = props.hidden || function() {};
+        options = $.extend(defaults, options);
+        return this.each(function (){
+            __popover__($target, options);
+        });
+    }
 
-        props.content = `
+    function __popover__($target, options) {
+        let ok = options.ok || function() {};
+        let cancel = options.cancel || function() {};
+        let shown = options.shown || function() {};
+        let hidden = options.hidden || function() {};
+
+        options.content = `
             <div class="edit-popover-warp">
                 <div class="popover-inner">
                     <div class="edit-popover-content">
-                          ${ props.content }
+                          ${ options.content }
                     </div>
                     <div class="popover-bar">
                          <a href="javascript:;" class="btn btn-primary js-commitb-btn">确定</a>
@@ -34,7 +46,7 @@ export default class  {
         $this.on('click',function(e){
             e.preventDefault();
             e.stopPropagation();
-        }).popover(props);
+        }).popover(options);
 
         let $popover;
         $this.on('shown.bs.popover', () => {
@@ -67,5 +79,13 @@ export default class  {
             // callback shown
             hidden($popover);
         });
-    };
-}
+    }
+
+    $(document).on('click', function (e) {
+        $('[data-toggle="popover"],[data-original-title]').each(function () {
+            if (!$(this).is(e.target) && $(this).has(e.target).length === 0 && $('.popover').has(e.target).length === 0) {
+                (($(this).popover('hide').data('bs.popover')||{}).inState||{}).click = false;
+            }
+        });
+    });
+})(jQuery);

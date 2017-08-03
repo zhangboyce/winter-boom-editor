@@ -59,7 +59,7 @@ export default class extends Component {
                 'margin-bottom': '5px'
             });
 
-        let $section_inner = $('<section></section>')
+        let $section_inner = $('<section class="winter-section-inner"></section>')
             .css({
                 'display': 'block',
                 'clear': 'both',
@@ -71,6 +71,16 @@ export default class extends Component {
 
         $section_inner.append($node);
         $section.append($section_inner);
+
+        $node.find('img').click(() => {
+            console.log('xxx');
+        });
+
+        $node.find('section').filter(function () {
+            return $(this).css('background-image');
+        }).click(() => {
+            console.log('oooo');
+        });
 
         return $section;
     };

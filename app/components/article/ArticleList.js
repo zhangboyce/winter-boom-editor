@@ -2,6 +2,7 @@
 import _ from 'lodash';
 import Component from './../Component';
 import SyncArticle from './SyncArticle';
+import { isFunction } from '../../../common/TypeUtils';
 
 export default class extends Component {
     constructor(props) {
@@ -77,13 +78,21 @@ export default class extends Component {
     };
 
     __buildDelBtn__ = article => {
-        return $(`<a class ="delete-article" title="删除文章"></a>`)
+        let $delBtn = $(`<a class ="delete-article" title="删除文章"></a>`)
             .hide()
-            .append($('<i class="icon-trash" style="color: #fff;"></i>'))
-            .click(e => {
-                this.__deleteArticle__(article._id);
+            .append($('<i class="icon-trash" style="color: #fff;"></i>'));
+
+        this.__popover__($delBtn, {
+            title: ``,
+            placement: 'left',
+            content: `<div>确定删除该文章?</div>`,
+            ok: ($popover, callback) => {
+                this.__deleteArticle__(article._id, callback);
                 return false;
-            });
+            }
+        });
+
+        return $delBtn;
     };
 
     __buildEditBtn__ = article => {
@@ -96,12 +105,11 @@ export default class extends Component {
             });
     };
 
-    __deleteArticle__ = id => {
+    __deleteArticle__ = (id, callback) => {
         //@TODO 需要判断是否是当前正在编辑的文章
-        this.confirm('确定删除此文章吗？', () => {
-            $.getJSON('/article/delete/' + id, json => {
-                $('#article_' + id).remove();
-            });
+        $.getJSON('/article/delete/' + id, json => {
+            $('#article_' + id).remove();
+            isFunction(callback) && callback();
         });
     };
 
