@@ -8,16 +8,6 @@ export default class extends Component {
     constructor(props) {
         super(props);
 
-        this.upload = upload({
-            name: 'image',
-            url: () => ('/upload/image/'),
-            multiple: true,
-            success: result => {
-                //let json = JSON.parse(result);
-                this.parent.categoryList.flush();
-            }
-        });
-
         this.__category__ = {};
         this.rendered();
     }
@@ -135,10 +125,6 @@ export default class extends Component {
             }
         });
 
-        this.find('.button-upload-local').click(() => {
-            this.upload.click({categoryId: this.category()._id});
-        });
-
 
         //删除分组
         let $deleteCategory = this.find('.delete-category');
@@ -186,9 +172,6 @@ export default class extends Component {
                                         <span class="title rename-category">重命名</span>
                                         <span class="title delete-category">删除分组</span>
                                 </div>
-                        </div>
-                        <div class="col col-md-4 text-right">
-                            <span>大小不超过2M</span><span class="button-upload-local">本地上传</span>
                         </div>
                </div>
                 <div class="col col-md-12">
