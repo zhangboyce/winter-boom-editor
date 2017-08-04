@@ -1,91 +1,102 @@
+import './jquery.popover.css';
 (function($) {
     'use strict';
      $.fn.extend({
-         confirm: confirm
+         popConfirm: function (message, placement= 'top' ) {
+             return this.each(function (){
+                 let arrayActions = [];
+                 let $this = $(this);
+
+                 if (jQuery._data(this, "events") && jQuery._data(this, "events").click) {
+                     for (let i = 0; i < jQuery._data(this, "events").click.length; i = i + 1) {
+                         arrayActions.push(jQuery._data(this, "events").click[i].handler);
+                     }
+                     $this.unbind("click");
+                 }
+
+                 if ($this.attr('onclick')) {
+                     let code = $this.attr('onclick');
+                     arrayActions.push(function () {
+                         eval(code);
+                     });
+                     $this.prop("onclick", null);
+                 }
+
+                 if (!$this.data('remote') && $this.attr('href')) {
+                     arrayActions.push(function () {
+                         window.location.href = $this.attr('href');
+                     });
+                 }
+
+                 if ($this.attr('type') && $this.attr('type') === 'submit') {
+                     let form = $this.parents('form:first');
+                     arrayActions.push(function () {
+                         if(typeof $this.attr('name') !== "undefined") {
+                             $('<input type="hidden">').attr('name', $this.attr('name')).attr('value', $this.attr('value')).appendTo(form);
+                         }
+                         form.submit();
+                     });
+                 }
+                 
+                 __popover__($this, arrayActions, {
+                     placement: placement,
+                     title: message,
+                     trigger: 'manual',
+                     html: true
+                 });
+             });
+         }
      });
 
-    function confirm(message, placement= 'top' ) {
-        return __confirm__($(this), {
-            placement: placement,
-            content: message
-        });
-    }
-
-    function __confirm__($target, options) {
-        let defaults = {
-            trigger: 'click',
-            html: true
-        };
-
-        options = $.extend(defaults, options);
-        return this.each(function (){
-            __popover__($target, options);
-        });
-    }
-
-    function __popover__($target, options) {
-        let ok = options.ok || function() {};
-        let cancel = options.cancel || function() {};
-        let shown = options.shown || function() {};
-        let hidden = options.hidden || function() {};
+    function __popover__($target, arrayActions, options) {
+        let last = null;
+        let activeClassName = 'popover-active';
 
         options.content = `
-            <div class="edit-popover-warp">
-                <div class="popover-inner">
-                    <div class="edit-popover-content">
-                          ${ options.content }
-                    </div>
-                    <div class="popover-bar">
-                         <a href="javascript:;" class="btn btn-primary js-commitb-btn">确定</a>
-                         <a href="javascript:;" class="btn btn-default js-canncel-btn">取消</a>
-                    </div>
-                </div>
+            <div class="popover-confirm-operator">
+                 <span class="btn popover-confirm-operator-cancel">取消</span>
+                 <span class="btn popover-confirm-operator-confirm">确定</span>
             </div>`;
 
         let $this = $target;
-        $this.on('click',function(e){
+        $this.popover(options);
+
+        $this.bind('click', function(e){
             e.preventDefault();
             e.stopPropagation();
-        }).popover(options);
 
-        let $popover;
-        $this.on('shown.bs.popover', () => {
-            $popover = $this.next('.popover');
+            if (last && last !== $this) {
+                last.popover('hide').removeClass(activeClassName);
+            }
+            last = $this;
 
-            // callback shown
-            shown($popover);
-
-            $popover.find('.popover-bar .js-commitb-btn').click((e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                ok($popover, () => {
-                    $this.popover('hide');
-                    $this.click();
-                });
-            });
-
-            $popover.find('.popover-bar .js-canncel-btn').click((e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                $this.popover('hide');
-                $this.click();
-
-                // callback cancel
-                cancel($popover);
-            });
+            $('.' + activeClassName).not($this).popover('hide').removeClass(activeClassName);
+            $this.popover('show').addClass(activeClassName);
         });
 
-        $this.on('hiden.bs.popover', () => {
-            // callback shown
-            hidden($popover);
+        $this.on('shown.bs.popover', () => {
+            let $popover = $this.next('.popover');
+
+            $popover.find('.popover-confirm-operator-confirm').click((e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                for (let i = 0; i < arrayActions.length; i = i + 1) {
+                    arrayActions[i].apply($this);
+                }
+                $this.popover('hide').removeClass(activeClassName);
+            });
+
+            $popover.find('.popover-confirm-operator-cancel').click((e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                $this.popover('hide').removeClass(activeClassName);
+            });
+
+            $(document).on('click', function () {
+                if (last) {
+                    last.popover('hide').removeClass(activeClassName);
+                }
+            });
         });
     }
-
-    $(document).on('click', function (e) {
-        $('[data-toggle="popover"],[data-original-title]').each(function () {
-            if (!$(this).is(e.target) && $(this).has(e.target).length === 0 && $('.popover').has(e.target).length === 0) {
-                (($(this).popover('hide').data('bs.popover')||{}).inState||{}).click = false;
-            }
-        });
-    });
 })(jQuery);

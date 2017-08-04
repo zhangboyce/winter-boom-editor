@@ -41,17 +41,17 @@ export default class {
     __show__ = () => {
         this.$msg.css({
             "opacity":"0",
-            "bottom": "0"
+            "top": "0"
         });
         this.$msg.animate({
             "opacity":"1",
-            "bottom": "40%"
+            "top": "40%"
         }, 100);
 
         let st = setTimeout(() => {
             this.$msg.animate({
                 "opacity":"0",
-                "bottom": "0"
+                "top": "0"
             }, 1000);
             clearTimeout(st);
         }, 2000);

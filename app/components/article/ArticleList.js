@@ -45,7 +45,7 @@ export default class extends Component {
         let isShow = false;
         let showTimeout;
 
-        return $(`<div class="article-list" id="article_${article._id}"></div>`).css({
+        return $(`<div class="article" id="article_${article._id}"></div>`).css({
             'background': `rgba(0, 0, 0, 0) url("${article.cover || 'http://boom-static.static.cceato.com/images/shirt.png'}") no-repeat scroll center center / cover`
         }).click(() => {
             this.parent.showArticle(article);
@@ -128,7 +128,7 @@ export default class extends Component {
 
     render() {
         return $(`
-            <div class=" col col-md-12 article-list-container">
+            <div class=" col col-md-12 article-list">
                 <div class="header-content">
                     <div class="sync-article-btn">同步文章</div>
                 </div>

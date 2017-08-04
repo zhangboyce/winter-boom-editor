@@ -44,7 +44,7 @@
   position: relative;
 }
 
-.article-list-container {
+.article-list {
   position: relative;
   height: 100%;
   overflow: hidden;
@@ -55,7 +55,7 @@
   text-align: center;
 }
 
-.article-list-container .article-list {
+.article-list .article {
   display: block;
   cursor: pointer;
   width: 86%;
@@ -66,28 +66,27 @@
   border-bottom: 1px solid #ebebe7;
 }
 
-.article-list-container .article-list .delete-article {
-  height: 23px;
-  width: 23px;
-  position: absolute;
-  right: 0;
-  text-align: center;
-  line-height: 23px;
-  background-color: rgba(33, 34, 35, 0.7);
+.article-list .article .delete-article {
+  .article-operator-btn(0);
 
 }
 
-.article-list-container .article-list .edit-article {
-  height: 23px;
-  width: 23px;
-  position: absolute;
-  right: 25px;
-  text-align: center;
-  line-height: 23px;
-  background-color: rgba(33, 34, 35, 0.7);
+.article-list .article .edit-article {
+  .article-operator-btn(32px);
 }
 
-.article-list-container .article-list .title {
+.article-operator-btn(@right, @size:30px) {
+  height: @size;
+  width: @size;
+  line-height: @size;
+  right: @right;
+  font-size: 16px;
+  position: absolute;
+  text-align: center;
+  background-color: fade(@dark-grey, 50%);
+}
+
+.article-list .article .title {
   width: 100%;
   height:30px;
   color: #fff;
@@ -95,34 +94,35 @@
   bottom: 0;
   padding: 0 5px;
   overflow: hidden;
-  background-color: rgba(33, 34, 35, 0.7);
+  background-color: fade(@dark-grey, 50%);
   text-align: left;
   line-height: 18px;
 
 }
 
-.article-list-container .article-list .title span {
+.article-list .article .title span {
   width:70%;
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
   display: inline-block;
   padding-top:3px;
-  transform: scale(0.9);
-  -webkit-transform: scale(0.9);
-  -moz-transform: scale(0.9);
-  -o-transform: scale(0.9);
+  .scale(0.9);
 
 }
 
-.article-list-container .article-list .title .datatime {
+.article-list .article .title .datatime {
   text-align: right;
   margin-top: -14px;
-  transform: scale(0.7);
-  -webkit-transform: scale(0.7);
-  -moz-transform: scale(0.7);
-  -o-transform: scale(0.7);
   margin-right:-25px;
+  .scale(0.7);
+}
+
+.scale(@size: 1) {
+  transform: scale(@size);
+  -webkit-transform: scale(@size);
+  -moz-transform: scale(@size);
+  -o-transform: scale(@size);
 }
 
 .header-content > .sync-article-btn {

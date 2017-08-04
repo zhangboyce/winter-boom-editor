@@ -68,8 +68,9 @@ export default class extends Component {
     };
 
     clear = () => {
-        if (!this.originArticle.isEmpty()) {
-            this.confirm('未保存的临时文档，操作后内容将无法恢复,是否确认执行操作?', () => {
+        let article = this.__getArticle__();
+        if (!article.isEmpty()) {
+            this.confirm('是否确认清空文档?', () => {
                 this.editor.clear();
                 this.title.clear();
                 this.editorFooter.clear();
@@ -84,9 +85,9 @@ export default class extends Component {
 
     __check__ = callback => {
         let article = this.__getArticle__();
-        if (this.originArticle.isEmpty()) {
+        if (this.originArticle.isEquals(article)) {
             callback()
-        } else if(!article.isEquals(this.originArticle)) {
+        } else {
             this.confirm('文档内容已更新，操作后内容将无法恢复,是否确认执行操作?', callback);
         }
     };
