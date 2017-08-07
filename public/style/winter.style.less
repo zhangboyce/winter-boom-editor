@@ -483,6 +483,10 @@
   .modal-pic-body {
     border: 0 none;
   }
+  .modal-footer{
+    padding: 0;
+    border-top:0 none;
+  }
 
   .modal-pic-left {
     border-right: 1px solid @light-grey;
@@ -511,6 +515,7 @@
   }
   #img-list-warp li.img-item {
     width: 17.8%;
+    cursor:pointer;
     .check-content {
       display: inline-block;
       width: 100%;
@@ -565,10 +570,10 @@
     }
 
     .btn-go {
-      color: #a5a6aa;
-      cursor: default;
+      color: #fff;
+      cursor: pointer;
       margin-right: 10px;
-      background-color: #e7e7eb;
+      background-color: @purple;
     }
 
     .btn-cancel {

@@ -13,7 +13,7 @@ export default  class extends Component{
             url: () => ('/upload/image/'),
             multiple: true,
             success: result => {
-                this.parent.chooseCategoryList.flush();
+                this.parent.categoryList.flush();
             }
         });
 

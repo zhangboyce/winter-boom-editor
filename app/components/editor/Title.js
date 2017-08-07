@@ -12,13 +12,6 @@ export default class extends Component {
         this.$titleInput = null;
         this.$authorInput = null;
         this.$coverImg = null;
-        this.upload = upload({
-            name: 'image',
-            url: () => ('/upload/image/'),
-            success: keys => {
-                this.cover('http://editor.static.cceato.com/' + keys[0]);
-            }
-        });
 
         this.rendered();
     }
@@ -104,7 +97,9 @@ export default class extends Component {
         $(`<a href="javascript:;">上传封面</a>`)
             .appendTo($cover_desc)
             .click(() => {
-                this.upload.click();
+                this.parent.choosePicManagement.open(imageItem => {
+                    this.cover(imageItem && 'http://editor.static.cceato.com/' + imageItem.key);
+                })
             });
 
         let $selected;

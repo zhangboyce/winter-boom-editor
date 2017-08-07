@@ -88,10 +88,6 @@ export default class extends Component {
         isFunction(callback) && callback();
     };
 
-    addItem = item => {
-        this.loadImages([item, ...this.images])
-    };
-
     //构建图片list
     __buildImageUl__ = () => {
         this.html('');

@@ -38,10 +38,10 @@ export default class extends Component {
     __typeOnClick__ = (type, callback) => {
         return e => {
             e.stopPropagation();
-            this.parent.pagination.category(type._id);
-            this.parent.pagination.page(1);
-            this.parent.toolBar.category(type);
-            this.parent.pagination.pagination(callback);
+            this.pagination.category(type._id);
+            this.pagination.page(1);
+            this.toolBar.category(type);
+            this.pagination.pagination(callback);
         };
     };
 
@@ -63,7 +63,7 @@ export default class extends Component {
         this.find('ul').append($li);
         $li.click(this.__typeOnClick__(category, items => {
             $li.addClass("active").siblings().removeClass("active");
-            this.parent.imageList.loadImages(items, this.parent.toolBar.changeStatus);
+            this.imageList.loadImages(items, this.toolBar.changeStatus);
         }));
     };
 
@@ -78,7 +78,7 @@ export default class extends Component {
                 this.__buildCategoryLi__(type);
             });
 
-            let category = this.parent.toolBar.category();
+            let category = this.toolBar.category();
             this.find(`ul > li[categoryId=${ category._id || "ALL" }]`).click();
         });
     };

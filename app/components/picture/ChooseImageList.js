@@ -8,24 +8,31 @@ export default class extends Component {
     constructor(props) {
         super(props);
         this.images = [];
+        this.selectedImage = null;
         this.rendered();
+    }
+
+    select(item) {
+        if (!item || !item._id) return;
+        if (this.selectedImage && this.selectedImage._id == item._id) {
+            this.selectedImage = null;
+        } else {
+            this.selectedImage = item;
+        }
+    }
+
+    getSelected() {
+        return this.selectedImage;
     }
 
     isEmpty = () => {
         return this.images.length < 1;
     };
 
-
-
-
     loadImages = (items, callback) => {
         this.images = items;
         this.__buildImageUl__();
         isFunction(callback) && callback();
-    };
-
-    addItem = item => {
-        this.loadImages([item, ...this.images])
     };
 
     //构建图片list

@@ -6,11 +6,8 @@ import { isFunction } from '../../../common/TypeUtils';
 export default class extends Component {
     constructor(props) {
         super(props);
-        this.choseImage = [];
         this.rendered();
     }
-
-
 
     rendered = () => {
         $(() => {
@@ -19,31 +16,17 @@ export default class extends Component {
 
         this.find('.cover').css("background-image", "url(http://editor.static.cceato.com/" + this.item.key);
         this.find('.bottom-content').text(this.item.name);
-        this.click(()=>{
-
-            if (this.find('.select-image-icon').hasClass("active")) {
-                this.find('.select-image-icon').removeClass("active");
-                this.choseImage.splice(1, this.choseImage.findIndex(it => it === this.item._id));
-
-            } else {
-                this.find('.select-image-icon').addClass("active");
-                this.siblings("li").find(".select-image-icon").removeClass("active");
-                this.choseImage.push(this.item._id);
-            }
-            console.log(this.parent.images);
-            console.log(this.choseImage);
-
+        this.click(() => {
+            this.parent.select(this.item);
+            this.parent.rendered();
         });
 
-
-        console.log(this.choseImage);
-        if (this.choseImage.indexOf(this.item._id) != -1) {
-            alert("have");
+        let selected = this.parent.getSelected() || {};
+        if (this.item._id == selected._id) {
             this.find('.select-image-icon').addClass("active");
+        } else {
+            this.find('.select-image-icon').removeClass("active");
         }
-
-
-
     };
 
     render() {

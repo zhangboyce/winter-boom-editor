@@ -6,6 +6,7 @@ import EditorFooter from './EditorFooter';
 import Operator from './Operator';
 import Message from '../common/Message';
 import ConfirmModal from '../common/ConfirmModal';
+import ChoosePicManagement from '../picture/ChoosePicManagement';
 
 export default class extends Component {
     constructor(props) {
@@ -15,6 +16,7 @@ export default class extends Component {
         this.editorFooter = new EditorFooter({ parent: this });
         this.operator = new Operator({ parent: this});
         this.originArticle = new Article({});
+        this.choosePicManagement = new ChoosePicManagement();
 
         this.rendered()
     }

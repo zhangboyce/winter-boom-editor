@@ -3,12 +3,12 @@ import Component from './../Component';
 import { isFunction, isNumber } from '../../../common/TypeUtils';
 
 export default class extends Component {
-    constructor(props) {
+    constructor(props, size) {
         super(props);
 
         this.__category__ = '';
         this.__page__ = 1;
-        this.__size__ = 6;
+        this.__size__ = size || 6;
 
         this.paginationInfo = {};
 

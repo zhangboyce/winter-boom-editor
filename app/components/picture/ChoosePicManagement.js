@@ -1,42 +1,41 @@
 'use strict';
-
 import Component from './../Component';
 import Modal from '../common/Modal';
-import ChooseImageList from './ChooseImageList';
-import ChooseCategoryList from './ChooseCategoryList';
-import ChoosePagination from './ChoosePagination';
+import CategoryList from './CategoryList';
+import Pagination from './Pagination';
 import ChooseUploadImage from './ChooseUploadImage';
-import ChooseModalFooter from './ChooseModalFooter';
+import ChooseImageList from './ChooseImageList';
+import { isFunction } from '../../../common/TypeUtils';
 
 export default class extends Component {
     constructor(props) {
         super(props);
         this.modal = new Modal({id: 'choosePictureManagementModal'});
-        this.chooseCategoryList = null;
-        this.chooseImageList = null;
-        this.choosePagination = null;
-        this.chooseUploadImage = null;
-        this.chooseModalFooter = null;
+        this.toolBar = null;
+        this.categoryList = null;
+        this.imageList = null;
+        this.pagination = null;
+
+        this.modalCallback = function() {};
     }
 
-    open = () => {
-        this.chooseUploadImage = new ChooseUploadImage({parent: this});
-        this.choosePagination = new ChoosePagination({parent: this});
-        this.chooseImageList = new ChooseImageList({parent: this});
-        this.chooseCategoryList = new ChooseCategoryList({parent: this});
-        this.chooseModalFooter = new ChooseModalFooter({parent: this});
+    open = (modalCallback) => {
+        this.toolBar = new ChooseUploadImage({ parent: this });
+        this.pagination = new Pagination({ parent: this}, 10);
+        this.imageList = new ChooseImageList({ parent: this });
+        this.categoryList = new CategoryList({ toolBar: this.toolBar, pagination: this.pagination, imageList: this.imageList });
+
+        this.modalCallback = modalCallback;
 
         this.rendered();
         this.modal.open();
-
     };
 
     rendered = () => {
 
-
         let $wrap = $('<div id="img-list-warp"></div>');
-        $wrap.append(this.chooseImageList);
-        $wrap.append(this.choosePagination);
+        $wrap.append(this.imageList);
+        $wrap.append(this.pagination);
 
         let $right = this.find('.modal-pic-right');
         $right.html('');
@@ -47,21 +46,27 @@ export default class extends Component {
                                      </div>
                                </div>`);
         $right.prepend($rightHeader);
-        $rightHeader.append(this.chooseUploadImage);
+        $rightHeader.append(this.toolBar);
 
 
         let $left = this.find('.modal-pic-left');
         $left.html('');
-        $left.html(this.chooseCategoryList);
-
-        let $footer = this.find('.footer');
-        $footer.html('');
-        $footer.append(this.chooseModalFooter);
+        $left.html(this.categoryList);
 
         this.modal.$header = $(`<h4>选择图片</h4>`);
         this.modal.$body = this;
 
+        let $footer = $(` <div class="footer"></div>`);
+        $(`<button class="btn-go">确定</button>`).click(() => {
+            let selected = this.imageList.getSelected();
+            isFunction(this.modalCallback) && this.modalCallback(selected);
+            this.modal.close();
+        }).appendTo($footer);
+        $(` <button class="btn-cancel">取消</button>`).click(() => {
+            this.modal.close();
+        }).appendTo($footer);
 
+        this.modal.$footer = $footer;
     };
 
     render() {
@@ -79,11 +84,7 @@ export default class extends Component {
                         </div>
                     </div>
                 </div>
-                <div class="row">
-                        <div class="footer">
 
-                        </div>
-                </div>
             </div>
         `);
     }

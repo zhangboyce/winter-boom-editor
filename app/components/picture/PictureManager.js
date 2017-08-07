@@ -26,7 +26,7 @@ export default class extends Component {
 
         this.pagination = new Pagination({ parent: this });
         this.imageList = new ImageList({ parent: this });
-        this.categoryList = new CategoryList({ parent: this });
+        this.categoryList = new CategoryList({ toolBar: this.toolBar, pagination: this.pagination, imageList: this.imageList });
 
         this.rendered();
         this.modal.open();
