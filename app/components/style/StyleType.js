@@ -1,12 +1,14 @@
 'use strict';
 import Component from './../Component';
 import PictureManager from '../picture/PictureManager';
+import ChoosePicManagement from '../picture/ChoosePicManagement';
 
 export default class extends Component {
 
     constructor(props) {
         super(props);
         this.pictureManager = new PictureManager();
+        this.choosePicManagement = new ChoosePicManagement();
 
         this.rendered();
     }
@@ -56,6 +58,10 @@ export default class extends Component {
         });
 
         //this.find('#pic-management').click();
+        this.find('#choose-pic-management').click(() => {
+            this.choosePicManagement.open()
+        });
+      //  this.find('#choose-pic-management').click();
 
         this.__loadTypes__(types => {
             types.forEach(type => {
@@ -88,6 +94,16 @@ export default class extends Component {
             <div class="col col-md-2 col-style-type">
                 <ul></ul>
                 <div id="pic-management" data-toggle="modal" data-target="#myModal">图片管理</div>
+                <div style=" width: 86%;
+                        height: 30px;
+                        border: 1px solid #59595a;
+                        color: #59595a;
+                        line-height: 30px;
+                        text-align: center;
+                        margin: 30px auto 0;
+                        border-radius: 5px;
+                        cursor: pointer;
+                        font-size: 12px;" id="choose-pic-management" data-toggle="modal" data-target="#myModal">选择图片</div>
             </div>
         `);
     }

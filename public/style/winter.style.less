@@ -1,9 +1,5 @@
 @import "common.less";
 
-//let modal scroll
-.modal{
-  //overflow:scroll;
-}
 .col-style > div > .col {
   height: 100%;
   border-left: 1px solid @grey;
@@ -81,6 +77,9 @@
   cursor: pointer;
 }
 
+/****************************************************************
+         ********  图片管理 css style  begin  ********
+  ***************************************************************/
 #pic-management {
   width: 86%;
   height: 30px;
@@ -94,131 +93,196 @@
   font-size: 12px;
 }
 
-#pictureManagementModal ul, #pictureManagementModal li {
-  list-style: none;
-}
-
-#pictureManagementModal .modal-dialog {
-  width: 900px;
-}
-
-#pictureManagementModal .modal-body {
-  padding: 0;
-}
-
 #pic-management:hover {
   background-color: @purple;
   color: @white;
 }
 
-.modal-pic-body {
-  border: 0 none;
+#pictureManagementModal {
+
+  .modal-pic-left {
+    border-right: 1px solid @light-grey;
+    height: 570px;
+    overflow: scroll;
+  }
+
+  .modal-pic-right {
+    height: 570px;
+  }
+
+  .modal-body {
+    padding: 0;
+  }
+  .modal-dialog {
+    width: 900px;
+  }
+
+  .modal-pic-body {
+    border: 0 none;
+  }
+
+  #img-list-warp ul {
+    min-height: 512px;
+  }
+
+  .change-category .title {
+    display: inline-block;
+    margin-top: 20px;
+    margin-left: 15px;
+  }
+  .rename-category,
+  .delete-category {
+    color: #459ae9;
+    font-weight: 200;
+  }
+
+  .rename-category:hover,
+  .delete-category:hover {
+    color: #459ae9;
+    text-decoration: underline;
+    cursor: pointer;
+  }
+
+  .chose_checkbox_label {
+    margin-right: 20px;
+  }
+
+  .modal-right-header .img-text {
+    font-size: 16px;
+  }
+
+  .modal-right-header .operation-area {
+    margin-top: 10px;
+    background: @wx-bg-grey;
+    height: 40px;
+    line-height: 40px;
+    padding-left: 15px;
+  }
+
+  .modal-right-header .operation-area .a-move,
+  .modal-right-header .operation-area .a-delete {
+    height: 28px;
+    line-height: 24px;
+    width: 76px;
+    text-align: center;
+    border: 1px solid @grey;
+    color: #444;
+    display: inline-block;
+    border-radius: 5px;
+    margin-right: 10px;
+    background-color: @white;
+    vertical-align: -1px;
+  }
+
+  .modal-right-header .operation-area .a-move[disabled="disabled"],
+  .modal-right-header .operation-area .a-delete[disabled="disabled"] {
+    background-color: #e7e7eb;
+    border-color: #dadbe0;
+    color: #a5a6aa;
+    cursor: default;
+  }
+
+  .check-content {
+    height: 32px;
+    line-height: 32px;
+    display: block;
+    overflow: hidden;
+  }
+
+  .checkbox-label {
+    display: inline-block;
+    text-align: left;
+    cursor: pointer;
+  }
+
+  .checkbox-label .input-checkbox {
+    vertical-align: 12px;
+    margin-right: 0;
+  }
+
+  .bottom-content {
+    height: 32px;
+    line-height: 32px;
+    text-align: left;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    display: inline-block;
+    padding: 0;
+    width: 118px;
+
+  }
+
+  .list-card-ft {
+    background-color: #f4f5f9;
+    border-top: 1px solid #e7e7eb;
+    text-align: center;
+    height: 30px;
+  }
+
+  .list-card-ft ul li {
+    width: 33.3%;
+    float: left;
+    height: 30px;
+    line-height: 30px;
+  }
+
+  .create-group-div {
+    width: 250px;
+    height: 170px;
+    position: absolute;
+    z-index: 9999;
+    top: 200px;
+    left: 200px;
+    border: 1px solid #d9dadc;
+    word-wrap: break-word;
+    word-break: break-all;
+    padding: 30px;
+    background-color: #fff;
+    box-shadow: none;
+    -moz-box-shadow: none;
+    -webkit-box-shadow: none;
+  }
+
+  .create-group-div .category-input {
+    display: inline-block;
+    position: relative;
+    height: 30px;
+    line-height: 30px;
+    vertical-align: middle;
+    width: 185px;
+    font-size: 14px;
+    padding: 0 10px;
+    border: 1px solid #e7e7eb;
+    background-color: #fff;
+    margin-top: 10px;
+  }
+
+  .create-group-div a.btn-tool {
+    width: 76px;
+    height: 28px;
+    border-radius: 5px;
+    margin-top: 20px;
+    line-height: 28px;
+    text-align: center;
+    display: inline-block;
+
+  }
+
+  .btn-commit {
+    background-color: @purple;
+    color: @white;
+
+  }
+
+  .btn-canncel {
+    background-color: @white;
+    border: 1px solid @light-grey;
+    color: #666;
+    margin-left: 33px;
+  }
+
 }
-
-.modal-pic-left {
-  border-right: 1px solid @light-grey;
-  height: 570px;
-  overflow: scroll;
-}
-
-.modal-pic-left .popover-content {
-  background-color: @white;
-}
-
-.modal-pic-left ul li {
-  text-align: left;
-  height: 32px;
-  line-height: 32px;
-  padding-left: 15px;
-  cursor: pointer;
-}
-
-.modal-pic-left ul li.active {
-  background-color: @light-grey;
-}
-
-.modal-pic-left ul li:hover {
-  background-color: @light-grey;
-}
-
-.modal-pic-right {
-  height: 570px;
-}
-.change-category .title{
-  display: inline-block;
-  margin-top: 20px;
-  margin-left: 15px;
-}
-.rename-category,
-.delete-category{
-    color:#459ae9;
-    font-weight:200;
-}
-
-.rename-category:hover,
-.delete-category:hover{
-  color:#459ae9;
-  text-decoration: underline;
-  cursor:pointer;
-}
-
-
-.button-upload-local {
-  height: 28px;
-  line-height: 28px;
-  width: 76px;
-  text-align: center;
-  background-color: @purple;
-  color: @white;
-  display: inline-block;
-  border-radius: 5px;
-  cursor: pointer;
-  margin-top: 15px;
-  margin-left: 10px;
-  margin-right: 15px;
-
-}
-
-.chose_checkbox_label {
-  margin-right: 20px;
-}
-
-
-.modal-right-header .img-text {
-  font-size: 16px;
-}
-
-.modal-right-header .operation-area {
-  margin-top: 10px;
-  background: @wx-bg-grey;
-  height: 40px;
-  line-height: 40px;
-  padding-left: 15px;
-}
-
-.modal-right-header .operation-area .a-move,
-.modal-right-header .operation-area .a-delete {
-  height: 28px;
-  line-height:24px;
-  width: 76px;
-  text-align: center;
-  border: 1px solid @grey;
-  color: #444;
-  display: inline-block;
-  border-radius: 5px;
-  margin-right: 10px;
-  background-color: @white;
-  vertical-align: -1px;
-}
-
-.modal-right-header .operation-area .a-move[disabled="disabled"],
-.modal-right-header .operation-area .a-delete[disabled="disabled"] {
-  background-color: #e7e7eb;
-  border-color: #dadbe0;
-  color: #a5a6aa;
-  cursor: default;
-}
-
 
 .modal-right-header .text-right {
   text-align: right;
@@ -229,19 +293,10 @@
 
 }
 
-#img-list-warp ul {
-  min-height: 512px;
-}
-
 #img-list-warp .tips-no-image {
   text-align: center;
   margin-top: 180px;
   color: @grey;
-}
-
-#img-list-warp li, #img-list-warp ul {
-  padding: 0;
-  margin: 0;
 }
 
 #img-list-warp li.img-item {
@@ -267,113 +322,9 @@
   width: 100%;
 }
 
-.check-content {
-  height: 32px;
-  line-height: 32px;
-  display: block;
-  overflow: hidden;
-}
-
-.checkbox-label {
-  display: inline-block;
-  text-align: left;
-  cursor: pointer;
-}
-
-.checkbox-label .input-checkbox {
-  vertical-align: 12px;
-  margin-right: 0;
-}
-
-.bottom-content {
-  height: 32px;
-  line-height: 32px;
-  text-align: left;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  display: inline-block;
-  padding: 0;
-  width: 118px;
-
-}
-
-.list-card-ft {
-  background-color: #f4f5f9;
-  border-top: 1px solid #e7e7eb;
-  text-align: center;
-  height: 30px;
-}
-
-.list-card-ft ul li {
-  width: 33.3%;
-  float: left;
-  height: 30px;
-  line-height: 30px;
-}
-
-.create-group-div {
-  width: 250px;
-  height: 170px;
-  position: absolute;
-  z-index: 9999;
-  top: 200px;
-  left: 200px;
-  border: 1px solid #d9dadc;
-  word-wrap: break-word;
-  word-break: break-all;
-  padding: 30px;
-  background-color: #fff;
-  box-shadow: none;
-  -moz-box-shadow: none;
-  -webkit-box-shadow: none;
-}
-
-.create-group-text {
-
-}
-
-.create-group-div .category-input {
-  display: inline-block;
-  position: relative;
-  height: 30px;
-  line-height: 30px;
-  vertical-align: middle;
-  width: 185px;
-  font-size: 14px;
-  padding: 0 10px;
-  border: 1px solid #e7e7eb;
-  background-color: #fff;
-  margin-top: 10px;
-}
-
-.create-group-div a.btn-tool {
-  width: 76px;
-  height: 28px;
-  border-radius: 5px;
-  margin-top: 20px;
-  line-height: 28px;
-  text-align: center;
-  display: inline-block;
-
-}
-
-.btn-commit {
-  background-color: @purple;
-  color: @white;
-
-}
-
-.btn-canncel {
-  background-color: @white;
-  border: 1px solid @light-grey;
-  color: #666;
-  margin-left: 33px;
-}
-
 #paginationArea {
   text-align: right;
-  margin-top: 10px;
+  margin-top: 0px;
   padding-top: 10px;
   border-top: 1px solid @light-grey;
   width: 100%;
@@ -420,6 +371,42 @@
   outline: 0 none;
 }
 
+.button-upload-local {
+  height: 28px;
+  line-height: 28px;
+  width: 76px;
+  text-align: center;
+  background-color: @purple;
+  color: @white;
+  display: inline-block;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 15px;
+  margin-left: 10px;
+  margin-right: 15px;
+
+}
+
+.modal-pic-left .popover-content {
+  background-color: @white;
+}
+
+.modal-pic-left ul li {
+  text-align: left;
+  height: 32px;
+  line-height: 32px;
+  padding-left: 15px;
+  cursor: pointer;
+}
+
+.modal-pic-left ul li.active {
+  background-color: @light-grey;
+}
+
+.modal-pic-left ul li:hover {
+  background-color: @light-grey;
+}
+
 .edit-popover-warp {
   padding: 10px;
 }
@@ -454,15 +441,15 @@
   margin-right: 15px;
 }
 
-.js-canncel-btn{
-  width:76px;
+.js-canncel-btn {
+  width: 76px;
   height: 28px;
   line-height: 14px;
 }
 
 .js-commitb-btn {
-  margin-right:20px;
-  width:76px;
+  margin-right: 20px;
+  width: 76px;
   height: 28px;
   line-height: 14px;
 }
@@ -471,9 +458,132 @@
 .item-name-input {
   outline: none;
   padding: 5px 2px;
-  width:100%;
+  width: 100%;
 }
 
 #category-radios {
   width: 150px;
 }
+
+/****************************************************************
+         ********  图片管理 css style  end  ********
+  ***************************************************************/
+
+/****************************************************************
+         ********  选择图片弹窗  css style  begin  ********
+  ***************************************************************/
+#choosePictureManagementModal {
+
+  .modal-body {
+    padding: 0;
+  }
+  .modal-dialog {
+    width: 900px;
+  }
+  .modal-pic-body {
+    border: 0 none;
+  }
+
+  .modal-pic-left {
+    border-right: 1px solid @light-grey;
+    height: 490px;
+    overflow: scroll;
+  }
+
+  .modal-pic-right {
+    height: 490px;
+    .right-header {
+      height: 50px;
+      border-bottom: 1px solid @light-grey;
+      .button-upload-local {
+        margin-top: 11px;
+      }
+    }
+
+  }
+  #img-list-warp {
+    margin-left: 0;
+  }
+
+  #img-list-warp ul {
+    min-height: 380px;
+    margin-left: -20px;
+  }
+  #img-list-warp li.img-item {
+    width: 17.8%;
+    .check-content {
+      display: inline-block;
+      width: 100%;
+      height: 34px;
+      line-height: 34px;
+      text-align: left;
+      padding-left: 15px;
+    }
+  }
+
+  #paginationArea {
+    margin-top: 0;
+    border-top:none;
+  }
+  .select-image-icon{
+    width: 127px;
+    height: 130px;
+    background: rgba(0, 0, 0, 0.7) none repeat scroll 0 0;
+    cursor: pointer;
+    text-align: center;
+    position: absolute;
+    top:0;
+    display: none;
+
+    i{
+      line-height: 127px;
+      font-size: 40px;
+    }
+  }
+  .select-image-icon.active{
+    display: inline-block;
+  }
+
+  .footer {
+    padding: 0;
+    margin: 0;
+    line-height: 65px;
+    background-color: #f4f5f9;
+    position: relative;
+    text-align: center;
+    border-top: 1px solid transparent;
+
+    button {
+      height: 28px;
+      line-height: 28px;
+      width: 100px;
+      text-align: center;
+      border-radius: 5px;
+      padding: 0;
+      margin: 0;
+      border: 1px solid #e7e7eb;
+    }
+
+    .btn-go {
+      color: #a5a6aa;
+      cursor: default;
+      margin-right: 10px;
+      background-color: #e7e7eb;
+    }
+
+    .btn-cancel {
+      background-color: #fff;
+      color: #222;
+
+      &:hover {
+        background-color: #e7e7eb;
+      }
+    }
+
+  }
+
+}
+
+/****************************************************************
+         ********  选择图片 弹窗 css style  end  ********
+  ***************************************************************/

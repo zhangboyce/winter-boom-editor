@@ -6,23 +6,33 @@ import upload from '../../utils/upload';
 export default  class extends Component{
     constructor(props) {
         super(props);
+        this.__category__ = {};
 
         this.upload = upload({
             name: 'image',
             url: () => ('/upload/image/'),
             multiple: true,
             success: result => {
-                this.parent.categoryList.flush();
+                this.parent.chooseCategoryList.flush();
             }
         });
 
         this.rendered();
     }
 
+    category = __category__ => {
+        if (__category__ == undefined) {
+            return this.__category__;
+        } else {
+            this.__category__ = __category__;
+        }
+    };
+
+
 
     rendered = () => {
         this.find('.button-upload-local').click(() => {
-            let categoryId = this.parent.toolBar.category()._id;
+            let categoryId = this.category()._id;
             this.upload.click({categoryId:categoryId});
         });
     };
