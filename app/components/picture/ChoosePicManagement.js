@@ -59,7 +59,7 @@ export default class extends Component {
         let $footer = $(` <div class="footer"></div>`);
         $(`<button class="btn-go">确定</button>`).click(() => {
             let selected = this.imageList.getSelected();
-            isFunction(this.modalCallback) && this.modalCallback(selected);
+            selected && isFunction(this.modalCallback) && this.modalCallback(selected);
             this.modal.close();
         }).appendTo($footer);
         $(` <button class="btn-cancel">取消</button>`).click(() => {

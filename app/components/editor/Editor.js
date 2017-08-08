@@ -72,14 +72,20 @@ export default class extends Component {
         $section_inner.append($node);
         $section.append($section_inner);
 
-        $node.find('img').click(() => {
-            console.log('xxx');
+        let styleTool = this.styleTool;
+        $node.find('img').css('cursor', 'pointer').click(function() {
+            styleTool.clickImg($(this));
         });
 
         $node.find('section').filter(function () {
-            return $(this).css('background-image');
-        }).click(() => {
-            console.log('oooo');
+            if ($(this).css('background-image')) {
+                $(this).css('cursor', 'pointer');
+                return true;
+            } else {
+                return false;
+            }
+        }).click(function() {
+            styleTool.clickImg($(this));
         });
 
         return $section;
@@ -136,25 +142,7 @@ export default class extends Component {
         }
     };
 
-    //判断是否有向上的移动图标
-    __hasUpBtnIcon__ = () => {
-        let prevDom = this.lastSection.prev();
-        if (prevDom.length < 1) {
-            $("#up-btn-editor").hide();
-        } else {
-            $("#up-btn-editor").show();
-        }
-    };
 
-    //判断是否有向下的移动图标
-    __hasDownBtnIcon__ = () => {
-        let nextDom = this.lastSection.next();
-        if (nextDom.length < 1) {
-            $("#down-btn-editor").hide();
-        } else {
-            $("#down-btn-editor").show();
-        }
-    };
 
     //@TODO 仅仅增加一个class效果并不好，最好还是外套div，先这样。
     __setLastSection__ = section => {
@@ -165,10 +153,6 @@ export default class extends Component {
         if (this.lastSection) {
             this.styleTool.exec(section);
             this.lastSection.addClass('winter-section-active');
-
-            this.__hasUpBtnIcon__();
-            this.__hasDownBtnIcon__();
-
         } else {
             this.styleTool.hide();
         }
